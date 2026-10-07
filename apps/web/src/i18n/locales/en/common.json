@@ -1,0 +1,27 @@
+{
+  "appName": "Power Grid Operations",
+  "appDescription": "Operations console for the Texas power grid: telemetry, forecasts, alarms and network topology.",
+  "language": "Language",
+  "openMenu": "Open menu",
+  "mainNavigation": "Main navigation",
+  "skipToContent": "Skip to main content",
+  "theme": {
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "it": "Italiano",
+    "ro": "Română"
+  },
+  "nav": {
+    "home": "Overview"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The page you are looking for does not exist.",
+    "home": "Back to overview"
+  }
+}

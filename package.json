@@ -1,0 +1,29 @@
+{
+  "name": "power-grid-operations",
+  "private": true,
+  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "author": "chira-florian-mircea",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev": "yarn workspace @pgo/web dev",
+    "build": "yarn workspace @pgo/web build",
+    "start": "yarn workspace @pgo/web start",
+    "lint": "yarn workspace @pgo/web lint",
+    "typecheck": "yarn workspace @pgo/web typecheck",
+    "test": "yarn workspace @pgo/web test",
+    "e2e": "yarn workspace @pgo/web e2e",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.9.9"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

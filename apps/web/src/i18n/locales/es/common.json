@@ -1,0 +1,27 @@
+{
+  "appName": "Power Grid Operations",
+  "appDescription": "Consola de operaciones de la red eléctrica de Texas: telemetría, previsiones, alarmas y topología de la red.",
+  "language": "Idioma",
+  "openMenu": "Abrir menú",
+  "mainNavigation": "Navegación principal",
+  "skipToContent": "Saltar al contenido principal",
+  "theme": {
+    "switchToDark": "Cambiar a modo oscuro",
+    "switchToLight": "Cambiar a modo claro"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "it": "Italiano",
+    "ro": "Română"
+  },
+  "nav": {
+    "home": "Resumen"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "body": "La página que buscas no existe.",
+    "home": "Volver al resumen"
+  }
+}

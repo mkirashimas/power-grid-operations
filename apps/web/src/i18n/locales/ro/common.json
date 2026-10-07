@@ -1,0 +1,27 @@
+{
+  "appName": "Power Grid Operations",
+  "appDescription": "Consolă de operare pentru rețeaua electrică din Texas: telemetrie, prognoze, alarme și topologia rețelei.",
+  "language": "Limbă",
+  "openMenu": "Deschide meniul",
+  "mainNavigation": "Navigare principală",
+  "skipToContent": "Salt la conținutul principal",
+  "theme": {
+    "switchToDark": "Comută la modul întunecat",
+    "switchToLight": "Comută la modul luminos"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "it": "Italiano",
+    "ro": "Română"
+  },
+  "nav": {
+    "home": "Prezentare generală"
+  },
+  "notFound": {
+    "title": "Pagina nu a fost găsită",
+    "body": "Pagina pe care o cauți nu există.",
+    "home": "Înapoi la prezentarea generală"
+  }
+}
