@@ -24,7 +24,20 @@ Across every module:
 - **Linked selection:** click an asset anywhere and every view follows.
 - **Shared component library:** accessible and tested.
 
-## Stack
+## Getting started
+
+Requires Node 22+ and Yarn 1.
+
+```bash
+yarn install
+cp apps/web/.env.example apps/web/.env.local   # optional: add your EIA API key
+yarn dev                                        # http://localhost:3000
+```
+
+Without a key, the app runs on the committed EIA snapshot.
+
+<details>
+<summary><b>Tech stack</b></summary>
 
 | Concern        | Choice                                                                                  |
 | -------------- | --------------------------------------------------------------------------------------- |
@@ -41,7 +54,10 @@ Across every module:
 
 All other UI libraries are open source and need no API keys.
 
-## Data
+</details>
+
+<details>
+<summary><b>Data sources (EIA + synthetic)</b></summary>
 
 **Source:** the [U.S. Energy Information Administration (EIA)](https://www.eia.gov/opendata/)
 API, for the ERCOT balancing authority. It provides hourly demand, demand forecast, generation
@@ -81,7 +97,10 @@ data.
 | `GET /api/eia/ercot` | EIA series: demand, day-ahead forecast, generation, interchange, by fuel |
 | `GET /api/assets`    | synthetic assets, labelled `synthetic: true`                             |
 
-## Repository layout
+</details>
+
+<details>
+<summary><b>Repository layout</b></summary>
 
 ```
 apps/web/          Next.js app
@@ -102,17 +121,10 @@ packages/
 docs/              deployment guide and one plan per milestone
 ```
 
-## Getting started
+</details>
 
-Requires Node 22+ and Yarn 1.
-
-```bash
-yarn install
-cp apps/web/.env.example apps/web/.env.local   # optional: add your EIA API key
-yarn dev                                        # http://localhost:3000
-```
-
-Without a key, the app runs on the committed EIA snapshot.
+<details>
+<summary><b>All commands</b></summary>
 
 | Command                        | What it does                                                                             |
 | ------------------------------ | ---------------------------------------------------------------------------------------- |
@@ -127,7 +139,56 @@ Without a key, the app runs on the committed EIA snapshot.
 
 Run `yarn workspace @pgo/web playwright install chromium` once before the first `yarn e2e`.
 
-## Secrets
+</details>
+
+<details>
+<summary><b>Design decisions</b></summary>
+
+- **Language without flicker.** The chosen language is stored in a cookie, so the server
+  renders the right language on the first request. On a first visit it falls back to the
+  browser's `Accept-Language`. Server components translate with a per-request i18next instance;
+  client components share one instance in the browser.
+- **Light and dark without flicker.** Both color schemes are compiled into one CSS-variable
+  theme, and MUI's `InitColorSchemeScript` applies the stored or system scheme before the first
+  paint.
+- **Responsive markup decided by CSS.** The sidebar switches between permanent (desktop) and
+  temporary (mobile) with media queries rather than `useMediaQuery`, so the server-rendered
+  HTML is already right for the viewport.
+- **Virtual scrolling past the browser height limit.** A million 40 px rows need 43M px, more
+  than browsers allow for one element. `VirtualGrid` caps the scroll area at 15M px and maps
+  the scroll position proportionally onto all rows, so the last row stays reachable by
+  scrollbar and by keyboard (Ctrl+End).
+- **Data work off the main thread.** Telemetry is generated, filtered, sorted and grouped in a
+  Web Worker. Results come back as transferable typed arrays (no copying), and the page only
+  formats the visible rows.
+- **Accessibility checked in CI.** Every Playwright page test runs axe (WCAG 2.1 AA) in both
+  color schemes. The shell has a skip link, labelled landmarks and `aria-current` navigation.
+- **Open demo.** There is no sign-in. All data is public or synthetic.
+
+</details>
+
+<details>
+<summary><b>Performance</b></summary>
+
+Telemetry table, `/telemetry`: 1,076,544 rows, Chromium desktop, production build.
+
+| Operation (in a Web Worker) | Time               |
+| --------------------------- | ------------------ |
+| Generate all rows           | about 410 ms       |
+| Filter                      | 3–15 ms            |
+| Sort, 1 key / 2 keys        | about 380 / 440 ms |
+| Group by zone               | about 55 ms        |
+
+The page never blocks: all of this runs in a worker. The grid keeps about 40 rows in the DOM,
+whatever the row count.
+
+</details>
+
+<details>
+<summary><b>Deployment & operations</b></summary>
+
+<details>
+<summary><b>Secrets</b></summary>
 
 | Where                   | What                                                      |
 | ----------------------- | --------------------------------------------------------- |
@@ -135,10 +196,13 @@ Run `yarn workspace @pgo/web playwright install chromium` once before the first 
 | `apps/web/.env.example` | committed template listing the variable names, no values  |
 | Secret Manager          | production values (`eia-api-key`), mounted into Cloud Run |
 
-The GCP identifiers below are not secrets. GitHub signs in to Google Cloud with Workload
-Identity Federation, so no service-account key exists anywhere.
+The GCP identifiers under Infrastructure are not secrets. GitHub signs in to Google Cloud with
+Workload Identity Federation, so no service-account key exists anywhere.
 
-## Branches and CI/CD
+</details>
+
+<details>
+<summary><b>Branches and CI/CD</b></summary>
 
 | Branch         | Role                                  | On push                                   |
 | -------------- | ------------------------------------- | ----------------------------------------- |
@@ -148,7 +212,10 @@ Identity Federation, so no service-account key exists anywhere.
 
 Pull requests run the checks only. The workflow is `.github/workflows/ci.yml`.
 
-## Cloud Run
+</details>
+
+<details>
+<summary><b>Cloud Run</b></summary>
 
 **How it works:**
 
@@ -172,7 +239,10 @@ Pull requests run the checks only. The workflow is `.github/workflows/ci.yml`.
 | Deploy history      | GitHub → Actions → runs on `main`; the "Deploy web to Cloud Run" log ends with the URL                                                                   |
 | Storybook           | `<live-url>/storybook`: the published design system                                                                                                      |
 
-## Infrastructure
+</details>
+
+<details>
+<summary><b>Infrastructure</b></summary>
 
 | Item                         | Value                                                                                       |
 | ---------------------------- | ------------------------------------------------------------------------------------------- |
@@ -200,45 +270,12 @@ secrets.
 A Firestore database `(default)` (location `eur3`) exists in the project but the app does not
 use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 
+</details>
+
+</details>
+
 ## Milestone docs
 
 - [M1: Data and shared types](docs/m1-data-and-shared-types.md)
 - [M2: Component library](docs/m2-component-library.md)
 - [M3: Telemetry table](docs/m3-telemetry-table.md)
-
-## Performance
-
-Telemetry table, `/telemetry`: 1,076,544 rows, Chromium desktop, production build.
-
-| Operation (in a Web Worker) | Time               |
-| --------------------------- | ------------------ |
-| Generate all rows           | about 410 ms       |
-| Filter                      | 3–15 ms            |
-| Sort, 1 key / 2 keys        | about 380 / 440 ms |
-| Group by zone               | about 55 ms        |
-
-The page never blocks: all of this runs in a worker. The grid keeps about 40 rows in the DOM,
-whatever the row count.
-
-## Design decisions
-
-- **Language without flicker.** The chosen language is stored in a cookie, so the server
-  renders the right language on the first request. On a first visit it falls back to the
-  browser's `Accept-Language`. Server components translate with a per-request i18next instance;
-  client components share one instance in the browser.
-- **Light and dark without flicker.** Both color schemes are compiled into one CSS-variable
-  theme, and MUI's `InitColorSchemeScript` applies the stored or system scheme before the first
-  paint.
-- **Responsive markup decided by CSS.** The sidebar switches between permanent (desktop) and
-  temporary (mobile) with media queries rather than `useMediaQuery`, so the server-rendered
-  HTML is already right for the viewport.
-- **Virtual scrolling past the browser height limit.** A million 40 px rows need 43M px, more
-  than browsers allow for one element. `VirtualGrid` caps the scroll area at 15M px and maps
-  the scroll position proportionally onto all rows, so the last row stays reachable by
-  scrollbar and by keyboard (Ctrl+End).
-- **Data work off the main thread.** Telemetry is generated, filtered, sorted and grouped in a
-  Web Worker. Results come back as transferable typed arrays (no copying), and the page only
-  formats the visible rows.
-- **Accessibility checked in CI.** Every Playwright page test runs axe (WCAG 2.1 AA) in both
-  color schemes. The shell has a skip link, labelled landmarks and `aria-current` navigation.
-- **Open demo.** There is no sign-in. All data is public or synthetic.
