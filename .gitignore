@@ -3,6 +3,8 @@ node_modules
 
 # Next.js
 .next
+# Built by yarn build:storybook
+apps/web/public/storybook
 out
 next-env.d.ts
 *.tsbuildinfo

@@ -1,7 +1,8 @@
 import { enUS, esES, frFR, itIT, roRO, type Localization } from '@mui/material/locale';
 import type { Language } from '../types';
 
-export { createAppTheme } from './theme';
+// The theme itself lives in the design system (packages/ui); the app adds the MUI locales.
+export { createAppTheme } from '@pgo/ui/theme';
 
 export const MUI_LOCALES: Record<Language, Localization> = {
   en: enUS,

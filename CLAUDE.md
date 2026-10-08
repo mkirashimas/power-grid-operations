@@ -39,6 +39,16 @@ not the roadmap.
   (an `sx` callback, `component={NextLink}`, event handlers) from a server component to an MUI
   component. Use plain-object `sx`, or move that UI into a `'use client'` component inside the
   feature.
+- **Design system:** `packages/ui` (`@pgo/ui`) owns the MUI theme (`src/theme`) and the shared
+  components. `apps/web/src/theme` only adds the MUI locales.
+  - Check `@pgo/ui` before building UI in a feature. Add generic, reusable pieces there
+    (with a story and tests), not in a feature.
+  - Library components hold no translations: they take translated strings as props.
+  - Every story must pass axe in light and dark mode (`e2e/storybook-a11y.spec.ts`).
+  - Colours come from palette tokens. New tokens get a check in `src/theme/contrast.test.ts`.
+  - The `index.ts` barrel uses named exports only, because Next.js cannot follow `export *` into
+    `'use client'` modules.
+- **MUI 9 icon names** end in `Outlined` (e.g. `ErrorOutlined`, not `ErrorOutline`).
 - **Theme overrides** use `(theme.vars || theme).palette.*`, so one stylesheet serves both
   schemes. In `sx`, prefer token strings (`'text.secondary'`, `bgcolor: 'background.paper'`),
   and `theme.applyStyles('dark', {...})` for dark-only styles.

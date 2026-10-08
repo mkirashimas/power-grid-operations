@@ -1,9 +1,10 @@
 import type { Localization } from '@mui/material/locale';
 import { createTheme } from '@mui/material/styles';
-import { components } from './components';
-import { getPalette } from './palette';
-import { shape } from './shape';
-import { typography } from './typography';
+import './augmentation.ts';
+import { components } from './components.ts';
+import { getPalette } from './palette.ts';
+import { shape } from './shape.ts';
+import { typography } from './typography.ts';
 
 /**
  * Both color schemes live in one theme as CSS variables, so the server renders the same markup

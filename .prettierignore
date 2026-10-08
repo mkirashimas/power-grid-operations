@@ -5,3 +5,4 @@ test-results
 playwright-report
 yarn.lock
 packages/grid-model/data
+apps/web/public/storybook

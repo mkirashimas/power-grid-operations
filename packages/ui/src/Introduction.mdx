@@ -1,0 +1,28 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+# Power Grid Operations design system
+
+`@pgo/ui` is the component library and theme behind the Power Grid Operations console. It is
+built on Material UI.
+
+- **Foundations:** the colour tokens (including operational status colours), the type scale and
+  the themed MUI components the app uses directly.
+- **Components:** accessible building blocks for the console's views.
+
+## Principles
+
+- **Accessible by default:**
+  - Every control has an accessible name.
+  - Status never depends on colour alone.
+  - Dialogs trap focus.
+  - Live updates are announced to screen readers.
+- **Tokens only:** colours, spacing and type come from the theme, so both colour schemes work
+  everywhere. Use the **Theme** toolbar button to switch between light and dark.
+- **Language-agnostic:** components take all text as props. The app translates it into
+  English, Spanish, French, Italian and Romanian.
+- **Honest data:** `SourceNote` credits real sources, and `SyntheticBadge` marks generated data.
+
+Each component has tests (Testing Library, keyboard checks, axe), and the **Accessibility**
+panel runs axe on every story.

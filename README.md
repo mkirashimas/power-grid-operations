@@ -26,17 +26,18 @@ Across every module:
 
 ## Stack
 
-| Concern        | Choice                                                                         |
-| -------------- | ------------------------------------------------------------------------------ |
-| Framework      | Next.js (App Router, server and client components), React, TypeScript (strict) |
-| UI             | Material UI with a CSS-variable theme (light and dark)                         |
-| State and data | Redux Toolkit + RTK Query                                                      |
-| i18n           | i18next, in English, Spanish, French, Italian and Romanian                     |
-| Compute        | Rust compiled to WebAssembly                                                   |
-| Map            | MapLibre GL with OpenFreeMap tiles (no API key)                                |
-| Tests          | Vitest + Testing Library, Playwright + axe                                     |
-| Hosting        | Google Cloud Run: the web app and a small real-time service                    |
-| Tooling        | Yarn workspaces, ESLint, Prettier, GitHub Actions                              |
+| Concern        | Choice                                                                                  |
+| -------------- | --------------------------------------------------------------------------------------- |
+| Framework      | Next.js (App Router, server and client components), React, TypeScript (strict)          |
+| UI             | Material UI with a CSS-variable theme (light and dark)                                  |
+| Design system  | `@pgo/ui` on Material UI, documented in Storybook                                       |
+| State and data | Redux Toolkit + RTK Query                                                               |
+| i18n           | i18next, in English, Spanish, French, Italian and Romanian                              |
+| Compute        | Rust compiled to WebAssembly                                                            |
+| Map            | MapLibre GL with OpenFreeMap tiles (no API key)                                         |
+| Tests          | Vitest + Testing Library + axe-core, Playwright + axe (pages and every Storybook story) |
+| Hosting        | Google Cloud Run: the web app and a small real-time service                             |
+| Tooling        | Yarn workspaces, ESLint, Prettier, GitHub Actions                                       |
 
 All other UI libraries are open source and need no API keys.
 
@@ -95,6 +96,7 @@ apps/web/          Next.js app
   e2e/             Playwright tests
 packages/
   grid-model/      shared types, EIA client, synthetic grid and telemetry generator
+  ui/              design system: theme, accessible components, Storybook stories
     data/          committed EIA snapshot
 docs/              deployment guide and one plan per milestone
 ```
@@ -111,14 +113,16 @@ yarn dev                                        # http://localhost:3000
 
 Without a key, the app runs on the committed EIA snapshot.
 
-| Command                        | What it does                                                                       |
-| ------------------------------ | ---------------------------------------------------------------------------------- |
-| `yarn build` / `yarn start`    | production build and server                                                        |
-| `yarn lint` / `yarn typecheck` | ESLint / TypeScript                                                                |
-| `yarn test`                    | unit and component tests (Vitest), in every workspace                              |
-| `yarn data:fetch`              | downloads the last 30 days of ERCOT data from EIA into the committed snapshot      |
-| `yarn e2e`                     | builds, starts and runs the Playwright tests (desktop and mobile, with axe checks) |
-| `yarn format`                  | Prettier                                                                           |
+| Command                        | What it does                                                                             |
+| ------------------------------ | ---------------------------------------------------------------------------------------- |
+| `yarn build` / `yarn start`    | production build and server                                                              |
+| `yarn lint` / `yarn typecheck` | ESLint / TypeScript                                                                      |
+| `yarn test`                    | unit and component tests (Vitest), in every workspace                                    |
+| `yarn data:fetch`              | downloads the last 30 days of ERCOT data from EIA into the committed snapshot            |
+| `yarn storybook`               | local Storybook at http://localhost:6006, with hot reload                                |
+| `yarn build:storybook`         | static Storybook into `apps/web/public/storybook`, served by the web app at `/storybook` |
+| `yarn e2e`                     | builds, starts and runs the Playwright tests (desktop and mobile, with axe checks)       |
+| `yarn format`                  | Prettier                                                                                 |
 
 Run `yarn workspace @pgo/web playwright install chromium` once before the first `yarn e2e`.
 
@@ -141,9 +145,31 @@ Identity Federation, so no service-account key exists anywhere.
 | `development`  | default, integration                  | lint, typecheck, unit tests, build, e2e   |
 | `main`         | release (merge `development` into it) | the same checks, then deploy to Cloud Run |
 
-Pull requests run the checks only. The workflow is `.github/workflows/ci.yml`. Cloud Run
-scales to zero (minimum instances = 0), so the first visit after an idle period can take a few
-seconds.
+Pull requests run the checks only. The workflow is `.github/workflows/ci.yml`.
+
+## Cloud Run
+
+**How it works:**
+
+- Cloud Run runs containers without servers to manage.
+- CI builds the app as a Docker image and deploys it as the service `pgo-web` in
+  `us-central1`.
+- Instances start when requests arrive and scale to zero when idle (minimum instances = 0).
+- Billing covers only request time. The trade-off is a cold start: the first visit after an
+  idle period can take a few seconds.
+
+**Seeing the result of a deploy:**
+
+| Where               | How                                                                                                                                                      |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Live site           | Cloud Shell: `gcloud run services describe pgo-web --region=us-central1 --project=power-grid-operations --format='value(status.url)'`, then open the URL |
+| Console             | https://console.cloud.google.com/run?project=power-grid-operations → `pgo-web`                                                                           |
+| Revisions           | one per deploy; a new one appears after each push to `main`                                                                                              |
+| Logs                | requests and server errors, e.g. "EIA request failed"                                                                                                    |
+| Metrics             | requests, latency, instance count                                                                                                                        |
+| Variables & Secrets | shows `EIA_API_KEY` once the secret is mounted                                                                                                           |
+| Deploy history      | GitHub → Actions → runs on `main`; the "Deploy web to Cloud Run" log ends with the URL                                                                   |
+| Storybook           | `<live-url>/storybook`: the published design system                                                                                                      |
 
 ## Infrastructure
 
@@ -176,6 +202,7 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 ## Milestone docs
 
 - [M1: Data and shared types](docs/m1-data-and-shared-types.md)
+- [M2: Component library](docs/m2-component-library.md)
 
 ## Design decisions
 

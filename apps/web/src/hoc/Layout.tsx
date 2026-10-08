@@ -10,7 +10,6 @@ import {
   Box,
   Container,
   Drawer,
-  IconButton,
   Link,
   List,
   ListItem,
@@ -20,10 +19,10 @@ import {
   MenuItem,
   Select,
   Toolbar,
-  Tooltip,
   useColorScheme,
   type SelectChangeEvent,
 } from '@mui/material';
+import { IconButton } from '@pgo/ui';
 import NextLink from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
@@ -86,19 +85,17 @@ const ThemeModeToggle = () => {
   const label = t(resolvedMode === 'dark' ? 'theme.switchToLight' : 'theme.switchToDark');
 
   return (
-    <Tooltip title={label}>
-      <IconButton
-        color="inherit"
-        onClick={() => setMode(resolvedMode === 'dark' ? 'light' : 'dark')}
-        aria-label={label}
-      >
-        {/* Both icons render; CSS picks one, so the server markup is right for either scheme. */}
-        <DarkModeOutlined sx={(theme) => theme.applyStyles('dark', { display: 'none' })} />
-        <LightModeOutlined
-          sx={(theme) => ({ display: 'none', ...theme.applyStyles('dark', { display: 'block' }) })}
-        />
-      </IconButton>
-    </Tooltip>
+    <IconButton
+      label={label}
+      color="inherit"
+      onClick={() => setMode(resolvedMode === 'dark' ? 'light' : 'dark')}
+    >
+      {/* Both icons render; CSS picks one, so the server markup is right for either scheme. */}
+      <DarkModeOutlined sx={(theme) => theme.applyStyles('dark', { display: 'none' })} />
+      <LightModeOutlined
+        sx={(theme) => ({ display: 'none', ...theme.applyStyles('dark', { display: 'block' }) })}
+      />
+    </IconButton>
   );
 };
 
@@ -183,7 +180,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             color="inherit"
             edge="start"
             onClick={() => setSidebarOpen((open) => !open)}
-            aria-label={t('openMenu')}
+            label={t('openMenu')}
             aria-expanded={sidebarOpen}
             sx={(theme) => ({
               display: 'none',

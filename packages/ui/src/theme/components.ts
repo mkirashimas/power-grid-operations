@@ -45,4 +45,15 @@ export const components: Components<Omit<Theme, 'components'>> = {
       }),
     },
   },
+  MuiToggleButton: {
+    styleOverrides: {
+      // MUI's default (action.active, 54% black) is 4.34:1 on the light page: below AA.
+      root: ({ theme }) => ({
+        color: (theme.vars || theme).palette.text.secondary,
+        '&.Mui-selected, &.Mui-selected:hover': {
+          color: (theme.vars || theme).palette.text.primary,
+        },
+      }),
+    },
+  },
 };
