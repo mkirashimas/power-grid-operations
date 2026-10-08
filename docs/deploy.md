@@ -1,7 +1,8 @@
 # Deploying to Google Cloud Run
 
 The web app runs on Cloud Run as the service `pgo-web`. GitHub Actions builds the container
-image, pushes it to Artifact Registry and deploys it on every push to `main`. GitHub signs in to
+image, pushes it to Artifact Registry and deploys it on every push to `main` (work happens on
+`development`; merging or pushing to `main` releases). GitHub signs in to
 Google Cloud with Workload Identity Federation, so no service-account key is stored anywhere.
 
 You do this setup once. The commands use bash syntax; on Windows, run them in Git Bash.
@@ -9,16 +10,19 @@ You do this setup once. The commands use bash syntax; on Windows, run them in Gi
 ## 1. Variables
 
 ```bash
-PROJECT_ID=power-grid-operations   # must be globally unique; pick another if taken
+PROJECT_ID=power-grid-operations   # the existing Firebase project (a Firebase project is a GCP project)
 REGION=europe-west1
-GITHUB_REPO=<owner>/power-grid-operations
+GITHUB_REPO=mkirashimas/power-grid-operations
 ```
 
-## 2. Project, billing and APIs
+## 2. Billing and APIs
+
+The project already exists (created in the Firebase console). Cloud Run needs billing, so in the
+Firebase console go to **Usage and billing > Details & settings > Modify plan** and switch from
+Spark to **Blaze (pay as you go)**.
 
 ```bash
-gcloud projects create "$PROJECT_ID"
-gcloud billing projects link "$PROJECT_ID" --billing-account=<BILLING_ACCOUNT_ID>
+gcloud auth login
 gcloud config set project "$PROJECT_ID"
 
 gcloud services enable run.googleapis.com artifactregistry.googleapis.com \

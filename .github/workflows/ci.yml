@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, development]
   pull_request:
   workflow_dispatch:
 
@@ -46,7 +46,8 @@ jobs:
   deploy-web:
     name: Deploy web to Cloud Run
     needs: checks
-    # Runs on main once the GCP variables exist (see docs/deploy.md).
+    # Deploys only pushes to main, once the GCP variables exist (see docs/deploy.md).
+    # Pushes to development and pull requests run the checks only.
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.GCP_PROJECT_ID != ''
     runs-on: ubuntu-latest
     timeout-minutes: 20
