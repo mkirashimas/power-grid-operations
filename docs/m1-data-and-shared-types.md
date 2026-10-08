@@ -128,7 +128,92 @@ yarn dev
 Expected: http://localhost:3000 shows real ERCOT numbers marked "Live". If you rename
 `apps/web/.env.local`, it shows "Snapshot" with the snapshot date.
 
-## Your follow-up after merging (Cloud Shell)
+## Manual setup after development
 
-These commands store the key in Secret Manager and let Cloud Run read it. They are listed in
-`docs/deploy.md` under "EIA API key".
+Do these steps once, in this order, after `feature/m1` is merged into `development`.
+
+### 1. Store the EIA key in Secret Manager
+
+Open Cloud Shell (https://shell.cloud.google.com). The prompt should end in
+`(power-grid-operations)$`.
+
+```bash
+read -rs -p "EIA API key: " EIA_KEY && echo
+```
+
+Paste the key when prompted. Nothing shows while you type, and it doesn't go into the shell
+history.
+
+```bash
+printf '%s' "$EIA_KEY" | gcloud secrets create eia-api-key --data-file=- --replication-policy=automatic --project=power-grid-operations
+unset EIA_KEY
+```
+
+Expected output:
+
+```text
+Created version [1] of the secret [eia-api-key].
+```
+
+### 2. Let Cloud Run read the secret
+
+```bash
+gcloud secrets add-iam-policy-binding eia-api-key --member=serviceAccount:142186164859-compute@developer.gserviceaccount.com --role=roles/secretmanager.secretAccessor --project=power-grid-operations
+```
+
+Expected output, beginning with:
+
+```text
+Updated IAM policy for secret [eia-api-key].
+```
+
+### 3. Tell CI to mount the secret
+
+1. Open https://github.com/mkirashimas/power-grid-operations/settings/variables/actions.
+2. Click **New repository variable**.
+3. Name = `EIA_SECRET_NAME`, Value = `eia-api-key`.
+4. Save. This must be a **variable**, not a secret.
+
+### 4. Release to `main`
+
+Pull request runs only do the checks. Only a push to `main` deploys. Merge the
+`development` → `main` PR on GitHub, or run:
+
+```bash
+git checkout main
+git pull
+git merge development
+git push origin main
+git checkout development
+```
+
+Then go to Actions → CI → the new `main` run (event: **push**) and wait until **Deploy web to
+Cloud Run** is green, which takes about 5 minutes.
+
+### 5. Check it worked (Cloud Shell)
+
+```bash
+gcloud run services describe pgo-web --region=us-central1 --project=power-grid-operations --format='value(spec.template.spec.containers[0].env)'
+```
+
+Expected output: one line that contains `EIA_API_KEY` and `eia-api-key`.
+
+```bash
+gcloud run services describe pgo-web --region=us-central1 --project=power-grid-operations --format='value(status.url)'
+```
+
+Expected output: `https://pgo-web-…run.app`. Open it. The line under the ERCOT cards ends with
+**"live, refreshed hourly"**.
+
+### Troubleshooting
+
+| Symptom                                           | Cause and fix                                                                                                                                                       |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Step 5 prints an empty line                       | The M1 deploy has not run. Check that `main` contains M1 and that the `main` **push** run finished. Re-running a PR run never deploys.                              |
+| Step 5 is empty after a green deploy              | `EIA_SECRET_NAME` is missing or misspelled. Fix it, then re-run the latest `main` push run.                                                                         |
+| `ALREADY_EXISTS` in step 1                        | The secret already exists. Add a version instead: `printf '%s' "$EIA_KEY" \| gcloud secrets versions add eia-api-key --data-file=- --project=power-grid-operations` |
+| Deploy job: `Permission denied on secret`         | Step 2 is missing. Run it, then re-run the job.                                                                                                                     |
+| Site still says "snapshot of …"                   | The deploy ran before step 3. Re-run the latest `main` push run.                                                                                                    |
+| `gcloud secrets list` does not show `eia-api-key` | Step 1 did not complete. Run it again.                                                                                                                              |
+
+These steps are also in `docs/deploy.md` under "EIA API key".
