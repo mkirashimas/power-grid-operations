@@ -1,4 +1,33 @@
 {
   "title": "Panoramica della rete",
-  "intro": "Monitora la rete del Texas (ERCOT). Telemetria, previsioni, allarmi, mappa in tempo reale e vista di rete arriveranno qui un modulo alla volta."
+  "intro": "Gli ultimi dati ERCOT forniti dall’EIA e il modello di rete sintetico su cui si basano le altre viste.",
+  "ercot": {
+    "heading": "ERCOT, ultima ora",
+    "source": "Fonte:",
+    "live": "in tempo reale, aggiornato ogni ora",
+    "snapshot": "istantanea del {{date}}",
+    "noData": "I dati EIA non sono disponibili al momento."
+  },
+  "kpi": {
+    "demand": "Domanda",
+    "forecast": "Previsione del giorno prima",
+    "forecastError": "Errore di previsione",
+    "forecastErrorHint": "Domanda effettiva rispetto alla previsione del giorno prima",
+    "interchange": "Scambio netto",
+    "interchangeHint": "negativo indica importazione netta"
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "model": {
+    "heading": "Modello di rete",
+    "synthetic": "Sintetico",
+    "note": "Generato per dare scala. Non sono dati EIA.",
+    "kinds": {
+      "substation": "Sottostazioni",
+      "line": "Linee",
+      "generator": "Generatori",
+      "load": "Carichi"
+    }
+  }
 }

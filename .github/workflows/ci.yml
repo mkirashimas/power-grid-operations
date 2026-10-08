@@ -74,8 +74,17 @@ jobs:
           docker push "$IMAGE"
 
       - name: Deploy
+        env:
+          # Name of the Secret Manager secret holding the EIA key. Until the repository variable
+          # EIA_SECRET_NAME is set, the app serves the committed EIA snapshot.
+          EIA_SECRET_NAME: ${{ vars.EIA_SECRET_NAME }}
         run: |
+          SECRETS=()
+          if [ -n "$EIA_SECRET_NAME" ]; then
+            SECRETS=(--set-secrets "EIA_API_KEY=${EIA_SECRET_NAME}:latest")
+          fi
           gcloud run deploy pgo-web \
+            "${SECRETS[@]}" \
             --image "$IMAGE" \
             --region ${{ vars.GCP_REGION }} \
             --allow-unauthenticated \

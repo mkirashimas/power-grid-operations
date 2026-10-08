@@ -3961,7 +3961,7 @@ typed-array-length@^1.0.7:
     possible-typed-array-names "^1.1.0"
     reflect.getprototypeof "^1.0.10"
 
-typescript-eslint@^8.56.0:
+typescript-eslint@^8.56.0, typescript-eslint@^8.71.1:
   version "8.71.1"
   resolved "https://registry.yarnpkg.com/typescript-eslint/-/typescript-eslint-8.71.1.tgz#dabf06af972d975ea25b27d73e161193ea41075d"
   integrity sha512-oiNVPC3/NbV1FpaHU07l8O6ynqG9v4PAiW2WvTrAmZdR0f2HI/gE668ElMLCK7Xbsu5k2fK5C4fXNiq05j7/nQ==

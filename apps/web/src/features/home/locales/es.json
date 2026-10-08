@@ -1,4 +1,33 @@
 {
   "title": "Resumen de la red",
-  "intro": "Supervisa la red de Texas (ERCOT). La telemetría, las previsiones, las alarmas, el mapa en vivo y la vista de red llegarán aquí módulo a módulo."
+  "intro": "Las cifras más recientes de ERCOT de la EIA y el modelo de red sintético en el que se basan las demás vistas.",
+  "ercot": {
+    "heading": "ERCOT, última hora",
+    "source": "Fuente:",
+    "live": "en directo, se actualiza cada hora",
+    "snapshot": "instantánea del {{date}}",
+    "noData": "Los datos de la EIA no están disponibles en este momento."
+  },
+  "kpi": {
+    "demand": "Demanda",
+    "forecast": "Previsión del día anterior",
+    "forecastError": "Error de previsión",
+    "forecastErrorHint": "Demanda real frente a la previsión del día anterior",
+    "interchange": "Intercambio neto",
+    "interchangeHint": "negativo significa importación neta"
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "model": {
+    "heading": "Modelo de red",
+    "synthetic": "Sintético",
+    "note": "Generado para dar escala. No son datos de la EIA.",
+    "kinds": {
+      "substation": "Subestaciones",
+      "line": "Líneas",
+      "generator": "Generadores",
+      "load": "Cargas"
+    }
+  }
 }

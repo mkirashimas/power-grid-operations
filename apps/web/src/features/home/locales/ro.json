@@ -1,4 +1,33 @@
 {
   "title": "Prezentarea rețelei",
-  "intro": "Monitorizează rețeaua din Texas (ERCOT). Telemetria, prognozele, alarmele, harta în timp real și vizualizarea rețelei vor apărea aici, modul cu modul."
+  "intro": "Cele mai recente cifre ERCOT de la EIA și modelul sintetic de rețea pe care se bazează celelalte vizualizări.",
+  "ercot": {
+    "heading": "ERCOT, ultima oră",
+    "source": "Sursă:",
+    "live": "în timp real, actualizat orar",
+    "snapshot": "instantaneu din {{date}}",
+    "noData": "Datele EIA nu sunt disponibile momentan."
+  },
+  "kpi": {
+    "demand": "Consum",
+    "forecast": "Prognoza din ziua anterioară",
+    "forecastError": "Eroare de prognoză",
+    "forecastErrorHint": "Consumul real față de prognoza din ziua anterioară",
+    "interchange": "Schimb net",
+    "interchangeHint": "negativ înseamnă import net"
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "model": {
+    "heading": "Modelul rețelei",
+    "synthetic": "Sintetic",
+    "note": "Generat pentru volum. Nu sunt date EIA.",
+    "kinds": {
+      "substation": "Stații",
+      "line": "Linii",
+      "generator": "Generatoare",
+      "load": "Consumatori"
+    }
+  }
 }

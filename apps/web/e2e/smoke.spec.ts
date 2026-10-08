@@ -29,6 +29,38 @@ test('renders the overview and passes axe in light and dark mode', async ({ page
   await expectNoAxeViolations(page);
 });
 
+test('shows ERCOT figures credited to EIA and the synthetic grid model', async ({ page }) => {
+  await page.goto('/');
+
+  const ercot = page.getByRole('region', { name: 'ERCOT, latest hour' });
+  for (const label of ['Demand', 'Day-ahead forecast', 'Forecast error', 'Net interchange']) {
+    await expect(ercot.getByRole('heading', { level: 3, name: label })).toBeVisible();
+  }
+  await expect(ercot.getByText(/\d MW/).first()).toBeVisible();
+  await expect(
+    ercot.getByRole('link', { name: 'U.S. Energy Information Administration' }),
+  ).toHaveAttribute('href', 'https://www.eia.gov/opendata/');
+
+  const model = page.getByRole('region', { name: 'Grid model' });
+  await expect(model.getByText('Synthetic').first()).toBeVisible();
+  await expect(model.getByText('This is not EIA data.', { exact: false })).toBeVisible();
+  for (const label of ['Substations', 'Lines', 'Generators', 'Loads']) {
+    await expect(model.getByRole('heading', { level: 3, name: label })).toBeVisible();
+  }
+});
+
+test('serves EIA data and synthetic assets from the API', async ({ request }) => {
+  const ercot = await (await request.get('/api/eia/ercot')).json();
+  expect(ercot.source).toBe('U.S. Energy Information Administration');
+  expect(ercot.series.map((series: { id: string }) => series.id)).toEqual(
+    expect.arrayContaining(['demand', 'forecast', 'generation', 'interchange']),
+  );
+
+  const assets = await (await request.get('/api/assets')).json();
+  expect(assets).toMatchObject({ synthetic: true, label: 'Synthetic' });
+  expect(assets.count).toBeGreaterThan(1800);
+});
+
 test('switches language and keeps it after a reload', async ({ page }) => {
   await page.goto('/');
 
