@@ -4,6 +4,7 @@
 export const PATHS = {
   HOME: '/',
   TELEMETRY: '/telemetry',
+  CHARTS: '/charts',
 } as const;
 
 export type Path = Extract<(typeof PATHS)[keyof typeof PATHS], string>;

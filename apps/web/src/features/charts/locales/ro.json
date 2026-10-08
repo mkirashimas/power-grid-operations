@@ -1,0 +1,51 @@
+{
+  "title": "Grafice",
+  "intro": "Consumul, prognoza, producția și schimburile ERCOT de la EIA, plus o serie sintetică de consum la secundă cu aproximativ 2,6 milioane de puncte. Mărește sau deplasează orice grafic; celelalte îl urmează.",
+  "workbench": "ERCOT, ultimele 30 de zile",
+  "panes": {
+    "demand": "Consum și prognoza din ziua anterioară",
+    "fuel": "Producție pe combustibil",
+    "interchange": "Schimb net (negativ = import)",
+    "highRes": "Consumul sistemului la secundă"
+  },
+  "series": {
+    "demand": "Consum",
+    "forecast": "Prognoza din ziua anterioară",
+    "error": "Eroare de prognoză",
+    "interchange": "Schimb net",
+    "load": "Consum"
+  },
+  "fuels": {
+    "gas": "Gaz",
+    "wind": "Eolian",
+    "solar": "Solar",
+    "nuclear": "Nuclear",
+    "coal": "Cărbune",
+    "other": "Altele"
+  },
+  "labels": {
+    "toolbar": "Controale grafic",
+    "zoomIn": "Mărește",
+    "zoomOut": "Micșorează",
+    "reset": "Arată toată perioada",
+    "presets": "Perioadă",
+    "day": "24 h",
+    "week": "7 z",
+    "month": "30 z",
+    "showTable": "Arată ca tabel",
+    "hideTable": "Ascunde tabelul",
+    "time": "Ora (CT)",
+    "overview": "Privire de ansamblu: trage fereastra sau folosește săgețile pentru a muta perioada vizibilă",
+    "keyboardHint": "Grafic interactiv. Săgețile mută cursorul, Shift cu săgeți deplasează, plus și minus măresc sau micșorează, Home și End sar la capete, Escape șterge cursorul."
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "summary": "{{title}}, între {{from}} și {{to}}: {{series}}.",
+  "summaryItem": "{{label}} între {{min}} și {{max}}",
+  "highResStats": "{{input}} → {{drawn}} puncte desenate în {{ms}} ms",
+  "loadingHighRes": "Se generează seria la secundă…",
+  "synthetic": "Sintetic",
+  "source": "Sursă:",
+  "live": "în timp real, actualizat orar"
+}

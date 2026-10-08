@@ -18,7 +18,8 @@
   },
   "nav": {
     "home": "Vue d’ensemble",
-    "telemetry": "Télémesures"
+    "telemetry": "Télémesures",
+    "charts": "Graphiques"
   },
   "notFound": {
     "title": "Page introuvable",

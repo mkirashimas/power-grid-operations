@@ -1,5 +1,16 @@
 // Named exports only: Next.js cannot follow `export *` into 'use client' modules when a server
 // component imports this barrel.
+export { ChartWorkbench, type ChartWorkbenchProps } from './components/charts/ChartWorkbench.tsx';
+export { clampDomain, lastSpan, MIN_SPAN_MS, type Domain } from './components/charts/domain.ts';
+export { downsampleMinMax, type DownsampleResult } from './components/charts/downsample.ts';
+export { TimeSeriesPane, type TimeSeriesPaneProps } from './components/charts/TimeSeriesPane.tsx';
+export type {
+  ChartBand,
+  ChartLabels,
+  ChartSeries,
+  PaneSummaryInput,
+  RenderStats,
+} from './components/charts/types.ts';
 export {
   ConfirmDialog,
   type ConfirmDialogProps,
@@ -36,4 +47,10 @@ export {
   type VirtualGridProps,
 } from './components/VirtualGrid/VirtualGrid.tsx';
 export { VisuallyHidden } from './components/VisuallyHidden/VisuallyHidden.tsx';
-export { STATUSES, type Status, type ThemeMode } from './theme/types.ts';
+export {
+  CHART_SERIES,
+  STATUSES,
+  type ChartSeriesColor,
+  type Status,
+  type ThemeMode,
+} from './theme/types.ts';

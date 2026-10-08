@@ -1,0 +1,51 @@
+{
+  "title": "Charts",
+  "intro": "ERCOT demand, forecast, generation and interchange from the EIA, plus a synthetic 1-second load series of about 2.6 million points. Zoom and pan any chart; the others follow.",
+  "workbench": "ERCOT, last 30 days",
+  "panes": {
+    "demand": "Demand vs day-ahead forecast",
+    "fuel": "Generation by fuel",
+    "interchange": "Net interchange (negative = import)",
+    "highRes": "1-second system load"
+  },
+  "series": {
+    "demand": "Demand",
+    "forecast": "Day-ahead forecast",
+    "error": "Forecast error",
+    "interchange": "Net interchange",
+    "load": "Load"
+  },
+  "fuels": {
+    "gas": "Gas",
+    "wind": "Wind",
+    "solar": "Solar",
+    "nuclear": "Nuclear",
+    "coal": "Coal",
+    "other": "Other"
+  },
+  "labels": {
+    "toolbar": "Chart controls",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "reset": "Show the whole range",
+    "presets": "Time range",
+    "day": "24 h",
+    "week": "7 d",
+    "month": "30 d",
+    "showTable": "Show as table",
+    "hideTable": "Hide table",
+    "time": "Time (CT)",
+    "overview": "Overview: drag the window or use the arrow keys to move the visible range",
+    "keyboardHint": "Interactive chart. Arrow keys move the crosshair, Shift with arrow keys pans, plus and minus zoom, Home and End jump to the edges, Escape clears the crosshair."
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "summary": "{{title}}, {{from}} to {{to}}: {{series}}.",
+  "summaryItem": "{{label}} from {{min}} to {{max}}",
+  "highResStats": "{{input}} → {{drawn}} points drawn in {{ms}} ms",
+  "loadingHighRes": "Generating the 1-second series…",
+  "synthetic": "Synthetic",
+  "source": "Source:",
+  "live": "live, refreshed hourly"
+}

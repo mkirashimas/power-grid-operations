@@ -5,6 +5,7 @@ import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import HomeOutlined from '@mui/icons-material/HomeOutlined';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
+import ShowChartOutlined from '@mui/icons-material/ShowChartOutlined';
 import TableRowsOutlined from '@mui/icons-material/TableRowsOutlined';
 import {
   AppBar,
@@ -44,6 +45,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { key: 'home', to: PATHS.HOME, icon: <HomeOutlined /> },
   { key: 'telemetry', to: PATHS.TELEMETRY, icon: <TableRowsOutlined /> },
+  { key: 'charts', to: PATHS.CHARTS, icon: <ShowChartOutlined /> },
 ];
 
 const isSelected = (item: NavItem, pathname: string) =>

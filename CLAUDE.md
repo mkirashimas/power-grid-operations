@@ -67,6 +67,11 @@ not the roadmap.
   - Results cross the boundary as transferable typed arrays.
 - **Shareable view state** is mirrored to the URL with `window.history.replaceState` (no
   server round trip), not `router.replace`.
+- **Charts** use `ChartWorkbench` + `TimeSeriesPane` from `@pgo/ui`.
+  - Series colours come from `palette.chart.series1..6` (≥ 3:1, checked by the contrast test).
+  - Canvas code resolves theme CSS variables to concrete colours (`charts/canvas.ts`) and redraws when
+    the scheme changes.
+  - Every pane needs a translated `summarize` for its `role="img"` label.
 - **Large tables** use `VirtualGrid` from `@pgo/ui`. It handles millions of rows (scaled
   scrolling) and the ARIA grid keyboard pattern.
 - **Cross-feature state** (e.g. linked selection) goes in a slice in `src/store`, never in a
