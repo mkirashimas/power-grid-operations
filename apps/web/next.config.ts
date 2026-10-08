@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   // Trace files from the monorepo root so workspace packages end up in the bundle.
   outputFileTracingRoot: path.join(import.meta.dirname, '../..'),
   poweredByHeader: false,
+  // Workspace packages ship TypeScript source; Next.js compiles them.
+  transpilePackages: ['@pgo/grid-model'],
 };
 
 export default nextConfig;

@@ -10,6 +10,16 @@ The build plan, milestone by milestone, is in the user's plan file
 `~/.claude/plans/this-is-what-i-wild-valley.md`. README.md describes the product and setup only,
 not the roadmap.
 
+## Workflow
+
+- **Branches:** the user creates `feature/m<N>` from `development` and merges PRs into it.
+  - Releases merge `development` into `main`, which deploys.
+  - Claude works on the current feature branch and never creates branches, commits or pushes.
+- **Milestone docs:** each milestone starts with its own doc in `docs/`, e.g.
+  `docs/m1-data-and-shared-types.md`.
+  - The doc covers goal, scope, files, tests, verification and the user's follow-up commands.
+  - Link it from the README's "Milestone docs" list.
+
 ## Differences from the workspace conventions
 
 | Workspace rule                              | This app                                                                                                       |
@@ -45,6 +55,14 @@ not the roadmap.
   folders. Dynamic routes get builder functions.
 - **Tests.** Every page gets a Playwright test with axe checks in light and dark mode. Components
   with behavior get Vitest + Testing Library tests.
+- **Server-only code** (data access, secrets) lives in `apps/web/src/server` and imports
+  `server-only`. It is infrastructure, like `store/`; features call it from server
+  components and route handlers.
+- **Workspace packages** (`packages/*`) ship TypeScript source, compiled by Next.js through
+  `transpilePackages`.
+  - Relative imports inside them keep the `.ts` extension, so Node can run their scripts with
+    `--experimental-strip-types`.
+  - The packages use erasable syntax only: no enums, no namespaces.
 - **New workspaces** must be added to the `deps` stage of `apps/web/Dockerfile` when the web app
   depends on them.
 - Local Node is 22.14, so dependencies must support it (e.g. jsdom is pinned to 29).
@@ -65,8 +83,9 @@ not the roadmap.
 ## Secrets and data terms
 
 - **Secrets:**
-  - Local secrets go in `.env.local`, which is git-ignored.
-  - Every new variable name goes in the committed `.env.example`.
+  - Local secrets go in `apps/web/.env.local`, which is git-ignored. Next.js reads env files only
+    from `apps/web`.
+  - Every new variable name goes in the committed `apps/web/.env.example`.
   - Production values go in Secret Manager, mounted with `--set-secrets`.
   - Never commit keys, and never expose them to the browser (no `NEXT_PUBLIC_` secrets).
 - **EIA API:** call it server-side only (route handlers, scripts, server components).
