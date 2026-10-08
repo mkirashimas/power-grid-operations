@@ -38,7 +38,9 @@ not the roadmap.
 - **Server vs client components.** Pages are server components by default. Never pass functions
   (an `sx` callback, `component={NextLink}`, event handlers) from a server component to an MUI
   component. Use plain-object `sx`, or move that UI into a `'use client'` component inside the
-  feature.
+  feature. Library components that pass a React element to an MUI prop (`icon`, `avatar`,
+  `startIcon`, …) must be `'use client'`: across the RSC boundary the element can reach SSR as a
+  lazy reference, MUI's `isValidElement` check drops it, and hydration fails.
 - **Design system:** `packages/ui` (`@pgo/ui`) owns the MUI theme (`src/theme`) and the shared
   components. `apps/web/src/theme` only adds the MUI locales.
   - Check `@pgo/ui` before building UI in a feature. Add generic, reusable pieces there

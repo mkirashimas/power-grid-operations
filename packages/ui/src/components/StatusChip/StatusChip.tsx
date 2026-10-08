@@ -1,3 +1,5 @@
+'use client';
+
 import CheckCircleOutlined from '@mui/icons-material/CheckCircleOutlined';
 import ErrorOutlined from '@mui/icons-material/ErrorOutlined';
 import RemoveCircleOutlined from '@mui/icons-material/RemoveCircleOutlined';
