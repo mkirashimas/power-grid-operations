@@ -8,7 +8,11 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(import.meta.dirname, '../..'),
   poweredByHeader: false,
   // Workspace packages ship TypeScript source; Next.js compiles them.
-  transpilePackages: ['@pgo/grid-model'],
+  transpilePackages: ['@pgo/grid-model', '@pgo/ui'],
+  // The design system's Storybook is built into public/storybook (yarn build:storybook).
+  redirects: async () => [
+    { source: '/storybook', destination: '/storybook/index.html', permanent: false },
+  ],
 };
 
 export default nextConfig;

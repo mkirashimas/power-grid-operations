@@ -61,6 +61,15 @@ test('serves EIA data and synthetic assets from the API', async ({ request }) =>
   expect(assets.count).toBeGreaterThan(1800);
 });
 
+test('publishes the design system Storybook at /storybook', async ({ page }) => {
+  const response = await page.goto('/storybook');
+
+  expect(response?.ok()).toBe(true);
+  expect(page.url()).toMatch(/\/storybook\/index\.html/);
+  await expect(page).toHaveTitle(/Storybook/);
+  await expect(page.locator('#storybook-preview-iframe')).toBeAttached();
+});
+
 test('switches language and keeps it after a reload', async ({ page }) => {
   await page.goto('/');
 

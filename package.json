@@ -19,7 +19,9 @@
     "e2e": "yarn workspace @pgo/web e2e",
     "data:fetch": "yarn workspace @pgo/grid-model fetch:eia",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "storybook": "yarn workspace @pgo/ui storybook",
+    "build:storybook": "yarn workspace @pgo/ui build:storybook"
   },
   "devDependencies": {
     "prettier": "^3.9.9"

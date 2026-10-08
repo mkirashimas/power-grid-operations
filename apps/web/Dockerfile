@@ -8,12 +8,14 @@ WORKDIR /repo
 COPY package.json yarn.lock ./
 COPY apps/web/package.json apps/web/
 COPY packages/grid-model/package.json packages/grid-model/
+COPY packages/ui/package.json packages/ui/
 RUN yarn install --frozen-lockfile --non-interactive
 
 FROM deps AS build
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN yarn workspace @pgo/web build
+# Storybook first: it is served from public/storybook.
+RUN yarn build:storybook && yarn workspace @pgo/web build
 
 FROM node:22-slim AS run
 WORKDIR /app

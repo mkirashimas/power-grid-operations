@@ -1,5 +1,6 @@
 import { EIA_SOURCE, EIA_SOURCE_URL, periodToMs, type AssetKind } from '@pgo/grid-model';
-import { Alert, Box, Card, CardContent, Chip, Link, Stack, Typography } from '@mui/material';
+import { Alert, Box, Stack, Typography } from '@mui/material';
+import { SourceNote, StatCard, SyntheticBadge } from '@pgo/ui';
 import { getRequestLanguage, getServerTranslation } from '../../../i18n/server';
 import { getAssets } from '../../../server/assets';
 import { getErcotData } from '../../../server/eia';
@@ -14,28 +15,6 @@ const cardGrid = {
 } as const;
 
 const MODEL_KINDS: AssetKind[] = ['substation', 'line', 'generator', 'load'];
-
-interface KpiCardProps {
-  label: string;
-  value: string;
-  caption: string;
-}
-
-const KpiCard = ({ label, value, caption }: KpiCardProps) => (
-  <Card variant="outlined">
-    <CardContent>
-      <Typography variant="body2" color="text.secondary" component="h3">
-        {label}
-      </Typography>
-      <Typography variant="h5" component="p" sx={{ my: 0.5, fontWeight: 600 }}>
-        {value}
-      </Typography>
-      <Typography variant="caption" color="text.secondary">
-        {caption}
-      </Typography>
-    </CardContent>
-  </Card>
-);
 
 /** Server component: reads EIA data and the synthetic model on the server, in the request's language. */
 export const HomePage = async () => {
@@ -83,19 +62,19 @@ export const HomePage = async () => {
 
         {kpis ? (
           <Box sx={cardGrid}>
-            <KpiCard label={t('kpi.demand')} value={mw(kpis.demand)} caption={at(kpis.demand)} />
-            <KpiCard
+            <StatCard label={t('kpi.demand')} value={mw(kpis.demand)} caption={at(kpis.demand)} />
+            <StatCard
               label={t('kpi.forecast')}
               value={mw(kpis.forecast)}
               caption={at(kpis.forecast)}
             />
-            <KpiCard
+            <StatCard
               label={t('kpi.forecastError')}
               value={percent.format(kpis.forecastError)}
               caption={t('kpi.forecastErrorHint')}
             />
             {kpis.interchange && (
-              <KpiCard
+              <StatCard
                 label={t('kpi.interchange')}
                 value={mw(kpis.interchange)}
                 caption={`${at(kpis.interchange)} · ${t('kpi.interchangeHint')}`}
@@ -106,16 +85,18 @@ export const HomePage = async () => {
           <Alert severity="warning">{t('ercot.noData')}</Alert>
         )}
 
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-          {t('ercot.source')}{' '}
-          <Link href={EIA_SOURCE_URL} color="inherit">
-            {EIA_SOURCE}
-          </Link>
-          {' · '}
-          {live
-            ? t('ercot.live')
-            : t('ercot.snapshot', { date: date.format(new Date(snapshot.fetchedAt)) })}
-        </Typography>
+        <Box sx={{ mt: 2 }}>
+          <SourceNote
+            prefix={t('ercot.source')}
+            name={EIA_SOURCE}
+            href={EIA_SOURCE_URL}
+            status={
+              live
+                ? t('ercot.live')
+                : t('ercot.snapshot', { date: date.format(new Date(snapshot.fetchedAt)) })
+            }
+          />
+        </Box>
       </Box>
 
       <Box component="section" aria-labelledby="model-heading">
@@ -123,15 +104,14 @@ export const HomePage = async () => {
           <Typography id="model-heading" variant="h6" component="h2">
             {t('model.heading')}
           </Typography>
-          <Chip label={t('model.synthetic')} size="small" variant="outlined" />
+          <SyntheticBadge label={t('model.synthetic')} />
         </Stack>
         <Box sx={cardGrid}>
           {MODEL_KINDS.map((kind) => (
-            <KpiCard
+            <StatCard
               key={kind}
               label={t(`model.kinds.${kind}`)}
               value={megawatts.format(assets.filter((asset) => asset.kind === kind).length)}
-              caption={t('model.synthetic')}
             />
           ))}
         </Box>

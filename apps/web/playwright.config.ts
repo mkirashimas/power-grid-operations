@@ -19,7 +19,9 @@ export default defineConfig({
   ],
   // Runs against the production build. CI builds in an earlier step; locally this builds first.
   webServer: {
-    command: isCI ? `yarn start -p ${PORT}` : `yarn build && yarn start -p ${PORT}`,
+    command: isCI
+      ? `yarn start -p ${PORT}`
+      : `yarn workspace @pgo/ui build:storybook && yarn build && yarn start -p ${PORT}`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !isCI,
     timeout: 300_000,
