@@ -5,6 +5,7 @@ import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import HomeOutlined from '@mui/icons-material/HomeOutlined';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
+import TableRowsOutlined from '@mui/icons-material/TableRowsOutlined';
 import {
   AppBar,
   Box,
@@ -40,7 +41,10 @@ interface NavItem {
 }
 
 // One entry per feature section.
-const NAV_ITEMS: NavItem[] = [{ key: 'home', to: PATHS.HOME, icon: <HomeOutlined /> }];
+const NAV_ITEMS: NavItem[] = [
+  { key: 'home', to: PATHS.HOME, icon: <HomeOutlined /> },
+  { key: 'telemetry', to: PATHS.TELEMETRY, icon: <TableRowsOutlined /> },
+];
 
 const isSelected = (item: NavItem, pathname: string) =>
   item.to === PATHS.HOME ? pathname === PATHS.HOME : pathname.startsWith(item.to);

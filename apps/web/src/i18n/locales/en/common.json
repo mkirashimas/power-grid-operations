@@ -17,7 +17,8 @@
     "ro": "Română"
   },
   "nav": {
-    "home": "Overview"
+    "home": "Overview",
+    "telemetry": "Telemetry"
   },
   "notFound": {
     "title": "Page not found",

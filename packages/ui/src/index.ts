@@ -26,5 +26,14 @@ export {
   type SyntheticBadgeProps,
 } from './components/SyntheticBadge/SyntheticBadge.tsx';
 export { Toolbar, type ToolbarProps } from './components/Toolbar/Toolbar.tsx';
+export {
+  nextSort,
+  VirtualGrid,
+  type GridColumn,
+  type GridRow,
+  type GridSortDirection,
+  type GridSortKey,
+  type VirtualGridProps,
+} from './components/VirtualGrid/VirtualGrid.tsx';
 export { VisuallyHidden } from './components/VisuallyHidden/VisuallyHidden.tsx';
 export { STATUSES, type Status, type ThemeMode } from './theme/types.ts';

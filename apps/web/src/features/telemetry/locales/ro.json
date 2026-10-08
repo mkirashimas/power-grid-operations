@@ -1,0 +1,75 @@
+{
+  "title": "Telemetrie",
+  "intro": "Fiecare activ sintetic, la fiecare 15 minute, timp de 6 zile. Sortarea, filtrarea și gruparea rulează într-un Web Worker, așa că pagina rămâne fluidă.",
+  "gridLabel": "Rânduri de telemetrie",
+  "columns": {
+    "asset": "Activ",
+    "kind": "Tip",
+    "zone": "Zonă",
+    "time": "Ora",
+    "mw": "MW",
+    "loading": "Încărcare %",
+    "voltage": "Tensiune (pu)",
+    "status": "Stare"
+  },
+  "kinds": {
+    "substation": "Stație",
+    "line": "Linie",
+    "generator": "Generator",
+    "load": "Consumator"
+  },
+  "zones": {
+    "coast": "Coastă",
+    "east": "Est",
+    "far-west": "Vestul Îndepărtat",
+    "north": "Nord",
+    "north-central": "Centru-Nord",
+    "south-central": "Centru-Sud",
+    "southern": "Sud",
+    "west": "Vest"
+  },
+  "statuses": {
+    "normal": "Normal",
+    "warning": "Avertizare",
+    "alarm": "Alarmă"
+  },
+  "filters": {
+    "label": "Controale tabel",
+    "asset": "Filtrează activele",
+    "assetPlaceholder": "Nume sau id",
+    "clear": "Șterge filtrul",
+    "kind": "Tip",
+    "zone": "Zonă",
+    "status": "Stare",
+    "all": "Toate",
+    "groupBy": "Grupează după",
+    "groupOptions": {
+      "none": "Fără",
+      "kind": "Tip",
+      "zone": "Zonă",
+      "asset": "Activ",
+      "status": "Stare"
+    },
+    "expandAll": "Extinde tot",
+    "collapseAll": "Restrânge tot",
+    "reset": "Șterge filtrele"
+  },
+  "readout": {
+    "rows": "{{matched}} din {{total}} rânduri",
+    "generate": "generare {{ms}} ms",
+    "filter": "filtrare {{ms}} ms",
+    "sort": "sortare {{ms}} ms",
+    "group": "grupare {{ms}} ms",
+    "updating": "Se actualizează…",
+    "announce": "{{matched}} rânduri corespund"
+  },
+  "groupSummary": "{{count}} rânduri · medie {{avg}} MW · max. {{max}} MW · încărcare maximă {{loading}} %",
+  "loading": "Se generează peste un milion de rânduri de telemetrie…",
+  "error": "Telemetria nu a putut fi generată: {{message}}",
+  "empty": {
+    "title": "Niciun rând nu corespunde acestor filtre",
+    "body": "Încearcă alt activ, altă zonă sau altă stare, ori șterge filtrele."
+  },
+  "synthetic": "Sintetic",
+  "source": "Profil de consum din:"
+}

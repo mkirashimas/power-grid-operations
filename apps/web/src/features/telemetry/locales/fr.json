@@ -1,0 +1,75 @@
+{
+  "title": "Télémesures",
+  "intro": "Chaque actif synthétique, toutes les 15 minutes, sur 6 jours. Le tri, le filtrage et le regroupement s’exécutent dans un Web Worker : la page reste réactive.",
+  "gridLabel": "Lignes de télémesure",
+  "columns": {
+    "asset": "Actif",
+    "kind": "Type",
+    "zone": "Zone",
+    "time": "Heure",
+    "mw": "MW",
+    "loading": "Charge %",
+    "voltage": "Tension (pu)",
+    "status": "État"
+  },
+  "kinds": {
+    "substation": "Poste",
+    "line": "Ligne",
+    "generator": "Générateur",
+    "load": "Charge"
+  },
+  "zones": {
+    "coast": "Côte",
+    "east": "Est",
+    "far-west": "Extrême Ouest",
+    "north": "Nord",
+    "north-central": "Centre Nord",
+    "south-central": "Centre Sud",
+    "southern": "Sud",
+    "west": "Ouest"
+  },
+  "statuses": {
+    "normal": "Normal",
+    "warning": "Avertissement",
+    "alarm": "Alarme"
+  },
+  "filters": {
+    "label": "Contrôles du tableau",
+    "asset": "Filtrer les actifs",
+    "assetPlaceholder": "Nom ou id",
+    "clear": "Effacer le filtre",
+    "kind": "Type",
+    "zone": "Zone",
+    "status": "État",
+    "all": "Tous",
+    "groupBy": "Regrouper par",
+    "groupOptions": {
+      "none": "Aucun",
+      "kind": "Type",
+      "zone": "Zone",
+      "asset": "Actif",
+      "status": "État"
+    },
+    "expandAll": "Tout déplier",
+    "collapseAll": "Tout replier",
+    "reset": "Effacer les filtres"
+  },
+  "readout": {
+    "rows": "{{matched}} sur {{total}} lignes",
+    "generate": "génération {{ms}} ms",
+    "filter": "filtre {{ms}} ms",
+    "sort": "tri {{ms}} ms",
+    "group": "regroupement {{ms}} ms",
+    "updating": "Mise à jour…",
+    "announce": "{{matched}} lignes correspondent"
+  },
+  "groupSummary": "{{count}} lignes · moy. {{avg}} MW · max. {{max}} MW · charge max. {{loading}} %",
+  "loading": "Génération de plus d’un million de lignes de télémesure…",
+  "error": "Les télémesures n’ont pas pu être générées : {{message}}",
+  "empty": {
+    "title": "Aucune ligne ne correspond à ces filtres",
+    "body": "Essayez un autre actif, une autre zone ou un autre état, ou effacez les filtres."
+  },
+  "synthetic": "Synthétique",
+  "source": "Profil de charge :"
+}

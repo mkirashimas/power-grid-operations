@@ -3,6 +3,7 @@
 // `incident: (id: string) => \`/incidents/${id}\``.
 export const PATHS = {
   HOME: '/',
+  TELEMETRY: '/telemetry',
 } as const;
 
 export type Path = Extract<(typeof PATHS)[keyof typeof PATHS], string>;
