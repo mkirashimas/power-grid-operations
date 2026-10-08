@@ -108,16 +108,18 @@ apps/web/          Next.js app
   src/hoc/         app shell: Providers (Redux, theme, i18n) and Layout
   src/features/    self-contained feature modules
     telemetry/     /telemetry: 1M+ row grid; query engine and Web Worker
+    charts/        /charts: chart workbench over EIA data and a 2.6M-point series
   src/i18n/        i18next setup, server and client
   src/store/       Redux store and the base RTK Query api
-  src/theme/       MUI theme: palettes, typography, component overrides
+  src/theme/       MUI locales (the theme itself lives in packages/ui)
   src/types/       app-wide types and PATHS
   src/server/      server-only data access (EIA client with snapshot fallback, assets)
   e2e/             Playwright tests
 packages/
-  grid-model/      shared types, EIA client, synthetic grid and telemetry generator
-  ui/              design system: theme, accessible components, Storybook stories
+  grid-model/      shared types, EIA client, synthetic grid, telemetry and 1-second load
     data/          committed EIA snapshot
+  ui/              design system: theme, accessible components, Storybook stories
+    src/components/charts/  canvas chart workbench: panes, brush, downsampling
 docs/              deployment guide and one plan per milestone
 ```
 
@@ -161,6 +163,10 @@ Run `yarn workspace @pgo/web playwright install chromium` once before the first 
 - **Data work off the main thread.** Telemetry is generated, filtered, sorted and grouped in a
   Web Worker. Results come back as transferable typed arrays (no copying), and the page only
   formats the visible rows.
+- **Canvas charts with min/max downsampling.** Each chart draws at most about 4 points per
+  pixel column (first, min, max, last), so a 2.6M-point series draws in milliseconds and no
+  peak is lost. Every chart is also a `role="img"` with a text summary, keyboard-operable, and has
+  a table view.
 - **Accessibility checked in CI.** Every Playwright page test runs axe (WCAG 2.1 AA) in both
   color schemes. The shell has a skip link, labelled landmarks and `aria-current` navigation.
 - **Open demo.** There is no sign-in. All data is public or synthetic.
@@ -181,6 +187,17 @@ Telemetry table, `/telemetry`: 1,076,544 rows, Chromium desktop, production buil
 
 The page never blocks: all of this runs in a worker. The grid keeps about 40 rows in the DOM,
 whatever the row count.
+
+Chart workbench, `/charts`: the synthetic 1-second load series, min/max-downsampled to the pane width
+(Chromium desktop).
+
+| Visible range | Points in range | Points drawn | Downsample + draw |
+| ------------- | --------------- | ------------ | ----------------- |
+| 24 h          | 39,602          | 1,572        | 0.8 ms            |
+| 7 days        | 558,002         | 3,223        | 4.7 ms            |
+| 30 days       | 2,588,401       | 3,427        | 19.7 ms           |
+
+Generating the 2.6M-point series takes about 420 ms. It runs once, after the first paint.
 
 </details>
 
@@ -279,3 +296,4 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 - [M1: Data and shared types](docs/m1-data-and-shared-types.md)
 - [M2: Component library](docs/m2-component-library.md)
 - [M3: Telemetry table](docs/m3-telemetry-table.md)
+- [M4: Chart workbench](docs/m4-chart-workbench.md)

@@ -18,7 +18,8 @@
   },
   "nav": {
     "home": "Panoramica",
-    "telemetry": "Telemetria"
+    "telemetry": "Telemetria",
+    "charts": "Grafici"
   },
   "notFound": {
     "title": "Pagina non trovata",

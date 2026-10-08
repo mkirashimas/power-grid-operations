@@ -1,5 +1,6 @@
 export * from './assets.ts';
 export * from './eia.ts';
+export * from './highres.ts';
 export * from './random.ts';
 export * from './status.ts';
 export * from './synthetic.ts';

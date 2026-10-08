@@ -38,7 +38,9 @@ not the roadmap.
 - **Server vs client components.** Pages are server components by default. Never pass functions
   (an `sx` callback, `component={NextLink}`, event handlers) from a server component to an MUI
   component. Use plain-object `sx`, or move that UI into a `'use client'` component inside the
-  feature.
+  feature. Library components that pass a React element to an MUI prop (`icon`, `avatar`,
+  `startIcon`, …) must be `'use client'`: across the RSC boundary the element can reach SSR as a
+  lazy reference, MUI's `isValidElement` check drops it, and hydration fails.
 - **Design system:** `packages/ui` (`@pgo/ui`) owns the MUI theme (`src/theme`) and the shared
   components. `apps/web/src/theme` only adds the MUI locales.
   - Check `@pgo/ui` before building UI in a feature. Add generic, reusable pieces there
@@ -67,6 +69,11 @@ not the roadmap.
   - Results cross the boundary as transferable typed arrays.
 - **Shareable view state** is mirrored to the URL with `window.history.replaceState` (no
   server round trip), not `router.replace`.
+- **Charts** use `ChartWorkbench` + `TimeSeriesPane` from `@pgo/ui`.
+  - Series colours come from `palette.chart.series1..6` (≥ 3:1, checked by the contrast test).
+  - Canvas code resolves theme CSS variables to concrete colours (`charts/canvas.ts`) and redraws when
+    the scheme changes.
+  - Every pane needs a translated `summarize` for its `role="img"` label.
 - **Large tables** use `VirtualGrid` from `@pgo/ui`. It handles millions of rows (scaled
   scrolling) and the ARIA grid keyboard pattern.
 - **Cross-feature state** (e.g. linked selection) goes in a slice in `src/store`, never in a

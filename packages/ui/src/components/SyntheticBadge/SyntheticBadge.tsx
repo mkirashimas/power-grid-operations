@@ -1,3 +1,5 @@
+'use client';
+
 import ScienceOutlined from '@mui/icons-material/ScienceOutlined';
 import { Chip } from '@mui/material';
 

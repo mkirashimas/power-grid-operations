@@ -18,7 +18,8 @@
   },
   "nav": {
     "home": "Prezentare generală",
-    "telemetry": "Telemetrie"
+    "telemetry": "Telemetrie",
+    "charts": "Grafice"
   },
   "notFound": {
     "title": "Pagina nu a fost găsită",

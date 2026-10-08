@@ -18,7 +18,8 @@
   },
   "nav": {
     "home": "Overview",
-    "telemetry": "Telemetry"
+    "telemetry": "Telemetry",
+    "charts": "Charts"
   },
   "notFound": {
     "title": "Page not found",

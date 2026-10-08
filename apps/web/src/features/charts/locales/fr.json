@@ -1,0 +1,51 @@
+{
+  "title": "Graphiques",
+  "intro": "Demande, prévision, production et échanges d’ERCOT fournis par l’EIA, plus une série synthétique de charge à la seconde d’environ 2,6 millions de points. Zoomez ou déplacez un graphique : les autres suivent.",
+  "workbench": "ERCOT, 30 derniers jours",
+  "panes": {
+    "demand": "Demande et prévision de la veille",
+    "fuel": "Production par combustible",
+    "interchange": "Échanges nets (négatif = importation)",
+    "highRes": "Charge du système à la seconde"
+  },
+  "series": {
+    "demand": "Demande",
+    "forecast": "Prévision de la veille",
+    "error": "Écart de prévision",
+    "interchange": "Échanges nets",
+    "load": "Charge"
+  },
+  "fuels": {
+    "gas": "Gaz",
+    "wind": "Éolien",
+    "solar": "Solaire",
+    "nuclear": "Nucléaire",
+    "coal": "Charbon",
+    "other": "Autres"
+  },
+  "labels": {
+    "toolbar": "Contrôles du graphique",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "reset": "Afficher toute la période",
+    "presets": "Période",
+    "day": "24 h",
+    "week": "7 j",
+    "month": "30 j",
+    "showTable": "Afficher en tableau",
+    "hideTable": "Masquer le tableau",
+    "time": "Heure (CT)",
+    "overview": "Vue d’ensemble : faites glisser la fenêtre ou utilisez les flèches pour déplacer la période visible",
+    "keyboardHint": "Graphique interactif. Les flèches déplacent le curseur, Maj avec les flèches fait défiler, plus et moins zooment, Début et Fin vont aux extrémités, Échap efface le curseur."
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "summary": "{{title}}, du {{from}} au {{to}} : {{series}}.",
+  "summaryItem": "{{label}} de {{min}} à {{max}}",
+  "highResStats": "{{input}} → {{drawn}} points dessinés en {{ms}} ms",
+  "loadingHighRes": "Génération de la série à la seconde…",
+  "synthetic": "Synthétique",
+  "source": "Source :",
+  "live": "en direct, actualisé toutes les heures"
+}

@@ -1,0 +1,51 @@
+{
+  "title": "Grafici",
+  "intro": "Domanda, previsione, generazione e scambi di ERCOT forniti dall’EIA, più una serie sintetica di carico al secondo di circa 2,6 milioni di punti. Ingrandisci o sposta un grafico: gli altri lo seguono.",
+  "workbench": "ERCOT, ultimi 30 giorni",
+  "panes": {
+    "demand": "Domanda e previsione del giorno prima",
+    "fuel": "Generazione per combustibile",
+    "interchange": "Scambio netto (negativo = importazione)",
+    "highRes": "Carico di sistema al secondo"
+  },
+  "series": {
+    "demand": "Domanda",
+    "forecast": "Previsione del giorno prima",
+    "error": "Errore di previsione",
+    "interchange": "Scambio netto",
+    "load": "Carico"
+  },
+  "fuels": {
+    "gas": "Gas",
+    "wind": "Eolico",
+    "solar": "Solare",
+    "nuclear": "Nucleare",
+    "coal": "Carbone",
+    "other": "Altro"
+  },
+  "labels": {
+    "toolbar": "Controlli del grafico",
+    "zoomIn": "Ingrandisci",
+    "zoomOut": "Riduci",
+    "reset": "Mostra tutto il periodo",
+    "presets": "Periodo",
+    "day": "24 h",
+    "week": "7 g",
+    "month": "30 g",
+    "showTable": "Mostra come tabella",
+    "hideTable": "Nascondi tabella",
+    "time": "Ora (CT)",
+    "overview": "Panoramica: trascina la finestra o usa le frecce per spostare il periodo visibile",
+    "keyboardHint": "Grafico interattivo. Le frecce spostano il cursore, Maiusc con le frecce sposta il periodo, più e meno ingrandiscono o riducono, Inizio e Fine vanno agli estremi, Esc cancella il cursore."
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "summary": "{{title}}, dal {{from}} al {{to}}: {{series}}.",
+  "summaryItem": "{{label}} da {{min}} a {{max}}",
+  "highResStats": "{{input}} → {{drawn}} punti disegnati in {{ms}} ms",
+  "loadingHighRes": "Generazione della serie al secondo…",
+  "synthetic": "Sintetico",
+  "source": "Fonte:",
+  "live": "in tempo reale, aggiornato ogni ora"
+}

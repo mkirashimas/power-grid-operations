@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getPalette } from './palette.ts';
-import { STATUSES, THEME_MODES } from './types.ts';
+import { CHART_SERIES, STATUSES, THEME_MODES } from './types.ts';
 
 // WCAG 2.x relative luminance and contrast ratio.
 const luminance = (hex: string) => {
@@ -25,6 +25,13 @@ describe.each(THEME_MODES)('%s palette', (mode) => {
     const color = palette.status![status]!;
     expect(contrast(color, paper)).toBeGreaterThanOrEqual(4.5);
     expect(contrast(color, page)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  // WCAG 1.4.11: graphical objects need 3:1 against adjacent colours.
+  it.each(CHART_SERIES)('chart.%s stands out from the background (3:1)', (key) => {
+    const color = palette.chart![key]!;
+    expect(contrast(color, paper)).toBeGreaterThanOrEqual(3);
+    expect(contrast(color, page)).toBeGreaterThanOrEqual(3);
   });
 
   it('keeps body and secondary text readable (AA)', () => {

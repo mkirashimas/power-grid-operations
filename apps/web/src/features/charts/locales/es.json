@@ -1,0 +1,51 @@
+{
+  "title": "Gráficos",
+  "intro": "Demanda, previsión, generación e intercambio de ERCOT de la EIA, más una serie sintética de carga por segundo con unos 2,6 millones de puntos. Amplía y desplaza cualquier gráfico; los demás le siguen.",
+  "workbench": "ERCOT, últimos 30 días",
+  "panes": {
+    "demand": "Demanda frente a previsión del día anterior",
+    "fuel": "Generación por combustible",
+    "interchange": "Intercambio neto (negativo = importación)",
+    "highRes": "Carga del sistema por segundo"
+  },
+  "series": {
+    "demand": "Demanda",
+    "forecast": "Previsión del día anterior",
+    "error": "Error de previsión",
+    "interchange": "Intercambio neto",
+    "load": "Carga"
+  },
+  "fuels": {
+    "gas": "Gas",
+    "wind": "Eólica",
+    "solar": "Solar",
+    "nuclear": "Nuclear",
+    "coal": "Carbón",
+    "other": "Otros"
+  },
+  "labels": {
+    "toolbar": "Controles del gráfico",
+    "zoomIn": "Ampliar",
+    "zoomOut": "Reducir",
+    "reset": "Mostrar todo el periodo",
+    "presets": "Periodo",
+    "day": "24 h",
+    "week": "7 d",
+    "month": "30 d",
+    "showTable": "Ver como tabla",
+    "hideTable": "Ocultar tabla",
+    "time": "Hora (CT)",
+    "overview": "Vista general: arrastra la ventana o usa las flechas para mover el periodo visible",
+    "keyboardHint": "Gráfico interactivo. Las flechas mueven el cursor, Mayús con flechas desplaza, más y menos amplían o reducen, Inicio y Fin saltan a los extremos, Escape borra el cursor."
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "summary": "{{title}}, del {{from}} al {{to}}: {{series}}.",
+  "summaryItem": "{{label}} de {{min}} a {{max}}",
+  "highResStats": "{{input}} → {{drawn}} puntos dibujados en {{ms}} ms",
+  "loadingHighRes": "Generando la serie por segundo…",
+  "synthetic": "Sintético",
+  "source": "Fuente:",
+  "live": "en directo, se actualiza cada hora"
+}
