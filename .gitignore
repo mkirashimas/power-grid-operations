@@ -21,6 +21,7 @@ yarn-error.log*
 
 # Env files (the app needs none; keep local experiments out of git)
 .env*
+!.env.example
 
 # Editor / OS
 .vscode/*

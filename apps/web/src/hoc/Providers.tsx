@@ -22,7 +22,8 @@ const ThemedApp = ({ children }: { children: ReactNode }) => {
   }, [language]);
 
   return (
-    <ThemeProvider theme={theme}>
+    // disableTransitionOnChange: switch schemes instantly, without animating every colour.
+    <ThemeProvider theme={theme} disableTransitionOnChange>
       <CssBaseline enableColorScheme />
       {children}
     </ThemeProvider>

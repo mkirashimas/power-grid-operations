@@ -20,6 +20,12 @@ test('renders the overview and passes axe in light and dark mode', async ({ page
 
   await page.getByRole('button', { name: 'Switch to dark mode' }).click();
   await expect(page.locator('html')).toHaveClass(/dark/);
+  // Dark background.default (#232527) is applied before axe measures contrast.
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(35, 37, 39)');
+  // The click leaves the pointer on the toggle, which opens its tooltip. axe would measure the
+  // tooltip mid-fade (semi-transparent text), so move away and let it close first.
+  await page.mouse.move(0, 0);
+  await expect(page.getByRole('tooltip')).toBeHidden();
   await expectNoAxeViolations(page);
 });
 

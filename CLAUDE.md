@@ -7,7 +7,8 @@ desktop-first responsive styles, theme tokens instead of hardcoded values, named
 feature isolation) still applies.
 
 The build plan, milestone by milestone, is in the user's plan file
-`~/.claude/plans/this-is-what-i-wild-valley.md`. The current milestone is listed in README.md.
+`~/.claude/plans/this-is-what-i-wild-valley.md`. README.md describes the product and setup only,
+not the roadmap.
 
 ## Differences from the workspace conventions
 
@@ -47,3 +48,30 @@ The build plan, milestone by milestone, is in the user's plan file
 - **New workspaces** must be added to the `deps` stage of `apps/web/Dockerfile` when the web app
   depends on them.
 - Local Node is 22.14, so dependencies must support it (e.g. jsdom is pinned to 29).
+- Unused variables are an ESLint error, not a tsc option, so the generated `.next/dev/types`
+  files type-check.
+
+## Infrastructure
+
+- GCP project `power-grid-operations` (number `142186164859`), region **`us-central1`**.
+- The workflow deploys `main` to the Cloud Run service `pgo-web`. The image is
+  `us-central1-docker.pkg.dev/power-grid-operations/web/pgo-web:<sha>`.
+- The workflow reads the GitHub repository variables `GCP_PROJECT_ID`, `GCP_REGION`,
+  `GCP_SERVICE_ACCOUNT` and `GCP_WORKLOAD_IDENTITY_PROVIDER` as `vars.*`. They are variables, not
+  secrets.
+- `docs/deploy.md` is the setup record. Keep it, README.md and `ci.yml` in sync.
+- A Firestore database exists in the project but is **not used**.
+
+## Secrets and data terms
+
+- **Secrets:**
+  - Local secrets go in `.env.local`, which is git-ignored.
+  - Every new variable name goes in the committed `.env.example`.
+  - Production values go in Secret Manager, mounted with `--set-secrets`.
+  - Never commit keys, and never expose them to the browser (no `NEXT_PUBLIC_` secrets).
+- **EIA API:** call it server-side only (route handlers, scripts, server components).
+- **EIA terms:**
+  - Credit "U.S. Energy Information Administration" wherever EIA data is shown.
+  - Never use the EIA logo, and never imply endorsement.
+  - Label generated data **synthetic** in the UI and docs, and never present it as EIA data.
+- **Map:** OpenFreeMap tiles need no key, but the attribution must stay visible.
