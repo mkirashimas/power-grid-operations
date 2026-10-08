@@ -88,6 +88,7 @@ apps/web/          Next.js app
   src/app/         routes (layouts, pages, route handlers)
   src/hoc/         app shell: Providers (Redux, theme, i18n) and Layout
   src/features/    self-contained feature modules
+    telemetry/     /telemetry: 1M+ row grid; query engine and Web Worker
   src/i18n/        i18next setup, server and client
   src/store/       Redux store and the base RTK Query api
   src/theme/       MUI theme: palettes, typography, component overrides
@@ -203,6 +204,21 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 
 - [M1: Data and shared types](docs/m1-data-and-shared-types.md)
 - [M2: Component library](docs/m2-component-library.md)
+- [M3: Telemetry table](docs/m3-telemetry-table.md)
+
+## Performance
+
+Telemetry table, `/telemetry`: 1,076,544 rows, Chromium desktop, production build.
+
+| Operation (in a Web Worker) | Time               |
+| --------------------------- | ------------------ |
+| Generate all rows           | about 410 ms       |
+| Filter                      | 3–15 ms            |
+| Sort, 1 key / 2 keys        | about 380 / 440 ms |
+| Group by zone               | about 55 ms        |
+
+The page never blocks: all of this runs in a worker. The grid keeps about 40 rows in the DOM,
+whatever the row count.
 
 ## Design decisions
 
@@ -216,6 +232,13 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 - **Responsive markup decided by CSS.** The sidebar switches between permanent (desktop) and
   temporary (mobile) with media queries rather than `useMediaQuery`, so the server-rendered
   HTML is already right for the viewport.
+- **Virtual scrolling past the browser height limit.** A million 40 px rows need 43M px, more
+  than browsers allow for one element. `VirtualGrid` caps the scroll area at 15M px and maps
+  the scroll position proportionally onto all rows, so the last row stays reachable by
+  scrollbar and by keyboard (Ctrl+End).
+- **Data work off the main thread.** Telemetry is generated, filtered, sorted and grouped in a
+  Web Worker. Results come back as transferable typed arrays (no copying), and the page only
+  formats the visible rows.
 - **Accessibility checked in CI.** Every Playwright page test runs axe (WCAG 2.1 AA) in both
   color schemes. The shell has a skip link, labelled landmarks and `aria-current` navigation.
 - **Open demo.** There is no sign-in. All data is public or synthetic.

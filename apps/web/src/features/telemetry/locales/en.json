@@ -1,0 +1,75 @@
+{
+  "title": "Telemetry",
+  "intro": "Every synthetic asset, every 15 minutes, for 6 days. Sorting, filtering and grouping run in a Web Worker, so the page stays responsive.",
+  "gridLabel": "Telemetry rows",
+  "columns": {
+    "asset": "Asset",
+    "kind": "Kind",
+    "zone": "Zone",
+    "time": "Time",
+    "mw": "MW",
+    "loading": "Loading %",
+    "voltage": "Voltage (pu)",
+    "status": "Status"
+  },
+  "kinds": {
+    "substation": "Substation",
+    "line": "Line",
+    "generator": "Generator",
+    "load": "Load"
+  },
+  "zones": {
+    "coast": "Coast",
+    "east": "East",
+    "far-west": "Far West",
+    "north": "North",
+    "north-central": "North Central",
+    "south-central": "South Central",
+    "southern": "Southern",
+    "west": "West"
+  },
+  "statuses": {
+    "normal": "Normal",
+    "warning": "Warning",
+    "alarm": "Alarm"
+  },
+  "filters": {
+    "label": "Table controls",
+    "asset": "Filter assets",
+    "assetPlaceholder": "Name or id",
+    "clear": "Clear filter",
+    "kind": "Kind",
+    "zone": "Zone",
+    "status": "Status",
+    "all": "All",
+    "groupBy": "Group by",
+    "groupOptions": {
+      "none": "None",
+      "kind": "Kind",
+      "zone": "Zone",
+      "asset": "Asset",
+      "status": "Status"
+    },
+    "expandAll": "Expand all",
+    "collapseAll": "Collapse all",
+    "reset": "Clear filters"
+  },
+  "readout": {
+    "rows": "{{matched}} of {{total}} rows",
+    "generate": "generate {{ms}} ms",
+    "filter": "filter {{ms}} ms",
+    "sort": "sort {{ms}} ms",
+    "group": "group {{ms}} ms",
+    "updating": "Updating…",
+    "announce": "{{matched}} rows match"
+  },
+  "groupSummary": "{{count}} rows · avg {{avg}} MW · max {{max}} MW · peak loading {{loading}} %",
+  "loading": "Generating more than a million telemetry rows…",
+  "error": "The telemetry could not be generated: {{message}}",
+  "empty": {
+    "title": "No rows match these filters",
+    "body": "Try another asset, zone or status, or clear the filters."
+  },
+  "synthetic": "Synthetic",
+  "source": "Load shape from:"
+}

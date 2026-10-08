@@ -17,7 +17,8 @@
     "ro": "Română"
   },
   "nav": {
-    "home": "Prezentare generală"
+    "home": "Prezentare generală",
+    "telemetry": "Telemetrie"
   },
   "notFound": {
     "title": "Pagina nu a fost găsită",

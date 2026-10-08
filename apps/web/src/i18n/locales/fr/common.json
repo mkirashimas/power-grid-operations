@@ -17,7 +17,8 @@
     "ro": "Română"
   },
   "nav": {
-    "home": "Vue d’ensemble"
+    "home": "Vue d’ensemble",
+    "telemetry": "Télémesures"
   },
   "notFound": {
     "title": "Page introuvable",

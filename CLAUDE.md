@@ -59,6 +59,16 @@ not the roadmap.
   in any language.
 - **Icons:** import one per file (`@mui/icons-material/HomeOutlined`), never from the package
   index.
+- **Feature slices** inject themselves with `slice.injectInto(rootReducer)` and augment
+  `LazyLoadedSlices` in `src/store` (see `features/telemetry/slice.ts`). The store never
+  imports features.
+- **Heavy data work** runs in a Web Worker inside the feature (`features/<f>/worker`).
+  - The query logic stays in pure, Node-tested functions (`engine/`).
+  - Results cross the boundary as transferable typed arrays.
+- **Shareable view state** is mirrored to the URL with `window.history.replaceState` (no
+  server round trip), not `router.replace`.
+- **Large tables** use `VirtualGrid` from `@pgo/ui`. It handles millions of rows (scaled
+  scrolling) and the ARIA grid keyboard pattern.
 - **Cross-feature state** (e.g. linked selection) goes in a slice in `src/store`, never in a
   feature.
 - **`PATHS`** in `src/types/paths.ts` holds every link target and must match the `src/app`
