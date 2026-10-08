@@ -38,6 +38,7 @@ variables, not secrets.
 | `GCP_REGION`                     | `us-central1`                                                                               |
 | `GCP_SERVICE_ACCOUNT`            | `deployer@power-grid-operations.iam.gserviceaccount.com`                                    |
 | `GCP_WORKLOAD_IDENTITY_PROVIDER` | `projects/142186164859/locations/global/workloadIdentityPools/github/providers/github-repo` |
+| `EIA_SECRET_NAME` (optional)     | `eia-api-key`, set once the secret exists (see "EIA API key")                               |
 
 The deploy job in `.github/workflows/ci.yml` is skipped while `GCP_PROJECT_ID` is empty.
 
@@ -76,10 +77,43 @@ With minimum instances at 0, demo traffic stays within the Cloud Run free tier.
 
 ## Secrets
 
-- **Local:** `.env.local`, which is git-ignored. The template is `.env.example`.
+- **Local:** `apps/web/.env.local`, which is git-ignored. The template is
+  `apps/web/.env.example`. Next.js only reads env files from the app's folder.
 - **Production:** Secret Manager, mounted into Cloud Run with `--set-secrets`.
-- The Cloud Run runtime service account needs `roles/secretmanager.secretAccessor` on each
-  secret it reads.
+- **Runtime account:** Cloud Run runs as the default compute service account,
+  `142186164859-compute@developer.gserviceaccount.com`. It needs
+  `roles/secretmanager.secretAccessor` on each secret it reads.
+
+### EIA API key
+
+Without this, the live site serves the committed EIA snapshot. With it, the site fetches fresh
+EIA data, cached for an hour. Run in Cloud Shell:
+
+**1. Store the key.** The first line asks for the key without echoing it, so it never lands in
+the shell history.
+
+```bash
+read -rs -p "EIA API key: " EIA_KEY && echo
+printf '%s' "$EIA_KEY" | gcloud secrets create eia-api-key --data-file=- --replication-policy=automatic --project=power-grid-operations
+unset EIA_KEY
+```
+
+Expected output: `Created version [1] of the secret [eia-api-key].`
+
+**2. Let Cloud Run read it.**
+
+```bash
+gcloud secrets add-iam-policy-binding eia-api-key --member=serviceAccount:142186164859-compute@developer.gserviceaccount.com --role=roles/secretmanager.secretAccessor --project=power-grid-operations
+```
+
+Expected output: `Updated IAM policy for secret [eia-api-key].`
+
+**3. Tell CI to mount it.** In GitHub, go to Settings → Secrets and variables → Actions →
+**Variables** and add `EIA_SECRET_NAME` = `eia-api-key`. The next deploy from `main` passes
+`--set-secrets EIA_API_KEY=eia-api-key:latest`.
+
+**To rotate the key:** add a new version with step 1, replacing `create` with
+`versions add eia-api-key --data-file=-` (and dropping `--replication-policy`). Then redeploy.
 
 ## Troubleshooting
 
@@ -89,6 +123,7 @@ With minimum instances at 0, demo traffic stays within the Cloud Run free tier.
 | `docker push`: `name unknown: Repository "web" not found`                           | The Artifact Registry repository is missing. Run the create command above.                       |
 | `docker push`: `denied: Permission "artifactregistry.repositories.uploadArtifacts"` | The deploy account lacks `roles/artifactregistry.writer`.                                        |
 | `gcloud run deploy`: `PERMISSION_DENIED ... iam.serviceaccounts.actAs`              | The deploy account lacks `roles/iam.serviceAccountUser`.                                         |
+| `gcloud run deploy`: `Permission denied on secret ... for Revision service account` | The runtime account cannot read the secret. Run step 2 of "EIA API key".                         |
 | The deploy job is skipped                                                           | The push wasn't to `main`, the checks failed, or `GCP_PROJECT_ID` isn't set.                     |
 
 ## Testing the container locally (optional, needs Docker)

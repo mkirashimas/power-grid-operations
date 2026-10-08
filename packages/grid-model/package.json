@@ -1,0 +1,26 @@
+{
+  "name": "@pgo/grid-model",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Shared grid types, the EIA client and the synthetic data generator.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./snapshot": "./data/ercot-snapshot.json"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "fetch:eia": "node --env-file=../../apps/web/.env.local --experimental-strip-types --disable-warning=ExperimentalWarning scripts/fetch-eia.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.13.3",
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.71.1",
+    "vitest": "^5.0.3"
+  }
+}

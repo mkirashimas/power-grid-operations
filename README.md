@@ -56,7 +56,29 @@ data.
 - No EIA logo.
 - No implied endorsement by EIA.
 
-**API key:** the EIA API is called server-side only. The key never reaches the browser.
+**How the app gets EIA data:**
+
+- **With `EIA_API_KEY`:** the server fetches the last 30 days live and caches them for an hour.
+- **Without the key, or if EIA is down:** it serves a committed snapshot,
+  `packages/grid-model/data/ercot-snapshot.json`, refreshed with `yarn data:fetch`.
+- The page always shows which of the two it is using ("live" or "snapshot of &lt;date&gt;").
+- The key is only read on the server and never reaches the browser.
+
+**Synthetic grid model** (`packages/grid-model`):
+
+- **Generated from a fixed seed,** so every build produces the same data:
+  - 400 substations
+  - 400 loads
+  - 300 generators
+  - 769 lines in one connected network across ERCOT's 8 weather zones
+- **Telemetry:** 1.08M rows (every asset every 15 minutes for 6 days), stored as columnar
+  typed arrays and generated in about 0.2 s.
+- **Load shape:** follows the real EIA demand curve.
+
+| Endpoint             | Returns                                                                  |
+| -------------------- | ------------------------------------------------------------------------ |
+| `GET /api/eia/ercot` | EIA series: demand, day-ahead forecast, generation, interchange, by fuel |
+| `GET /api/assets`    | synthetic assets, labelled `synthetic: true`                             |
 
 ## Repository layout
 
@@ -69,8 +91,12 @@ apps/web/          Next.js app
   src/store/       Redux store and the base RTK Query api
   src/theme/       MUI theme: palettes, typography, component overrides
   src/types/       app-wide types and PATHS
+  src/server/      server-only data access (EIA client with snapshot fallback, assets)
   e2e/             Playwright tests
-docs/              deployment guide
+packages/
+  grid-model/      shared types, EIA client, synthetic grid and telemetry generator
+    data/          committed EIA snapshot
+docs/              deployment guide and one plan per milestone
 ```
 
 ## Getting started
@@ -79,14 +105,18 @@ Requires Node 22+ and Yarn 1.
 
 ```bash
 yarn install
-yarn dev          # http://localhost:3000
+cp apps/web/.env.example apps/web/.env.local   # optional: add your EIA API key
+yarn dev                                        # http://localhost:3000
 ```
+
+Without a key, the app runs on the committed EIA snapshot.
 
 | Command                        | What it does                                                                       |
 | ------------------------------ | ---------------------------------------------------------------------------------- |
 | `yarn build` / `yarn start`    | production build and server                                                        |
 | `yarn lint` / `yarn typecheck` | ESLint / TypeScript                                                                |
-| `yarn test`                    | unit and component tests (Vitest)                                                  |
+| `yarn test`                    | unit and component tests (Vitest), in every workspace                              |
+| `yarn data:fetch`              | downloads the last 30 days of ERCOT data from EIA into the committed snapshot      |
 | `yarn e2e`                     | builds, starts and runs the Playwright tests (desktop and mobile, with axe checks) |
 | `yarn format`                  | Prettier                                                                           |
 
@@ -94,21 +124,22 @@ Run `yarn workspace @pgo/web playwright install chromium` once before the first 
 
 ## Secrets
 
-| Where          | What                                                     |
-| -------------- | -------------------------------------------------------- |
-| `.env.local`   | local secrets such as `EIA_API_KEY` (git-ignored)        |
-| `.env.example` | committed template listing the variable names, no values |
-| Secret Manager | production values, mounted into Cloud Run                |
+| Where                   | What                                                      |
+| ----------------------- | --------------------------------------------------------- |
+| `apps/web/.env.local`   | local secrets such as `EIA_API_KEY` (git-ignored)         |
+| `apps/web/.env.example` | committed template listing the variable names, no values  |
+| Secret Manager          | production values (`eia-api-key`), mounted into Cloud Run |
 
 The GCP identifiers below are not secrets. GitHub signs in to Google Cloud with Workload
 Identity Federation, so no service-account key exists anywhere.
 
 ## Branches and CI/CD
 
-| Branch        | Role                | On push                                   |
-| ------------- | ------------------- | ----------------------------------------- |
-| `development` | default, daily work | lint, typecheck, unit tests, build, e2e   |
-| `main`        | release             | the same checks, then deploy to Cloud Run |
+| Branch         | Role                                  | On push                                   |
+| -------------- | ------------------------------------- | ----------------------------------------- |
+| `feature/m<N>` | one per milestone, from `development` | checks run on its PR into `development`   |
+| `development`  | default, integration                  | lint, typecheck, unit tests, build, e2e   |
+| `main`         | release (merge `development` into it) | the same checks, then deploy to Cloud Run |
 
 Pull requests run the checks only. The workflow is `.github/workflows/ci.yml`. Cloud Run
 scales to zero (minimum instances = 0), so the first visit after an idle period can take a few
@@ -137,9 +168,14 @@ secrets.
 | `GCP_REGION`                     | `us-central1`                                            |
 | `GCP_SERVICE_ACCOUNT`            | `deployer@power-grid-operations.iam.gserviceaccount.com` |
 | `GCP_WORKLOAD_IDENTITY_PROVIDER` | the provider path above                                  |
+| `EIA_SECRET_NAME` (optional)     | `eia-api-key`; mounts the EIA key from Secret Manager    |
 
 A Firestore database `(default)` (location `eur3`) exists in the project but the app does not
 use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
+
+## Milestone docs
+
+- [M1: Data and shared types](docs/m1-data-and-shared-types.md)
 
 ## Design decisions
 

@@ -1,4 +1,33 @@
 {
   "title": "Vue d’ensemble du réseau",
-  "intro": "Surveillez le réseau du Texas (ERCOT). Télémesures, prévisions, alarmes, carte en direct et vue du réseau arrivent ici module par module."
+  "intro": "Les derniers chiffres d’ERCOT fournis par l’EIA, et le modèle de réseau synthétique sur lequel reposent les autres vues.",
+  "ercot": {
+    "heading": "ERCOT, dernière heure",
+    "source": "Source :",
+    "live": "en direct, actualisé toutes les heures",
+    "snapshot": "instantané du {{date}}",
+    "noData": "Les données de l’EIA ne sont pas disponibles pour le moment."
+  },
+  "kpi": {
+    "demand": "Demande",
+    "forecast": "Prévision de la veille",
+    "forecastError": "Écart de prévision",
+    "forecastErrorHint": "Demande réelle par rapport à la prévision de la veille",
+    "interchange": "Échanges nets",
+    "interchangeHint": "négatif signifie importation nette"
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "model": {
+    "heading": "Modèle de réseau",
+    "synthetic": "Synthétique",
+    "note": "Généré pour l’échelle. Ce ne sont pas des données de l’EIA.",
+    "kinds": {
+      "substation": "Postes",
+      "line": "Lignes",
+      "generator": "Générateurs",
+      "load": "Charges"
+    }
+  }
 }

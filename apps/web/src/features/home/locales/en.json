@@ -1,4 +1,33 @@
 {
   "title": "Grid overview",
-  "intro": "Monitor the Texas (ERCOT) grid. Telemetry, forecasts, alarms, the live map and the network view arrive here one module at a time."
+  "intro": "The latest ERCOT figures from the EIA, and the synthetic grid model the other views are built on.",
+  "ercot": {
+    "heading": "ERCOT, latest hour",
+    "source": "Source:",
+    "live": "live, refreshed hourly",
+    "snapshot": "snapshot of {{date}}",
+    "noData": "EIA data is not available right now."
+  },
+  "kpi": {
+    "demand": "Demand",
+    "forecast": "Day-ahead forecast",
+    "forecastError": "Forecast error",
+    "forecastErrorHint": "Actual demand vs the day-ahead forecast",
+    "interchange": "Net interchange",
+    "interchangeHint": "negative means net import"
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "model": {
+    "heading": "Grid model",
+    "synthetic": "Synthetic",
+    "note": "Generated for scale. This is not EIA data.",
+    "kinds": {
+      "substation": "Substations",
+      "line": "Lines",
+      "generator": "Generators",
+      "load": "Loads"
+    }
+  }
 }
