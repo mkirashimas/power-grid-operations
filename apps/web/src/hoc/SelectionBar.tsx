@@ -46,7 +46,7 @@ export const SelectionBar = () => {
           {t(`selection.kinds.${asset.kind}`)} · {t(`selection.zones.${asset.zone}`)}
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
-        <Stack direction="row" useFlexGap sx={{ alignItems: 'center', gap: 1 }}>
+        <Stack direction="row" useFlexGap sx={{ alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
           {VIEWS.filter((view) => view.to !== pathname).map((view) => (
             <Button
               key={view.key}
@@ -57,6 +57,9 @@ export const SelectionBar = () => {
               {t('selection.openIn', { view: t(`nav.${view.key}`) })}
             </Button>
           ))}
+          <Button size="small" component={NextLink} href={PATHS.newIncident(asset.id)}>
+            {t('selection.reportIncident')}
+          </Button>
           <IconButton label={t('selection.clear')} onClick={() => dispatch(clearSelection())}>
             <CloseOutlined fontSize="small" />
           </IconButton>

@@ -22,7 +22,8 @@
     "charts": "Grafici",
     "alarms": "Allarmi",
     "map": "Mappa",
-    "network": "Rete"
+    "network": "Rete",
+    "incidents": "Incidenti"
   },
   "notFound": {
     "title": "Pagina non trovata",
@@ -32,6 +33,7 @@
   "selection": {
     "label": "Asset selezionato",
     "openIn": "Apri in {{view}}",
+    "reportIncident": "Segnala incidente",
     "clear": "Cancella la selezione",
     "kinds": {
       "substation": "Sottostazione",
