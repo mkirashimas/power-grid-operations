@@ -54,7 +54,7 @@ const NUCLEAR_ZONES: WeatherZone[] = ['north-central', 'coast'];
 const pad = (value: number, length: number) => String(value).padStart(length, '0');
 
 /** Equirectangular distance in km; plenty accurate within Texas. */
-const distanceKm = (a: Asset, b: Asset) => {
+export const distanceKm = (a: Pick<Asset, 'lat' | 'lon'>, b: Pick<Asset, 'lat' | 'lon'>) => {
   const meanLat = ((a.lat + b.lat) / 2) * (Math.PI / 180);
   const dx = (a.lon - b.lon) * Math.cos(meanLat) * 111.32;
   const dy = (a.lat - b.lat) * 110.57;

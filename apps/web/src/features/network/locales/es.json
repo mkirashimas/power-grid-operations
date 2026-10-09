@@ -1,0 +1,75 @@
+{
+  "title": "Red",
+  "intro": "La red sintética como grafo: recórrela en el árbol de activos, mírala en el grafo de topología y prueba un cambio con un estudio de flujo de potencia DC antes de que ocurra.",
+  "synthetic": "Sintético",
+  "mode": {
+    "label": "Colores de las líneas",
+    "live": "En vivo",
+    "study": "Qué pasaría si"
+  },
+  "zone": {
+    "label": "Zona",
+    "all": "Todas las zonas"
+  },
+  "tree": {
+    "title": "Activos",
+    "label": "Activos por zona y subestación",
+    "filter": "Filtrar activos",
+    "filterPlaceholder": "Nombre, p. ej. CST-001",
+    "clear": "Borrar filtro",
+    "empty": "Ningún activo coincide con este filtro."
+  },
+  "graph": {
+    "title": "Topología",
+    "label": "Grafo de la red: {{substations}} subestaciones y {{lines}} líneas",
+    "hint": "Usa el árbol de activos para recorrer la red con el teclado. Ctrl y la rueda del ratón hacen zoom en el grafo."
+  },
+  "editor": {
+    "heading": "Estudio qué pasaría si",
+    "title": "Cambiar un activo",
+    "empty": "Selecciona una línea, subestación, carga o generador en el árbol o en el grafo para cambiarlo.",
+    "trip": "Disparar línea",
+    "restore": "Restablecer línea",
+    "offline": "Desconectar",
+    "online": "Volver a conectar",
+    "load": "Carga en {{name}}",
+    "loadValue": "{{value}} %",
+    "edits": "Cambios",
+    "noEdits": "Todavía no hay cambios.",
+    "undo": "Deshacer: {{edit}}",
+    "reset": "Restablecer estudio"
+  },
+  "edits": {
+    "trip": "{{name}} disparada",
+    "load": "Carga en {{name}} {{value}} %",
+    "offline": "{{name}} desconectado"
+  },
+  "results": {
+    "empty": "Haz un cambio para ver cómo se mueven los flujos respecto al caso base.",
+    "overloads": "Nuevas sobrecargas: {{total}}",
+    "noOverloads": "Sin nuevas sobrecargas.",
+    "islands": "Subestaciones sin suministro: {{total}} ({{mw}} MW de carga sin servir)",
+    "table": "Líneas que más cambiaron",
+    "line": "Línea",
+    "base": "Base",
+    "study": "Estudio",
+    "delta": "Cambio",
+    "tripped": "Disparada",
+    "pct": "{{value}} %"
+  },
+  "statuses": {
+    "normal": "Normal",
+    "warning": "Aviso",
+    "alarm": "Alarma"
+  },
+  "zones": {
+    "coast": "Costa",
+    "east": "Este",
+    "far-west": "Lejano Oeste",
+    "north": "Norte",
+    "north-central": "Centro Norte",
+    "south-central": "Centro Sur",
+    "southern": "Sur",
+    "west": "Oeste"
+  }
+}

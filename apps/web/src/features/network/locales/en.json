@@ -1,0 +1,75 @@
+{
+  "title": "Network",
+  "intro": "The synthetic grid as a network: browse it in the asset tree, see it on the topology graph, and test a change with a DC power-flow study before it happens.",
+  "synthetic": "Synthetic",
+  "mode": {
+    "label": "Line colours",
+    "live": "Live",
+    "study": "What-if"
+  },
+  "zone": {
+    "label": "Zone",
+    "all": "All zones"
+  },
+  "tree": {
+    "title": "Assets",
+    "label": "Assets by zone and substation",
+    "filter": "Filter assets",
+    "filterPlaceholder": "Name, e.g. CST-001",
+    "clear": "Clear filter",
+    "empty": "No asset matches this filter."
+  },
+  "graph": {
+    "title": "Topology",
+    "label": "Network graph: {{substations}} substations and {{lines}} lines",
+    "hint": "Use the asset tree to move through the network with the keyboard. Ctrl and the mouse wheel zoom the graph."
+  },
+  "editor": {
+    "heading": "What-if study",
+    "title": "Change an asset",
+    "empty": "Select a line, substation, load or generator in the tree or on the graph to change it.",
+    "trip": "Trip line",
+    "restore": "Restore line",
+    "offline": "Take offline",
+    "online": "Bring back online",
+    "load": "Load at {{name}}",
+    "loadValue": "{{value}} %",
+    "edits": "Changes",
+    "noEdits": "No changes yet.",
+    "undo": "Undo: {{edit}}",
+    "reset": "Reset study"
+  },
+  "edits": {
+    "trip": "{{name}} tripped",
+    "load": "Load at {{name}} {{value}} %",
+    "offline": "{{name}} offline"
+  },
+  "results": {
+    "empty": "Make a change to see how flows move compared with the base case.",
+    "overloads": "New overloads: {{total}}",
+    "noOverloads": "No new overloads.",
+    "islands": "Substations without supply: {{total}} ({{mw}} MW of load unserved)",
+    "table": "Lines that changed most",
+    "line": "Line",
+    "base": "Base",
+    "study": "Study",
+    "delta": "Change",
+    "tripped": "Tripped",
+    "pct": "{{value}} %"
+  },
+  "statuses": {
+    "normal": "Normal",
+    "warning": "Warning",
+    "alarm": "Alarm"
+  },
+  "zones": {
+    "coast": "Coast",
+    "east": "East",
+    "far-west": "Far West",
+    "north": "North",
+    "north-central": "North Central",
+    "south-central": "South Central",
+    "southern": "Southern",
+    "west": "West"
+  }
+}

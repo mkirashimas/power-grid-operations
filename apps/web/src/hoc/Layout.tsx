@@ -1,6 +1,7 @@
 'use client';
 
 // Per-icon imports: the package index pulls in thousands of modules.
+import AccountTreeOutlined from '@mui/icons-material/AccountTreeOutlined';
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import HomeOutlined from '@mui/icons-material/HomeOutlined';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
@@ -52,6 +53,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'charts', to: PATHS.CHARTS, icon: <ShowChartOutlined /> },
   { key: 'alarms', to: PATHS.ALARMS, icon: <NotificationsActiveOutlined /> },
   { key: 'map', to: PATHS.MAP, icon: <MapOutlined /> },
+  { key: 'network', to: PATHS.NETWORK, icon: <AccountTreeOutlined /> },
 ];
 
 const isSelected = (item: NavItem, pathname: string) =>

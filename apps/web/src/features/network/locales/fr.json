@@ -1,0 +1,75 @@
+{
+  "title": "Réseau",
+  "intro": "Le réseau synthétique sous forme de graphe : parcourez-le dans l’arbre des équipements, voyez-le sur le graphe de topologie et testez un changement avec une étude de répartition de charge en courant continu avant qu’il ne se produise.",
+  "synthetic": "Synthétique",
+  "mode": {
+    "label": "Couleurs des lignes",
+    "live": "En direct",
+    "study": "Simulation"
+  },
+  "zone": {
+    "label": "Zone",
+    "all": "Toutes les zones"
+  },
+  "tree": {
+    "title": "Équipements",
+    "label": "Équipements par zone et par poste",
+    "filter": "Filtrer les équipements",
+    "filterPlaceholder": "Nom, p. ex. CST-001",
+    "clear": "Effacer le filtre",
+    "empty": "Aucun équipement ne correspond à ce filtre."
+  },
+  "graph": {
+    "title": "Topologie",
+    "label": "Graphe du réseau : {{substations}} postes et {{lines}} lignes",
+    "hint": "Utilisez l’arbre des équipements pour parcourir le réseau au clavier. Ctrl et la molette zooment le graphe."
+  },
+  "editor": {
+    "heading": "Étude de simulation",
+    "title": "Modifier un équipement",
+    "empty": "Sélectionnez une ligne, un poste, une charge ou un générateur dans l’arbre ou sur le graphe pour le modifier.",
+    "trip": "Déclencher la ligne",
+    "restore": "Rétablir la ligne",
+    "offline": "Mettre hors service",
+    "online": "Remettre en service",
+    "load": "Charge au poste {{name}}",
+    "loadValue": "{{value}} %",
+    "edits": "Modifications",
+    "noEdits": "Aucune modification pour l’instant.",
+    "undo": "Annuler : {{edit}}",
+    "reset": "Réinitialiser l’étude"
+  },
+  "edits": {
+    "trip": "{{name}} déclenchée",
+    "load": "Charge au poste {{name}} {{value}} %",
+    "offline": "{{name}} hors service"
+  },
+  "results": {
+    "empty": "Faites une modification pour voir comment les flux évoluent par rapport au cas de base.",
+    "overloads": "Nouvelles surcharges : {{total}}",
+    "noOverloads": "Aucune nouvelle surcharge.",
+    "islands": "Postes sans alimentation : {{total}} ({{mw}} MW de charge non desservie)",
+    "table": "Lignes les plus modifiées",
+    "line": "Ligne",
+    "base": "Base",
+    "study": "Étude",
+    "delta": "Écart",
+    "tripped": "Déclenchée",
+    "pct": "{{value}} %"
+  },
+  "statuses": {
+    "normal": "Normal",
+    "warning": "Avertissement",
+    "alarm": "Alarme"
+  },
+  "zones": {
+    "coast": "Côte",
+    "east": "Est",
+    "far-west": "Extrême Ouest",
+    "north": "Nord",
+    "north-central": "Centre Nord",
+    "south-central": "Centre Sud",
+    "southern": "Sud",
+    "west": "Ouest"
+  }
+}

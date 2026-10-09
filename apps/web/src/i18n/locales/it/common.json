@@ -21,7 +21,8 @@
     "telemetry": "Telemetria",
     "charts": "Grafici",
     "alarms": "Allarmi",
-    "map": "Mappa"
+    "map": "Mappa",
+    "network": "Rete"
   },
   "notFound": {
     "title": "Pagina non trovata",

@@ -7,6 +7,7 @@ export const PATHS = {
   CHARTS: '/charts',
   ALARMS: '/alarms',
   MAP: '/map',
+  NETWORK: '/network',
 } as const;
 
 export type Path = Extract<(typeof PATHS)[keyof typeof PATHS], string>;

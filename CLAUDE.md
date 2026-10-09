@@ -90,6 +90,13 @@ not the roadmap.
     because `@pgo/ui` imports it.
   - WASM loading can fail: fall back to JS and say so in the UI.
   - Toolchain: rustup stable with `wasm32-unknown-unknown` (`rust-toolchain.toml`), wasm-pack 0.15.
+- **Network view** (`features/network`):
+  - The study engine (`engine/`: network, DC flow, study) is pure TypeScript with Node tests.
+    Keep it free of React and of the live feed.
+  - React Flow (`@xyflow/react`) and the tree (`@mui/x-tree-view`) are imported only in
+    client components, with React Flow's CSS imported there.
+  - Graph nodes get an explicit width and height (the minimap needs them in read-only mode).
+  - The tree is the keyboard path; graph nodes are not focusable.
 - **Large tables** use `VirtualGrid` from `@pgo/ui`. It handles millions of rows (scaled
   scrolling) and the ARIA grid keyboard pattern.
 - **Real-time data** comes from `services/realtime` (`@pgo/realtime`, Cloud Run `pgo-realtime`).
