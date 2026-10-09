@@ -44,9 +44,43 @@ jobs:
           path: apps/web/playwright-report
           retention-days: 7
 
+  rust:
+    name: Rust and WASM
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/downsample/rust
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-pack
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: yarn
+
+      - run: yarn install --frozen-lockfile --non-interactive
+
+      # cargo fmt --check, clippy -D warnings, cargo test.
+      - run: yarn wasm:test
+      # Rebuild the WASM and check JS/WASM parity against the fresh build. The committed
+      # packages/downsample/pkg is not diffed: builds are not byte-identical across platforms.
+      - run: yarn wasm:build
+      - run: yarn workspace @pgo/downsample test
+
   deploy-web:
     name: Deploy web to Cloud Run
-    needs: checks
+    needs: [checks, rust]
     # Deploys only pushes to main, once the GCP variables exist (see docs/deploy.md).
     # Pushes to development and pull requests run the checks only.
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.GCP_PROJECT_ID != ''

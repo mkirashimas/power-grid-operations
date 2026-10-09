@@ -1,5 +1,6 @@
 import type { ChartSeriesColor } from '../../theme/types.ts';
 import type { Domain } from './domain.ts';
+import type { DownsampleResult } from './downsample.ts';
 
 export interface ChartSeries {
   id: string;
@@ -24,8 +25,27 @@ export interface ChartBand {
 export interface RenderStats {
   inputPoints: number;
   drawnPoints: number;
+  /** Main-thread time: preparing the data and drawing. */
+  ms: number;
+  /** Time the pane's `downsample` function reported (e.g. in a worker), if it has one. */
+  downsampleMs?: number;
+}
+
+/** A line downsampled outside the pane, with the time it took. */
+export interface DownsampledLine extends DownsampleResult {
   ms: number;
 }
+
+/**
+ * Downsamples one series of a pane asynchronously, e.g. in a Web Worker. The pane calls it
+ * whenever the range or width changes and ignores answers that arrive out of date.
+ */
+export type PaneDownsampler = (
+  series: ChartSeries,
+  from: number,
+  to: number,
+  buckets: number,
+) => Promise<DownsampledLine>;
 
 /** What a pane shows, for its screen-reader summary. */
 export interface PaneSummaryInput {

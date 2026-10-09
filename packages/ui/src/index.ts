@@ -8,6 +8,8 @@ export type {
   ChartBand,
   ChartLabels,
   ChartSeries,
+  DownsampledLine,
+  PaneDownsampler,
   PaneSummaryInput,
   RenderStats,
 } from './components/charts/types.ts';

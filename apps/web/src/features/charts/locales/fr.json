@@ -43,9 +43,33 @@
   },
   "summary": "{{title}}, du {{from}} au {{to}} : {{series}}.",
   "summaryItem": "{{label}} de {{min}} à {{max}}",
-  "highResStats": "{{input}} → {{drawn}} points dessinés en {{ms}} ms",
   "loadingHighRes": "Génération de la série à la seconde…",
+  "highResFailed": "Impossible de générer la série à la seconde : {{message}}",
   "synthetic": "Synthétique",
   "source": "Source :",
-  "live": "en direct, actualisé toutes les heures"
+  "live": "en direct, actualisé toutes les heures",
+  "downsampling": {
+    "engine": "Moteur",
+    "algorithm": "Algorithme",
+    "js": "JS",
+    "wasm": "WASM",
+    "minmax": "Min/max",
+    "lttb": "LTTB",
+    "note": "Min/max conserve tous les pics (jusqu’à 4 points par colonne de pixels). LTTB conserve la forme avec un point par colonne, mais peut perdre un pic d’une seule seconde.",
+    "wasmUnavailable": "WebAssembly n’a pas pu être chargé dans ce navigateur : le sous-échantillonnage se fait en JS.",
+    "stats": "{{input}} → {{drawn}} points · {{engine}} {{algorithm}} en {{downsampleMs}} ms dans un worker · tracé en {{drawMs}} ms"
+  },
+  "benchmark": {
+    "run": "Lancer le benchmark",
+    "running": "Benchmark en cours…",
+    "done": "Benchmark terminé.",
+    "failed": "Le benchmark a échoué : {{message}}",
+    "caption": "Médiane de 7 exécutions dans un Web Worker sur cet appareil, réduites à {{buckets}} colonnes de pixels",
+    "range": "Plage",
+    "algorithm": "Algorithme",
+    "points": "Points dans la plage",
+    "speedup": "Gain WASM",
+    "ms": "{{value}} ms",
+    "times": "{{value}}×"
+  }
 }

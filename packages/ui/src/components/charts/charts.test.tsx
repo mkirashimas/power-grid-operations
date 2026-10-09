@@ -1,12 +1,18 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { expectNoAxeViolations, renderWithTheme } from '../../test/utils.tsx';
 import { ChartWorkbench } from './ChartWorkbench.tsx';
 import type { Domain } from './domain.ts';
 import { TimeSeriesPane } from './TimeSeriesPane.tsx';
-import type { ChartLabels, ChartSeries, RenderStats } from './types.ts';
+import type {
+  ChartLabels,
+  ChartSeries,
+  DownsampledLine,
+  PaneDownsampler,
+  RenderStats,
+} from './types.ts';
 
 const HOUR = 3_600_000;
 const START = Date.UTC(2026, 9, 1);
@@ -45,7 +51,13 @@ const FORECAST: ChartSeries = {
   dashed: true,
 };
 
-const Charts = ({ onRenderStats }: { onRenderStats?: (stats: RenderStats) => void }) => {
+const Charts = ({
+  onRenderStats,
+  downsample,
+}: {
+  onRenderStats?: (stats: RenderStats) => void;
+  downsample?: PaneDownsampler;
+}) => {
   const [domain, setDomain] = useState<Domain>(FULL);
   return (
     <ChartWorkbench
@@ -65,6 +77,7 @@ const Charts = ({ onRenderStats }: { onRenderStats?: (stats: RenderStats) => voi
           `Demand vs forecast. ${series.map((s) => `${s.label} ${Math.round(s.min)} to ${Math.round(s.max)} MW`).join('; ')}`
         }
         onRenderStats={onRenderStats}
+        downsample={downsample}
       />
     </ChartWorkbench>
   );
@@ -170,5 +183,74 @@ describe('ChartWorkbench and TimeSeriesPane', () => {
     const chart = screen.getByRole('img', { name: /Demand vs forecast/ });
     fireEvent.keyDown(chart, { key: 'ArrowLeft', shiftKey: true });
     expect(range.textContent).not.toBe(before);
+  });
+});
+
+describe('TimeSeriesPane with async downsampling', () => {
+  // jsdom has no ResizeObserver; report an 800 px wide pane.
+  class FixedWidthObserver {
+    private readonly callback: ResizeObserverCallback;
+    constructor(callback: ResizeObserverCallback) {
+      this.callback = callback;
+    }
+    observe() {
+      this.callback(
+        [{ contentRect: { width: 800 } } as ResizeObserverEntry],
+        this as unknown as ResizeObserver,
+      );
+    }
+    disconnect() {}
+    unobserve() {}
+  }
+  beforeEach(() => vi.stubGlobal('ResizeObserver', FixedWidthObserver));
+  afterEach(() => vi.unstubAllGlobals());
+
+  const line = (min: number, max: number): DownsampledLine => ({
+    time: Float64Array.from([START, START + HOUR]),
+    value: Float64Array.from([min, max]),
+    inputCount: 721,
+    ms: 1,
+  });
+
+  /** A downsampler whose answers the test releases by hand. */
+  const deferred = () => {
+    const calls: { buckets: number; resolve: (line: DownsampledLine) => void }[] = [];
+    const downsample: PaneDownsampler = (_series, _from, _to, buckets) =>
+      new Promise((resolve) => calls.push({ buckets, resolve }));
+    return { calls, downsample };
+  };
+
+  it('requests every line at the plot width and draws the answers', async () => {
+    const { calls, downsample } = deferred();
+    renderWithTheme(<Charts downsample={downsample} />);
+
+    // 800 px minus the 72 px of axis margins.
+    expect(calls.map((call) => call.buckets)).toEqual([728, 728]);
+    await act(async () => {
+      calls[0].resolve(line(100, 200));
+      calls[1].resolve(line(300, 400));
+    });
+    expect(
+      screen.getByRole('img', {
+        name: /Demand 100 to 200 MW; Forecast 300 to 400 MW/,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it('ignores answers that arrive after a newer request', async () => {
+    const { calls, downsample } = deferred();
+    renderWithTheme(<Charts downsample={downsample} />);
+    fireEvent.click(screen.getByRole('button', { name: '7 d' }));
+    expect(calls).toHaveLength(4);
+
+    await act(async () => {
+      calls[2].resolve(line(1000, 2000));
+      calls[3].resolve(line(1000, 2000));
+    });
+    await act(async () => {
+      calls[0].resolve(line(1, 2));
+      calls[1].resolve(line(1, 2));
+    });
+    expect(screen.getByRole('img', { name: /Demand 1000 to 2000 MW/ })).toBeInTheDocument();
   });
 });

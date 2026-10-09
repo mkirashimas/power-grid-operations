@@ -34,7 +34,9 @@ cp apps/web/.env.example apps/web/.env.local   # optional: add your EIA API key
 yarn dev                                        # http://localhost:3000
 ```
 
-Without a key, the app runs on the committed EIA snapshot.
+Without a key, the app runs on the committed EIA snapshot. Rust is only needed to change the
+WebAssembly code: the built module is committed (see
+[M5: Rust/WASM downsampling](docs/m5-wasm-downsampling.md)).
 
 <details>
 <summary><b>Tech stack</b></summary>
@@ -46,7 +48,7 @@ Without a key, the app runs on the committed EIA snapshot.
 | Design system  | `@pgo/ui` on Material UI, documented in Storybook                                       |
 | State and data | Redux Toolkit + RTK Query                                                               |
 | i18n           | i18next, in English, Spanish, French, Italian and Romanian                              |
-| Compute        | Rust compiled to WebAssembly                                                            |
+| Compute        | Rust compiled to WebAssembly (`wasm-bindgen`, `wasm-pack`), run in Web Workers          |
 | Map            | MapLibre GL with OpenFreeMap tiles (no API key)                                         |
 | Tests          | Vitest + Testing Library + axe-core, Playwright + axe (pages and every Storybook story) |
 | Hosting        | Google Cloud Run: the web app and a small real-time service                             |
@@ -108,7 +110,8 @@ apps/web/          Next.js app
   src/hoc/         app shell: Providers (Redux, theme, i18n) and Layout
   src/features/    self-contained feature modules
     telemetry/     /telemetry: 1M+ row grid; query engine and Web Worker
-    charts/        /charts: chart workbench over EIA data and a 2.6M-point series
+    charts/        /charts: chart workbench over EIA data and a 2.6M-point series;
+                   downsampling worker (JS or WASM) and benchmark
   src/i18n/        i18next setup, server and client
   src/store/       Redux store and the base RTK Query api
   src/theme/       MUI locales (the theme itself lives in packages/ui)
@@ -116,6 +119,9 @@ apps/web/          Next.js app
   src/server/      server-only data access (EIA client with snapshot fallback, assets)
   e2e/             Playwright tests
 packages/
+  downsample/      min/max and LTTB downsampling in TypeScript and in Rust
+    rust/          Rust crate, compiled to WebAssembly
+    pkg/           wasm-pack output (committed; rebuilt with yarn wasm:build)
   grid-model/      shared types, EIA client, synthetic grid, telemetry and 1-second load
     data/          committed EIA snapshot
   ui/              design system: theme, accessible components, Storybook stories
@@ -134,6 +140,8 @@ docs/              deployment guide and one plan per milestone
 | `yarn lint` / `yarn typecheck` | ESLint / TypeScript                                                                      |
 | `yarn test`                    | unit and component tests (Vitest), in every workspace                                    |
 | `yarn data:fetch`              | downloads the last 30 days of ERCOT data from EIA into the committed snapshot            |
+| `yarn wasm:build`              | rebuilds the Rust/WASM module into `packages/downsample/pkg` (needs Rust and wasm-pack)  |
+| `yarn wasm:test`               | `cargo fmt --check`, `cargo clippy` and `cargo test` for the Rust crate                  |
 | `yarn storybook`               | local Storybook at http://localhost:6006, with hot reload                                |
 | `yarn build:storybook`         | static Storybook into `apps/web/public/storybook`, served by the web app at `/storybook` |
 | `yarn e2e`                     | builds, starts and runs the Playwright tests (desktop and mobile, with axe checks)       |
@@ -167,6 +175,15 @@ Run `yarn workspace @pgo/web playwright install chromium` once before the first 
   pixel column (first, min, max, last), so a 2.6M-point series draws in milliseconds and no
   peak is lost. Every chart is also a `role="img"` with a text summary, keyboard-operable, and has
   a table view.
+- **Rust/WASM in a worker, measured.** The 1-second series is generated and downsampled in a
+  Web Worker. Rust copies it into WebAssembly memory once, so each request only passes the
+  range. The Rust and TypeScript versions perform the same operations in the same order, so a
+  test checks that they return identical points. A JS vs WASM toggle and a benchmark show the
+  difference on the visitor's own machine.
+- **Downsampling that reads less memory.** Min/max finds each pixel column's end by binary
+  search, so it only scans the values, not the timestamps. At 2.6M points both engines are
+  limited by memory bandwidth, and WASM is about as fast as JS. On the arithmetic-heavy
+  LTTB, WASM is about 1.4× faster.
 - **Accessibility checked in CI.** Every Playwright page test runs axe (WCAG 2.1 AA) in both
   color schemes. The shell has a skip link, labelled landmarks and `aria-current` navigation.
 - **Open demo.** There is no sign-in. All data is public or synthetic.
@@ -188,16 +205,21 @@ Telemetry table, `/telemetry`: 1,076,544 rows, Chromium desktop, production buil
 The page never blocks: all of this runs in a worker. The grid keeps about 40 rows in the DOM,
 whatever the row count.
 
-Chart workbench, `/charts`: the synthetic 1-second load series, min/max-downsampled to the pane width
-(Chromium desktop).
+Chart workbench, `/charts`: the synthetic 1-second load series, downsampled in a Web Worker to
+1,000 pixel columns. These are the page's own benchmark figures: the median of 7 runs, Chromium
+desktop, production build.
 
-| Visible range | Points in range | Points drawn | Downsample + draw |
-| ------------- | --------------- | ------------ | ----------------- |
-| 24 h          | 39,602          | 1,572        | 0.8 ms            |
-| 7 days        | 558,002         | 3,223        | 4.7 ms            |
-| 30 days       | 2,588,401       | 3,427        | 19.7 ms           |
+| Range   | Points in range | Min/max JS | Min/max WASM | LTTB JS | LTTB WASM |
+| ------- | --------------- | ---------- | ------------ | ------- | --------- |
+| 24 h    | 86,402          | 1.2 ms     | 0.6 ms       | 0.7 ms  | 0.4 ms    |
+| 7 days  | 604,802         | 1.7 ms     | 2.1 ms       | 2.7 ms  | 2.0 ms    |
+| 30 days | 2,588,401       | 5.5 ms     | 5.8 ms       | 12.2 ms | 8.1 ms    |
 
-Generating the 2.6M-point series takes about 420 ms. It runs once, after the first paint.
+- **Min/max** keeps up to 4 points per column, about 3,400 for a wide pane. **LTTB** keeps one
+  point per column.
+- Drawing the result takes under 1 ms on the main thread.
+- In M4, downsampling and drawing ran on the main thread and took 19.7 ms for 30 days.
+- The series is generated once, in the worker, so the page never blocks.
 
 </details>
 
@@ -297,3 +319,4 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 - [M2: Component library](docs/m2-component-library.md)
 - [M3: Telemetry table](docs/m3-telemetry-table.md)
 - [M4: Chart workbench](docs/m4-chart-workbench.md)
+- [M5: Rust/WASM downsampling](docs/m5-wasm-downsampling.md)
