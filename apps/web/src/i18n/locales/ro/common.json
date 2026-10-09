@@ -21,7 +21,8 @@
     "telemetry": "Telemetrie",
     "charts": "Grafice",
     "alarms": "Alarme",
-    "map": "Hartă"
+    "map": "Hartă",
+    "network": "Rețea"
   },
   "notFound": {
     "title": "Pagina nu a fost găsită",

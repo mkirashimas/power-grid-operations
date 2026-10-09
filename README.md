@@ -116,6 +116,7 @@ apps/web/          Next.js app
                    downsampling worker (JS or WASM) and benchmark
     alarms/        /alarms: live alarm feed over a WebSocket (RTK Query streaming)
     map/           /map: MapLibre map of the grid, coloured by live loading
+    network/       /network: asset tree, React Flow topology, what-if DC power-flow study
   src/i18n/        i18next setup, server and client
   src/store/       Redux store, the base RTK Query api, the linked selection and the
                    shared live feed (store/live: WebSocket client used by alarms and map)
@@ -217,6 +218,12 @@ Run `yarn workspace @pgo/web playwright install chromium` once before the first 
     everywhere.
   - **Accessible alternative:** **Show as table** lists every asset with live values for
     keyboard and screen-reader users.
+- **What-if studies in the browser.** `/network` runs a DC power flow (dense LU over 400
+  buses, a few ms) for every change: tripped lines, scaled loads, generators offline. It
+  compares the study with the base case and lists new overloads and islands.
+  - **Shareable studies:** the edits live in the URL (`study=t.ln-0012~l.sub-cst-001.20`).
+  - **N-0 secure base case:** line ratings are set so the base case peaks at 80 %, because
+    the synthetic grid's nameplate ratings don't come from a planned network.
 - **Accessibility checked in CI.** Every Playwright page test runs axe (WCAG 2.1 AA) in both
   color schemes. The shell has a skip link, labelled landmarks and `aria-current` navigation.
 - **Open demo.** There is no sign-in. All data is public or synthetic.
@@ -357,3 +364,4 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 - [M6: Real-time + alarm feed](docs/m6-realtime-alarms.md)
 - [M7: Linked selection](docs/m7-linked-selection.md)
 - [M8: Live map](docs/m8-live-map.md)
+- [M9: Network view](docs/m9-network-view.md)

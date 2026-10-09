@@ -1,0 +1,75 @@
+{
+  "title": "Rețea",
+  "intro": "Rețeaua sintetică sub formă de graf: parcurge-o în arborele de echipamente, vezi-o pe graful topologiei și testează o modificare cu un studiu de circulație de puteri DC înainte să se întâmple.",
+  "synthetic": "Sintetic",
+  "mode": {
+    "label": "Culorile liniilor",
+    "live": "Live",
+    "study": "Simulare"
+  },
+  "zone": {
+    "label": "Zonă",
+    "all": "Toate zonele"
+  },
+  "tree": {
+    "title": "Echipamente",
+    "label": "Echipamente pe zone și stații",
+    "filter": "Filtrează echipamentele",
+    "filterPlaceholder": "Nume, de ex. CST-001",
+    "clear": "Șterge filtrul",
+    "empty": "Niciun echipament nu corespunde filtrului."
+  },
+  "graph": {
+    "title": "Topologie",
+    "label": "Graful rețelei: {{substations}} stații și {{lines}} linii",
+    "hint": "Folosește arborele de echipamente pentru a parcurge rețeaua cu tastatura. Ctrl și rotița mouse-ului măresc graful."
+  },
+  "editor": {
+    "heading": "Studiu de simulare",
+    "title": "Modifică un echipament",
+    "empty": "Selectează o linie, o stație, un consumator sau un generator în arbore sau pe graf pentru a-l modifica.",
+    "trip": "Declanșează linia",
+    "restore": "Repune linia",
+    "offline": "Scoate din funcțiune",
+    "online": "Repune în funcțiune",
+    "load": "Consum în {{name}}",
+    "loadValue": "{{value}} %",
+    "edits": "Modificări",
+    "noEdits": "Încă nu există modificări.",
+    "undo": "Anulează: {{edit}}",
+    "reset": "Resetează studiul"
+  },
+  "edits": {
+    "trip": "{{name}} declanșată",
+    "load": "Consum în {{name}} {{value}} %",
+    "offline": "{{name}} scos din funcțiune"
+  },
+  "results": {
+    "empty": "Fă o modificare pentru a vedea cum se schimbă circulațiile față de cazul de bază.",
+    "overloads": "Suprasarcini noi: {{total}}",
+    "noOverloads": "Nicio suprasarcină nouă.",
+    "islands": "Stații fără alimentare: {{total}} ({{mw}} MW de consum neacoperit)",
+    "table": "Liniile care s-au schimbat cel mai mult",
+    "line": "Linie",
+    "base": "Bază",
+    "study": "Studiu",
+    "delta": "Variație",
+    "tripped": "Declanșată",
+    "pct": "{{value}} %"
+  },
+  "statuses": {
+    "normal": "Normal",
+    "warning": "Avertizare",
+    "alarm": "Alarmă"
+  },
+  "zones": {
+    "coast": "Coastă",
+    "east": "Est",
+    "far-west": "Vestul Îndepărtat",
+    "north": "Nord",
+    "north-central": "Centru-Nord",
+    "south-central": "Centru-Sud",
+    "southern": "Sud",
+    "west": "Vest"
+  }
+}

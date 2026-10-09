@@ -21,7 +21,8 @@
     "telemetry": "Telemetry",
     "charts": "Charts",
     "alarms": "Alarms",
-    "map": "Map"
+    "map": "Map",
+    "network": "Network"
   },
   "notFound": {
     "title": "Page not found",

@@ -21,7 +21,8 @@
     "telemetry": "Télémesures",
     "charts": "Graphiques",
     "alarms": "Alarmes",
-    "map": "Carte"
+    "map": "Carte",
+    "network": "Réseau"
   },
   "notFound": {
     "title": "Page introuvable",
