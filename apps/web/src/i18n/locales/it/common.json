@@ -20,7 +20,8 @@
     "home": "Panoramica",
     "telemetry": "Telemetria",
     "charts": "Grafici",
-    "alarms": "Allarmi"
+    "alarms": "Allarmi",
+    "map": "Mappa"
   },
   "notFound": {
     "title": "Pagina non trovata",

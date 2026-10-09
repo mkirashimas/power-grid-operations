@@ -60,6 +60,9 @@ describe('realtime service', () => {
     const hello = await client.next(isHello);
     expect(hello.tickMs).toBe(50);
     expect(hello.history.length).toBeGreaterThan(0);
+    // Every asset's values, so a map can colour everything from the first message.
+    expect(hello.assets.length % 3).toBe(0);
+    expect(hello.assets.length / 3).toBeGreaterThan(1800);
 
     const tick = await client.next(isTick);
     expect(tick.tick.load).toBeGreaterThan(0);

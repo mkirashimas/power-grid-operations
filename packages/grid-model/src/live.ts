@@ -85,6 +85,8 @@ export interface LiveSimulator {
   recentAlarms: (limit?: number) => LiveAlarm[];
   /** Latest loading (%) and voltage (pu) of one asset, or undefined for an unknown index. */
   assetValues: (index: number) => { loadingPct: number; voltagePu: number } | undefined;
+  /** Every asset's current values as flat triples: [index, loadingPct, voltagePu, …]. */
+  snapshotAssets: () => number[];
 }
 
 interface Disturbance {
@@ -310,10 +312,17 @@ export const createLiveSimulator = ({
       ? { loadingPct: round(loading[index], 1), voltagePu: round(voltage[index], 3) }
       : undefined;
 
+  const snapshotAssets = () => {
+    const flat: number[] = [];
+    for (let i = 0; i < n; i += 1) flat.push(i, round(loading[i], 1), round(voltage[i], 3));
+    return flat;
+  };
+
   return {
     step,
     acknowledge,
     recentAlarms: (limit = keep) => recent.slice(0, limit),
     assetValues,
+    snapshotAssets,
   };
 };

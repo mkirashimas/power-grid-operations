@@ -1,15 +1,16 @@
-import { api } from '../../store/api';
-import { applyMessage, initialLiveFeed, type LiveFeedState } from './live';
+import { api } from '../api';
+import { applyMessage, initialLiveFeed, type LiveFeedState } from './feed';
 import { openLiveSocket, type LiveSocket } from './socket';
 
 // One socket per realtime URL while its cache entry is in use; mutations send through it.
 const sockets = new Map<string, LiveSocket>();
 
 /**
- * The live feed from the realtime service. The query itself resolves at once with an empty
+ * The live feed from the realtime service, shared by every view that shows live data (alarms,
+ * map): one cache entry, so one WebSocket per tab. The query itself resolves at once with an empty
  * feed; `onCacheEntryAdded` then opens the WebSocket and folds every message into the cache.
  */
-export const alarmsApi = api.injectEndpoints({
+export const liveApi = api.injectEndpoints({
   endpoints: (build) => ({
     liveFeed: build.query<LiveFeedState, string>({
       queryFn: () => ({ data: initialLiveFeed() }),
@@ -52,4 +53,4 @@ export const alarmsApi = api.injectEndpoints({
   }),
 });
 
-export const { useLiveFeedQuery, useAcknowledgeAlarmMutation, useWatchAssetMutation } = alarmsApi;
+export const { useLiveFeedQuery, useAcknowledgeAlarmMutation, useWatchAssetMutation } = liveApi;

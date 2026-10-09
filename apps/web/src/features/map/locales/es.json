@@ -1,0 +1,74 @@
+{
+  "title": "Mapa",
+  "intro": "La red sintética sobre Texas, coloreada según la carga en vivo del servicio en tiempo real. Haz clic en un activo para seleccionarlo en todas partes; Mostrar como tabla lista todos los activos.",
+  "synthetic": "Sintético",
+  "connection": {
+    "connecting": "Conectando…",
+    "live": "En vivo",
+    "liveLatency": "En vivo · {{ms}} ms",
+    "reconnecting": "Reconectando…",
+    "offline": "Sin conexión, reintentando"
+  },
+  "layers": {
+    "label": "Capas",
+    "withCount": "{{layer}} ({{count}})",
+    "lines": "Líneas",
+    "substations": "Subestaciones",
+    "generators": "Generadores",
+    "loads": "Cargas"
+  },
+  "legend": {
+    "label": "Estado",
+    "normal": "Normal",
+    "warning": "Aviso",
+    "alarm": "Alarma"
+  },
+  "summary": "Mapa de {{count}} activos de la red en Texas: {{alarm}} en alarma, {{warning}} en aviso. Usa Mostrar como tabla para ver una lista.",
+  "failed": "El mapa no se puede mostrar en este navegador (WebGL no está disponible). La tabla de abajo lista todos los activos con sus valores en vivo.",
+  "panel": {
+    "label": "Activo seleccionado",
+    "empty": "Selecciona un activo en el mapa o en la tabla.",
+    "kind": "Tipo",
+    "zone": "Zona",
+    "capacity": "Capacidad",
+    "loading": "Carga",
+    "voltage": "Tensión"
+  },
+  "table": {
+    "label": "Activos",
+    "show": "Mostrar como tabla",
+    "hide": "Ocultar tabla",
+    "asset": "Activo",
+    "kind": "Tipo",
+    "zone": "Zona",
+    "loading": "Carga",
+    "voltage": "Tensión",
+    "status": "Estado"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "credit": {
+    "prefix": "Teselas del mapa:",
+    "data": "datos",
+    "osm": "© colaboradores de OpenStreetMap"
+  },
+  "kinds": {
+    "substation": "Subestación",
+    "line": "Línea",
+    "generator": "Generador",
+    "load": "Carga"
+  },
+  "zones": {
+    "coast": "Costa",
+    "east": "Este",
+    "far-west": "Lejano Oeste",
+    "north": "Norte",
+    "north-central": "Centro Norte",
+    "south-central": "Centro Sur",
+    "southern": "Sur",
+    "west": "Oeste"
+  }
+}

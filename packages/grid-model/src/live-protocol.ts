@@ -17,6 +17,8 @@ export type ServerMessage =
       history: LoadPoint[];
       /** Recent alarms, newest first. */
       alarms: LiveAlarm[];
+      /** Every asset's current values: [index, loadingPct, voltagePu, …] (since M8). */
+      assets: number[];
     }
   | { type: 'tick'; tick: LiveTick }
   | { type: 'alarm'; alarm: LiveAlarm }

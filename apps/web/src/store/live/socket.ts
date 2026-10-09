@@ -1,5 +1,5 @@
 import type { ClientMessage, ServerMessage } from '@pgo/grid-model';
-import type { ConnectionStatus } from './live';
+import type { ConnectionStatus } from './feed';
 
 export interface LiveSocket {
   /** Sends if connected; returns false otherwise. */

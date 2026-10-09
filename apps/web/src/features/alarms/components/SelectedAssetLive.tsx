@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toLanguage } from '../../../i18n/language';
 import { ALARMS_NAMESPACE } from '../i18n';
-import type { WatchedAsset } from '../live';
+import type { WatchedAsset } from '../../../store/live/feed';
 
 const TIME_ZONE = 'America/Chicago';
 

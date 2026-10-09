@@ -63,16 +63,36 @@ test('an acknowledgement in one tab shows in another', async ({ context }) => {
 });
 
 test('acknowledges from the keyboard inside the grid', async ({ page }) => {
+  test.setTimeout(60_000);
   await openAlarms(page);
-  await expect(ackButtons(page).first()).toBeVisible({ timeout: 15_000 });
-  await page.getByRole('button', { name: 'Pause' }).click();
-  const label = (await ackButtons(page).first().getAttribute('aria-label'))!;
 
-  await alarmGrid(page).getByRole('columnheader').first().focus();
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('End');
-  await page.keyboard.press('Enter');
-  await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0);
+  // Other tests acknowledge alarms on the same server at the same time, so an attempt can lose
+  // its target; it then starts again from a fresh, unpaused table.
+  await expect(async () => {
+    const resume = page.getByRole('button', { name: 'Resume' });
+    if (await resume.isVisible()) await resume.click();
+    await expect(ackButtons(page).first()).toBeVisible({ timeout: 10_000 });
+    await page.getByRole('button', { name: 'Pause' }).click();
+    const button = ackButtons(page).first();
+    const label = (await button.getAttribute('aria-label', { timeout: 1000 }))!;
+
+    // The first button is not always in the first row: arrow down to its row, then End to
+    // its cell, and press Enter there.
+    const rowIndex = await button
+      .locator('xpath=ancestor::*[@role="row"]')
+      .getAttribute('aria-rowindex', { timeout: 1000 });
+    const row = Number(rowIndex) - 2;
+    await alarmGrid(page).getByRole('columnheader').first().focus();
+    for (let i = 0; i <= row; i += 1) await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('End');
+    await expect(page.locator(':focus')).toHaveAttribute('data-cell', `${row}:7`, {
+      timeout: 2000,
+    });
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0, {
+      timeout: 3000,
+    });
+  }).toPass({ timeout: 45_000 });
 });
 
 test('filters by severity and zone, kept in the URL', async ({ page }) => {

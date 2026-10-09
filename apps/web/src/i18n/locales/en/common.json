@@ -20,7 +20,8 @@
     "home": "Overview",
     "telemetry": "Telemetry",
     "charts": "Charts",
-    "alarms": "Alarms"
+    "alarms": "Alarms",
+    "map": "Map"
   },
   "notFound": {
     "title": "Page not found",

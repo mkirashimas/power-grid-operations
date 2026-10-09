@@ -20,7 +20,8 @@
     "home": "Prezentare generală",
     "telemetry": "Telemetrie",
     "charts": "Grafice",
-    "alarms": "Alarme"
+    "alarms": "Alarme",
+    "map": "Hartă"
   },
   "notFound": {
     "title": "Pagina nu a fost găsită",

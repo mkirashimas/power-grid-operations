@@ -105,6 +105,16 @@ describe('createLiveSimulator', () => {
     expect(simulator.assetValues(assets.length)).toBeUndefined();
   });
 
+  it('snapshots every asset, matching the latest tick values', () => {
+    const { simulator, results } = run(3);
+    const snapshot = simulator.snapshotAssets();
+    expect(snapshot).toHaveLength(assets.length * 3);
+    expect(snapshot.filter((_, i) => i % 3 === 0)).toEqual(assets.map((asset) => asset.index));
+    const reported = results.at(-1)!.tick.assets;
+    const index = reported[0];
+    expect(snapshot.slice(index * 3, index * 3 + 3)).toEqual(reported.slice(0, 3));
+  });
+
   it('acknowledges an alarm once', () => {
     const { simulator } = run(600, { eventRate: 1 / 10 });
     const [alarm] = simulator.recentAlarms(1);
