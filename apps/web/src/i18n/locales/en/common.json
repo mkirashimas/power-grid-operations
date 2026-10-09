@@ -22,7 +22,8 @@
     "charts": "Charts",
     "alarms": "Alarms",
     "map": "Map",
-    "network": "Network"
+    "network": "Network",
+    "incidents": "Incidents"
   },
   "notFound": {
     "title": "Page not found",
@@ -32,6 +33,7 @@
   "selection": {
     "label": "Selected asset",
     "openIn": "Open in {{view}}",
+    "reportIncident": "Report incident",
     "clear": "Clear selection",
     "kinds": {
       "substation": "Substation",

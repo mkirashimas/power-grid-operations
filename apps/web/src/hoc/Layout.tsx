@@ -8,6 +8,7 @@ import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import MapOutlined from '@mui/icons-material/MapOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsActiveOutlined from '@mui/icons-material/NotificationsActiveOutlined';
+import ReportOutlined from '@mui/icons-material/ReportOutlined';
 import ShowChartOutlined from '@mui/icons-material/ShowChartOutlined';
 import TableRowsOutlined from '@mui/icons-material/TableRowsOutlined';
 import {
@@ -54,6 +55,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'alarms', to: PATHS.ALARMS, icon: <NotificationsActiveOutlined /> },
   { key: 'map', to: PATHS.MAP, icon: <MapOutlined /> },
   { key: 'network', to: PATHS.NETWORK, icon: <AccountTreeOutlined /> },
+  { key: 'incidents', to: PATHS.INCIDENTS, icon: <ReportOutlined /> },
 ];
 
 const isSelected = (item: NavItem, pathname: string) =>

@@ -97,6 +97,26 @@ not the roadmap.
     client components, with React Flow's CSS imported there.
   - Graph nodes get an explicit width and height (the minimap needs them in read-only mode).
   - The tree is the keyboard path; graph nodes are not focusable.
+- **Incident reports** (`features/incidents`):
+  - Reports live in the browser only (IndexedDB `pgo-incidents` via `idb`, `storage/db.ts`).
+    Nothing goes to a server. The samples in `seed.ts` are seeded when the database is created
+    and restored by Reset.
+  - RTK Query endpoints call `storage/db.ts` from `queryFn`. Saves go through
+    `db.updateIncident` (one read-modify-write transaction) and patch `getIncident`
+    optimistically. They invalidate only the list, because refetching the report would reset
+    the editor.
+  - Binary files never go into Redux. Uploads are stored by `storage/uploads.ts` (size, MIME
+    type and `%PDF-` signature checks) before the attachment metadata is saved.
+  - Tiptap and `pdfjs-dist` are imported only in the report's client components. pdf.js loads
+    with a dynamic `import()` (`pdf/pdfjs.ts`), and its worker URL is set with
+    `new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url)`.
+  - The text layer CSS is written in `PdfPage.tsx` (pdf.js's `pdf_viewer.css` is 168 kB). It
+    needs `--total-scale-factor` on the page box.
+  - Links in reports must pass `isSafeLink` (http, https, mailto).
+  - Sample PDFs come from `apps/web/scripts/sample-pdfs.ts` (`yarn workspace @pgo/web samples:pdf`),
+    are committed, and say SYNTHETIC on every page. `seed.test.ts` checks their sizes.
+  - Component tests that mount the editor need jsdom layout stubs (`getClientRects`,
+    `elementFromPoint`); see `ReportEditor.test.tsx`.
 - **Large tables** use `VirtualGrid` from `@pgo/ui`. It handles millions of rows (scaled
   scrolling) and the ARIA grid keyboard pattern.
 - **Real-time data** comes from `services/realtime` (`@pgo/realtime`, Cloud Run `pgo-realtime`).

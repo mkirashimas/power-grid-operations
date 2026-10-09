@@ -17,7 +17,7 @@ One app, a grid operations console:
 | Alarm feed        | Live stream that updates the map, table and charts                          |
 | Live map          | Assets coloured by load, updated in real time                               |
 | Network view      | Asset tree, topology canvas and a "what if" node editor                     |
-| Incident reports  | PDF viewer with rich-text notes that link to assets                         |
+| Incident reports  | Rich-text reports that link to assets, with a PDF viewer for attachments    |
 
 Across every module:
 
@@ -50,6 +50,8 @@ WebAssembly code: the built module is committed (see
 | i18n           | i18next, in English, Spanish, French, Italian and Romanian                              |
 | Compute        | Rust compiled to WebAssembly (`wasm-bindgen`, `wasm-pack`), run in Web Workers          |
 | Map            | MapLibre GL with OpenFreeMap tiles (no API key)                                         |
+| Graphs         | React Flow (topology), MUI X Tree View                                                  |
+| Documents      | Tiptap (rich text), pdf.js (PDF viewer), IndexedDB via `idb`                            |
 | Tests          | Vitest + Testing Library + axe-core, Playwright + axe (pages and every Storybook story) |
 | Hosting        | Google Cloud Run: the web app and a WebSocket service (`ws`, Node 22)                   |
 | Tooling        | Yarn workspaces, ESLint, Prettier, GitHub Actions                                       |
@@ -117,6 +119,7 @@ apps/web/          Next.js app
     alarms/        /alarms: live alarm feed over a WebSocket (RTK Query streaming)
     map/           /map: MapLibre map of the grid, coloured by live loading
     network/       /network: asset tree, React Flow topology, what-if DC power-flow study
+    incidents/     /incidents: Tiptap reports with asset mentions, pdf.js viewer, IndexedDB
   src/i18n/        i18next setup, server and client
   src/store/       Redux store, the base RTK Query api, the linked selection and the
                    shared live feed (store/live: WebSocket client used by alarms and map)
@@ -124,6 +127,7 @@ apps/web/          Next.js app
   src/types/       app-wide types and PATHS
   src/server/      server-only data access (EIA client with snapshot fallback, assets)
   e2e/             Playwright tests
+  scripts/         sample-pdfs.ts: writes the synthetic PDFs in public/samples/incidents
 packages/
   downsample/      min/max and LTTB downsampling in TypeScript and in Rust
     rust/          Rust crate, compiled to WebAssembly
@@ -142,20 +146,21 @@ docs/              deployment guide and one plan per milestone
 <details>
 <summary><b>All commands</b></summary>
 
-| Command                              | What it does                                                                             |
-| ------------------------------------ | ---------------------------------------------------------------------------------------- |
-| `yarn dev`                           | web (http://localhost:3000) and realtime service (ws://localhost:8081) with hot reload   |
-| `yarn dev:web` / `yarn dev:realtime` | one of the two                                                                           |
-| `yarn build` / `yarn start`          | production build and server                                                              |
-| `yarn lint` / `yarn typecheck`       | ESLint / TypeScript                                                                      |
-| `yarn test`                          | unit and component tests (Vitest), in every workspace                                    |
-| `yarn data:fetch`                    | downloads the last 30 days of ERCOT data from EIA into the committed snapshot            |
-| `yarn wasm:build`                    | rebuilds the Rust/WASM module into `packages/downsample/pkg` (needs Rust and wasm-pack)  |
-| `yarn wasm:test`                     | `cargo fmt --check`, `cargo clippy` and `cargo test` for the Rust crate                  |
-| `yarn storybook`                     | local Storybook at http://localhost:6006, with hot reload                                |
-| `yarn build:storybook`               | static Storybook into `apps/web/public/storybook`, served by the web app at `/storybook` |
-| `yarn e2e`                           | builds, starts and runs the Playwright tests (desktop and mobile, with axe checks)       |
-| `yarn format`                        | Prettier                                                                                 |
+| Command                               | What it does                                                                             |
+| ------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `yarn dev`                            | web (http://localhost:3000) and realtime service (ws://localhost:8081) with hot reload   |
+| `yarn dev:web` / `yarn dev:realtime`  | one of the two                                                                           |
+| `yarn build` / `yarn start`           | production build and server                                                              |
+| `yarn lint` / `yarn typecheck`        | ESLint / TypeScript                                                                      |
+| `yarn test`                           | unit and component tests (Vitest), in every workspace                                    |
+| `yarn data:fetch`                     | downloads the last 30 days of ERCOT data from EIA into the committed snapshot            |
+| `yarn wasm:build`                     | rebuilds the Rust/WASM module into `packages/downsample/pkg` (needs Rust and wasm-pack)  |
+| `yarn wasm:test`                      | `cargo fmt --check`, `cargo clippy` and `cargo test` for the Rust crate                  |
+| `yarn storybook`                      | local Storybook at http://localhost:6006, with hot reload                                |
+| `yarn build:storybook`                | static Storybook into `apps/web/public/storybook`, served by the web app at `/storybook` |
+| `yarn e2e`                            | builds, starts and runs the Playwright tests (desktop and mobile, with axe checks)       |
+| `yarn workspace @pgo/web samples:pdf` | rewrites the synthetic sample PDFs in `apps/web/public/samples/incidents`                |
+| `yarn format`                         | Prettier                                                                                 |
 
 Run `yarn workspace @pgo/web playwright install chromium` once before the first `yarn e2e`.
 
@@ -224,6 +229,19 @@ Run `yarn workspace @pgo/web playwright install chromium` once before the first 
   - **Shareable studies:** the edits live in the URL (`study=t.ln-0012~l.sub-cst-001.20`).
   - **N-0 secure base case:** line ratings are set so the base case peaks at 80 %, because
     the synthetic grid's nameplate ratings don't come from a planned network.
+- **Incident reports that stay in the browser.** The demo has no sign-in, so reports are kept
+  in IndexedDB and never sent anywhere. Sample reports are seeded on first use and restored by
+  **Reset demo data**.
+  - **Data layer:** RTK Query endpoints call IndexedDB from `queryFn`. Autosave patches the
+    cached report optimistically and refetches only the list, so the editor is never reset
+    while typing. Each save is one read-modify-write transaction, so overlapping saves keep
+    each other's changes.
+  - **Rich text:** Tiptap with an MUI toolbar (`aria-pressed` toggles). Typing `@` suggests
+    grid assets, and a mention links the asset to the report. Links are limited to http, https
+    and mailto.
+  - **PDFs:** pdf.js draws each page on a canvas when it scrolls near view, with its text
+    layer on top for selection, search and screen readers. Uploads are checked for the
+    `%PDF-` signature and a 10 MB limit. The open document and page are in the URL.
 - **Accessibility checked in CI.** Every Playwright page test runs axe (WCAG 2.1 AA) in both
   color schemes. The shell has a skip link, labelled landmarks and `aria-current` navigation.
 - **Open demo.** There is no sign-in. All data is public or synthetic.
@@ -365,3 +383,4 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 - [M7: Linked selection](docs/m7-linked-selection.md)
 - [M8: Live map](docs/m8-live-map.md)
 - [M9: Network view](docs/m9-network-view.md)
+- [M10: Incident reports](docs/m10-incident-reports.md)

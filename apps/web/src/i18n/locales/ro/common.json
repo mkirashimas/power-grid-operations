@@ -22,7 +22,8 @@
     "charts": "Grafice",
     "alarms": "Alarme",
     "map": "Hartă",
-    "network": "Rețea"
+    "network": "Rețea",
+    "incidents": "Incidente"
   },
   "notFound": {
     "title": "Pagina nu a fost găsită",
@@ -32,6 +33,7 @@
   "selection": {
     "label": "Echipament selectat",
     "openIn": "Deschide în {{view}}",
+    "reportIncident": "Raportează incident",
     "clear": "Șterge selecția",
     "kinds": {
       "substation": "Stație",

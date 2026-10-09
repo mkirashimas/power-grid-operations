@@ -22,7 +22,8 @@
     "charts": "Gráficos",
     "alarms": "Alarmas",
     "map": "Mapa",
-    "network": "Red"
+    "network": "Red",
+    "incidents": "Incidentes"
   },
   "notFound": {
     "title": "Página no encontrada",
@@ -32,6 +33,7 @@
   "selection": {
     "label": "Activo seleccionado",
     "openIn": "Abrir en {{view}}",
+    "reportIncident": "Informar incidente",
     "clear": "Borrar la selección",
     "kinds": {
       "substation": "Subestación",

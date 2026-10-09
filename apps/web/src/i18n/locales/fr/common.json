@@ -22,7 +22,8 @@
     "charts": "Graphiques",
     "alarms": "Alarmes",
     "map": "Carte",
-    "network": "Réseau"
+    "network": "Réseau",
+    "incidents": "Incidents"
   },
   "notFound": {
     "title": "Page introuvable",
@@ -32,6 +33,7 @@
   "selection": {
     "label": "Équipement sélectionné",
     "openIn": "Ouvrir dans {{view}}",
+    "reportIncident": "Signaler un incident",
     "clear": "Effacer la sélection",
     "kinds": {
       "substation": "Poste",
