@@ -204,6 +204,24 @@ export const AssetMap = (props: AssetMapProps) => {
         instance.addControl(new AttributionControl({ compact: false }), 'bottom-right');
         instance.addControl(new NavigationControl({ showCompass: false }), 'top-right');
 
+        // OpenFreeMap's dark style asks for icons such as "circle-11", but its sprite names them
+        // "circle_11". Reuse the sprite image under the requested name; anything else unknown
+        // in the third-party style becomes a transparent pixel instead of a console warning.
+        instance.setMissingStyleImageResolver((id) => {
+          const alias = id.replace(/-/g, '_');
+          const sprite = alias === id ? undefined : instance.getImage(alias);
+          const pixels = sprite?.data;
+          if (sprite && pixels?.width && pixels.data?.length) {
+            instance.addImage(
+              id,
+              { width: pixels.width, height: pixels.height, data: pixels.data },
+              { pixelRatio: sprite.pixelRatio, sdf: sprite.sdf },
+            );
+          } else {
+            instance.addImage(id, { width: 1, height: 1, data: new Uint8Array(4) });
+          }
+        });
+
         // Also after every setStyle: the base style replaces our sources and layers.
         instance.on('style.load', () => {
           const { props: current, colorsOf: colors } = latest.current;
