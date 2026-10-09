@@ -83,6 +83,30 @@ describe('realtime service', () => {
     second.socket.close();
   });
 
+  it('sends the watched asset every tick, only to the client that asked', async () => {
+    const watcher = await connect(realtime.port);
+    const other = await connect(realtime.port);
+    watcher.socket.send(JSON.stringify({ type: 'watch', index: 7 }));
+    const isAsset = (m: ServerMessage): m is Extract<ServerMessage, { type: 'asset' }> =>
+      m.type === 'asset';
+    const asset = await watcher.next(isAsset);
+    expect(asset).toMatchObject({ index: 7 });
+    expect(asset.loadingPct).toBeGreaterThanOrEqual(0);
+    expect(asset.voltagePu).toBeGreaterThan(0.8);
+
+    await other.next(isTick);
+    await other.next(isTick);
+    expect(other.messages.some(isAsset)).toBe(false);
+
+    watcher.socket.send(JSON.stringify({ type: 'watch', index: null }));
+    await watcher.next(isTick);
+    const count = watcher.messages.filter(isAsset).length;
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(watcher.messages.filter(isAsset).length).toBeLessThanOrEqual(count + 1);
+    watcher.socket.close();
+    other.socket.close();
+  });
+
   it('ignores malformed messages and closes oversized ones', async () => {
     const client = await connect(realtime.port);
     client.socket.send('not json');

@@ -3,8 +3,9 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store';
+import { replaceSearchParams } from '../../../store/url';
 import { restoreView, selectChartsView } from '../slice';
-import { fromSearchParams, toSearchParams } from '../url';
+import { fromSearchParams, SEARCH_KEYS, toSearchParams } from '../url';
 
 /**
  * Keeps the chart view (range, downsampling engine and algorithm) and the URL in step: the URL
@@ -28,9 +29,6 @@ export const useChartsUrlSync = () => {
       skipWrite.current = false;
       return;
     }
-    const search = toSearchParams(view).toString();
-    if (search !== window.location.search.replace(/^\?/, '')) {
-      window.history.replaceState(null, '', search ? `?${search}` : window.location.pathname);
-    }
+    replaceSearchParams(SEARCH_KEYS, toSearchParams(view));
   }, [view]);
 };

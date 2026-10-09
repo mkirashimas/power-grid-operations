@@ -71,5 +71,29 @@
     "body": "Try another asset, zone or status, or clear the filters."
   },
   "synthetic": "Synthetic",
-  "source": "Load shape from:"
+  "source": "Load shape from:",
+  "assetChart": {
+    "title": "Selected asset: {{name}}",
+    "mwPane": "Power",
+    "loadingPane": "Loading",
+    "mw": "MW",
+    "loading": "Loading",
+    "unitMw": "{{value}} MW",
+    "unitPct": "{{value}} %",
+    "summary": "{{title}}, {{from}} to {{to}}: {{series}}.",
+    "summaryItem": "{{label}} from {{min}} to {{max}}",
+    "toolbar": "Chart controls",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "reset": "Show the whole range",
+    "presets": "Time range",
+    "day": "24 h",
+    "week": "7 d",
+    "month": "30 d",
+    "showTable": "Show as table",
+    "hideTable": "Hide table",
+    "time": "Time (CT)",
+    "overview": "Overview: drag the window or use the arrow keys to move the visible range",
+    "keyboardHint": "Interactive chart. Arrow keys move the crosshair, Shift with arrow keys pans, plus and minus zoom, Home and End jump to the edges, Escape clears the crosshair."
+  }
 }

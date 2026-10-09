@@ -71,5 +71,29 @@
     "body": "Prueba con otro activo, zona o estado, o borra los filtros."
   },
   "synthetic": "Sintético",
-  "source": "Perfil de carga de:"
+  "source": "Perfil de carga de:",
+  "assetChart": {
+    "title": "Activo seleccionado: {{name}}",
+    "mwPane": "Potencia",
+    "loadingPane": "Carga",
+    "mw": "MW",
+    "loading": "Carga",
+    "unitMw": "{{value}} MW",
+    "unitPct": "{{value}} %",
+    "summary": "{{title}}, de {{from}} a {{to}}: {{series}}.",
+    "summaryItem": "{{label}} de {{min}} a {{max}}",
+    "toolbar": "Controles del gráfico",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
+    "reset": "Mostrar todo el intervalo",
+    "presets": "Intervalo",
+    "day": "24 h",
+    "week": "7 d",
+    "month": "30 d",
+    "showTable": "Mostrar como tabla",
+    "hideTable": "Ocultar tabla",
+    "time": "Hora (CT)",
+    "overview": "Vista general: arrastra la ventana o usa las flechas para mover el intervalo visible",
+    "keyboardHint": "Gráfico interactivo. Las flechas mueven el cursor, Mayús con las flechas desplaza, más y menos hacen zoom, Inicio y Fin van a los extremos, Escape borra el cursor."
+  }
 }

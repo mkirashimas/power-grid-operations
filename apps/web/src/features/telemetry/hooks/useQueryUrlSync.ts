@@ -3,8 +3,9 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store';
+import { replaceSearchParams } from '../../../store/url';
 import { replaceQuery, selectQuery } from '../slice';
-import { fromSearchParams, toSearchParams } from '../url';
+import { fromSearchParams, SEARCH_KEYS, toSearchParams } from '../url';
 
 /**
  * Keeps the query and the URL in step: the URL wins when the page opens, then every change
@@ -27,9 +28,6 @@ export const useQueryUrlSync = () => {
       skipWrite.current = false;
       return;
     }
-    const search = toSearchParams(query).toString();
-    if (search !== window.location.search.replace(/^\?/, '')) {
-      window.history.replaceState(null, '', search ? `?${search}` : window.location.pathname);
-    }
+    replaceSearchParams(SEARCH_KEYS, toSearchParams(query));
   }, [query]);
 };

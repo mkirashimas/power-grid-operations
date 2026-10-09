@@ -67,8 +67,10 @@ not the roadmap.
 - **Heavy data work** runs in a Web Worker inside the feature (`features/<f>/worker`).
   - The query logic stays in pure, Node-tested functions (`engine/`).
   - Results cross the boundary as transferable typed arrays.
-- **Shareable view state** is mirrored to the URL with `window.history.replaceState` (no
-  server round trip), not `router.replace`.
+- **Shareable view state** is mirrored to the URL with `replaceSearchParams(SEARCH_KEYS, params)`
+  from `src/store/url.ts` (history.replaceState, no server round trip), not `router.replace`.
+  Each view declares the keys it owns (`SEARCH_KEYS` in its `url.ts`) and never rewrites the
+  whole query string, so other keys (e.g. `asset`) survive.
 - **Charts** use `ChartWorkbench` + `TimeSeriesPane` from `@pgo/ui`.
   - Series colours come from `palette.chart.series1..6` (≥ 3:1, checked by the contrast test).
   - Canvas code resolves theme CSS variables to concrete colours (`charts/canvas.ts`) and redraws when
@@ -105,6 +107,12 @@ not the roadmap.
     is `services/realtime/Dockerfile`; e2e starts it from `playwright.config.ts`.
 - **Cross-feature state** (e.g. linked selection) goes in a slice in `src/store`, never in a
   feature.
+  - **Linked selection:** `store/selectionSlice` holds one asset id. Views dispatch
+    `selectAsset(id)` and highlight with `selectSelectedAssetId`.
+  - `hoc/useSelectionUrlSync` keeps it in the URL as `asset`, and `hoc/SelectionBar` shows it
+    on every page.
+  - Look assets up with `findAsset(id)` (`store/assets.ts`).
+  - Tables make rows selectable with `VirtualGrid`'s `isRowSelected` / `onRowSelect`.
 - **`PATHS`** in `src/types/paths.ts` holds every link target and must match the `src/app`
   folders. Dynamic routes get builder functions.
 - **Tests.** Every page gets a Playwright test with axe checks in light and dark mode. Components

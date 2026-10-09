@@ -42,7 +42,14 @@ export const alarmsApi = api.injectEndpoints({
           ? { data: null }
           : { error: { status: 'CUSTOM_ERROR', error: 'Not connected' } },
     }),
+    /** Asks the server for one asset's values every tick (null stops). */
+    watchAsset: build.mutation<null, { url: string; index: number | null }>({
+      queryFn: ({ url, index }) =>
+        sockets.get(url)?.send({ type: 'watch', index })
+          ? { data: null }
+          : { error: { status: 'CUSTOM_ERROR', error: 'Not connected' } },
+    }),
   }),
 });
 
-export const { useLiveFeedQuery, useAcknowledgeAlarmMutation } = alarmsApi;
+export const { useLiveFeedQuery, useAcknowledgeAlarmMutation, useWatchAssetMutation } = alarmsApi;

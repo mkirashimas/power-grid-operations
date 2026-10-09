@@ -3,8 +3,9 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store';
+import { replaceSearchParams } from '../../../store/url';
 import { restoreFilters, selectFilters } from '../slice';
-import { fromSearchParams, toSearchParams } from '../url';
+import { fromSearchParams, SEARCH_KEYS, toSearchParams } from '../url';
 
 /**
  * Keeps the alarm filters and the URL in step: the URL wins when the page opens, then every
@@ -27,9 +28,6 @@ export const useAlarmsUrlSync = () => {
       skipWrite.current = false;
       return;
     }
-    const search = toSearchParams(filters).toString();
-    if (search !== window.location.search.replace(/^\?/, '')) {
-      window.history.replaceState(null, '', search ? `?${search}` : window.location.pathname);
-    }
+    replaceSearchParams(SEARCH_KEYS, toSearchParams(filters));
   }, [filters]);
 };

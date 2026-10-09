@@ -32,6 +32,8 @@ import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { persistLanguage, toLanguage } from '../i18n/language';
 import { LANGUAGES, PATHS, type Language, type Path } from '../types';
+import { SelectionBar } from './SelectionBar';
+import { useSelectionUrlSync } from './useSelectionUrlSync';
 
 const SIDEBAR_WIDTH = 240;
 const MAIN_CONTENT_ID = 'main-content';
@@ -158,6 +160,7 @@ const LanguageSelect = () => {
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation('common');
+  useSelectionUrlSync();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -252,6 +255,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             [theme.breakpoints.down('md')]: { py: 2, px: 2 },
           })}
         >
+          <SelectionBar />
           {children}
         </Container>
       </Box>

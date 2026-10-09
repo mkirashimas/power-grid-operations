@@ -147,3 +147,18 @@ export const Empty: Story = {
     empty: <p style={{ padding: 16 }}>No rows match these filters.</p>,
   },
 };
+
+const SelectableGrid = (args: VirtualGridProps) => {
+  // Rows of one zone belong together, like the rows of one asset in the telemetry table.
+  const [zone, setZone] = useState<string | null>(ZONES[1]);
+  return (
+    <VirtualGrid
+      {...args}
+      isRowSelected={(index) => sample(index).zone === zone}
+      onRowSelect={(index) => setZone(sample(index).zone)}
+    />
+  );
+};
+
+/** Click a row, or press Space or Enter on it, to select it and every row of its zone. */
+export const Selectable: Story = { render: (args) => <SelectableGrid {...args} /> };

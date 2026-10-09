@@ -42,6 +42,8 @@ export const createHub = ({
 }: HubOptions): Hub => {
   const clients = new Set<WebSocket>();
   const alive = new WeakMap<WebSocket, boolean>();
+  /** Asset index each connection follows (`watch`). */
+  const watched = new Map<WebSocket, number>();
   let history: LoadPoint[] = [];
   let timer: ReturnType<typeof setInterval> | undefined;
 
@@ -63,6 +65,13 @@ export const createHub = ({
     }
     broadcast({ type: 'tick', tick });
     alarms.forEach((alarm) => broadcast({ type: 'alarm', alarm }));
+    watched.forEach((index, socket) => {
+      const values = simulator.assetValues(index);
+      if (values) {
+        const message: ServerMessage = { type: 'asset', time: tick.time, index, ...values };
+        send(socket, JSON.stringify(message));
+      }
+    });
   };
 
   const heartbeat = setInterval(() => {
@@ -105,6 +114,11 @@ export const createHub = ({
       if (isBinary) return;
       const message = parseClientMessage(data.toString());
       if (!message) return;
+      if (message.type === 'watch') {
+        if (message.index === null) watched.delete(socket);
+        else watched.set(socket, message.index);
+        return;
+      }
       const time = now();
       if (time - windowStart >= 1000) {
         windowStart = time;
@@ -117,6 +131,7 @@ export const createHub = ({
     });
     socket.on('close', () => {
       clients.delete(socket);
+      watched.delete(socket);
       if (clients.size === 0) stop();
     });
     socket.on('error', () => socket.terminate());

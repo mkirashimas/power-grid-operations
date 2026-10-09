@@ -21,6 +21,15 @@ export interface LiveFeedState {
   latencyMs: number | null;
   /** Messages received since the page opened, for an updates-per-second rate. */
   messageCount: number;
+  /** Latest values of the asset this client watches (the linked selection). */
+  watched: WatchedAsset | null;
+}
+
+export interface WatchedAsset {
+  index: number;
+  time: number;
+  loadingPct: number;
+  voltagePu: number;
 }
 
 export const initialLiveFeed = (): LiveFeedState => ({
@@ -32,6 +41,7 @@ export const initialLiveFeed = (): LiveFeedState => ({
   clockOffsetMs: 0,
   latencyMs: null,
   messageCount: 0,
+  watched: null,
 });
 
 /**
@@ -65,6 +75,11 @@ export const applyMessage = (state: LiveFeedState, message: ServerMessage, recei
         state.alarms.unshift(message.alarm);
         if (state.alarms.length > ALARM_LIMIT) state.alarms.length = ALARM_LIMIT;
       }
+      return;
+    }
+    case 'asset': {
+      const { index, time, loadingPct, voltagePu } = message;
+      state.watched = { index, time, loadingPct, voltagePu };
       return;
     }
     default:

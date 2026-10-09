@@ -60,6 +60,13 @@ export interface VirtualGridProps {
   rowHeight?: number;
   /** Shown under the header when rowCount is 0. */
   empty?: ReactNode;
+  /** Data rows that are selected (single selection, e.g. every row of one asset). */
+  isRowSelected?: (index: number) => boolean;
+  /**
+   * Makes data rows selectable: a click on the row, or Enter / Space on a cell without a
+   * button, calls this with the row index.
+   */
+  onRowSelect?: (index: number) => void;
 }
 
 /** Next sort after activating a header: asc → desc → off. Shift (additive) keeps other keys. */
@@ -127,6 +134,8 @@ export const VirtualGrid = ({
   height,
   rowHeight = 40,
   empty,
+  isRowSelected,
+  onRowSelect,
 }: VirtualGridProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [storedFocus, setFocus] = useState<Focus>({ row: HEADER, col: 0 });
@@ -261,6 +270,9 @@ export const VirtualGrid = ({
           if (widget && event.target !== widget) {
             event.preventDefault();
             widget.click();
+          } else if (!widget && onRowSelect && groupRow?.kind === 'data') {
+            event.preventDefault();
+            onRowSelect(row);
           }
         }
         return;
@@ -302,6 +314,7 @@ export const VirtualGrid = ({
       aria-label={label}
       aria-rowcount={rowCount + 1}
       aria-colcount={columns.length}
+      aria-multiselectable={onRowSelect ? false : undefined}
       onKeyDown={handleKeyDown}
       onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
       onFocus={handleFocus}
@@ -430,6 +443,8 @@ export const VirtualGrid = ({
               );
             }
 
+            const selectable = Boolean(onRowSelect && row);
+            const selected = selectable && (isRowSelected?.(index) ?? false);
             return (
               <Box
                 key={index}
@@ -437,7 +452,35 @@ export const VirtualGrid = ({
                 aria-rowindex={index + 2}
                 aria-level={grouped ? 2 : undefined}
                 aria-busy={row ? undefined : true}
-                sx={[rowSx, position, { '&:hover > *': { bgcolor: 'action.hover' } }]}
+                aria-selected={selectable ? selected : undefined}
+                onClick={
+                  selectable
+                    ? (event) => {
+                        // A button or link inside a cell does its own thing.
+                        if ((event.target as HTMLElement).closest('button, a[href]')) return;
+                        onRowSelect?.(index);
+                      }
+                    : undefined
+                }
+                sx={[
+                  rowSx,
+                  position,
+                  { '&:hover > *': { bgcolor: 'action.hover' } },
+                  selectable ? { cursor: 'pointer' } : {},
+                  selected
+                    ? (theme) => {
+                        const tint = (theme.vars || theme).palette.action.selected;
+                        return {
+                          // An overlay keeps the sticky first cell opaque while tinting it.
+                          '& > *': { backgroundImage: `linear-gradient(${tint}, ${tint})` },
+                          // A bar on the left, so selection does not rely on colour alone.
+                          '& > :first-of-type': {
+                            boxShadow: `inset 3px 0 0 ${(theme.vars || theme).palette.primary.main}`,
+                          },
+                        };
+                      }
+                    : {},
+                ]}
               >
                 {columns.map((column, col) => (
                   <Box

@@ -169,6 +169,46 @@ describe('VirtualGrid', () => {
     expect(onAcknowledge).toHaveBeenLastCalledWith(2);
   });
 
+  it('selects rows by click and by Space or Enter, marked with aria-selected', async () => {
+    const user = userEvent.setup();
+    const Selectable = () => {
+      const [selected, setSelected] = useState<number | null>(null);
+      return (
+        <VirtualGrid
+          label="Telemetry rows"
+          columns={COLUMNS}
+          rowCount={6}
+          height={400}
+          // Rows come in pairs, like several rows of one asset.
+          getRow={dataRow}
+          isRowSelected={(index) => selected !== null && Math.floor(index / 2) === selected}
+          onRowSelect={(index) => setSelected(Math.floor(index / 2))}
+        />
+      );
+    };
+    renderWithTheme(<Selectable />);
+    const grid = screen.getByRole('grid', { name: 'Telemetry rows' });
+    expect(grid).toHaveAttribute('aria-multiselectable', 'false');
+    const rows = () => within(grid).getAllByRole('row').slice(1);
+    expect(rows().every((row) => row.getAttribute('aria-selected') === 'false')).toBe(true);
+
+    await user.click(screen.getByRole('gridcell', { name: 'Asset 3' }));
+    expect(rows().map((row) => row.getAttribute('aria-selected'))).toEqual([
+      'false',
+      'false',
+      'true',
+      'true',
+      'false',
+      'false',
+    ]);
+
+    await user.keyboard('{ArrowDown}{ArrowDown} ');
+    expect(rows()[4]).toHaveAttribute('aria-selected', 'true');
+    await user.keyboard('{ArrowUp}{ArrowUp}{ArrowUp}{ArrowUp}{Enter}');
+    expect(rows()[0]).toHaveAttribute('aria-selected', 'true');
+    await expectNoAxeViolations();
+  });
+
   it('shows the empty state under the header when there are no rows', () => {
     renderWithTheme(<Grid rowCount={0} />);
     expect(screen.getByRole('columnheader', { name: 'MW' })).toBeInTheDocument();

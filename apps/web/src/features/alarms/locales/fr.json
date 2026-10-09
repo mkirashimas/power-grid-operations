@@ -96,5 +96,12 @@
     "line": "Ligne",
     "generator": "Générateur",
     "load": "Charge"
+  },
+  "selected": {
+    "title": "Équipement sélectionné, en direct",
+    "values": "Charge {{loading}} · Tension {{voltage}}",
+    "updated": "Mis à jour {{time}}",
+    "waiting": "En attente de la prochaine mise à jour…",
+    "only": "Seulement l’équipement sélectionné"
   }
 }

@@ -26,5 +26,26 @@
     "title": "Pagina non trovata",
     "body": "La pagina che cerchi non esiste.",
     "home": "Torna alla panoramica"
+  },
+  "selection": {
+    "label": "Asset selezionato",
+    "openIn": "Apri in {{view}}",
+    "clear": "Cancella la selezione",
+    "kinds": {
+      "substation": "Sottostazione",
+      "line": "Linea",
+      "generator": "Generatore",
+      "load": "Carico"
+    },
+    "zones": {
+      "coast": "Costa",
+      "east": "Est",
+      "far-west": "Estremo Ovest",
+      "north": "Nord",
+      "north-central": "Centro Nord",
+      "south-central": "Centro Sud",
+      "southern": "Sud",
+      "west": "Ovest"
+    }
   }
 }

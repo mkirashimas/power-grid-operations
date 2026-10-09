@@ -71,5 +71,29 @@
     "body": "Încearcă alt activ, altă zonă sau altă stare, ori șterge filtrele."
   },
   "synthetic": "Sintetic",
-  "source": "Profil de consum din:"
+  "source": "Profil de consum din:",
+  "assetChart": {
+    "title": "Echipament selectat: {{name}}",
+    "mwPane": "Putere",
+    "loadingPane": "Încărcare",
+    "mw": "MW",
+    "loading": "Încărcare",
+    "unitMw": "{{value}} MW",
+    "unitPct": "{{value}} %",
+    "summary": "{{title}}, de la {{from}} la {{to}}: {{series}}.",
+    "summaryItem": "{{label}} de la {{min}} la {{max}}",
+    "toolbar": "Comenzile graficului",
+    "zoomIn": "Mărește",
+    "zoomOut": "Micșorează",
+    "reset": "Afișează tot intervalul",
+    "presets": "Interval",
+    "day": "24 h",
+    "week": "7 z",
+    "month": "30 z",
+    "showTable": "Afișează ca tabel",
+    "hideTable": "Ascunde tabelul",
+    "time": "Ora (CT)",
+    "overview": "Privire de ansamblu: trage fereastra sau folosește săgețile pentru a muta intervalul vizibil",
+    "keyboardHint": "Grafic interactiv. Săgețile mută cursorul, Shift cu săgețile derulează, plus și minus măresc, Home și End sar la capete, Escape șterge cursorul."
+  }
 }

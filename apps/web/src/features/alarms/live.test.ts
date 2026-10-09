@@ -81,6 +81,21 @@ describe('applyMessage', () => {
   });
 });
 
+describe('applyMessage for the watched asset', () => {
+  it('keeps the latest values of the watched asset', () => {
+    let state = apply(initialLiveFeed(), hello);
+    expect(state.watched).toBeNull();
+    state = apply(state, {
+      type: 'asset',
+      time: 11_000,
+      index: 7,
+      loadingPct: 64.2,
+      voltagePu: 1.003,
+    });
+    expect(state.watched).toEqual({ index: 7, time: 11_000, loadingPct: 64.2, voltagePu: 1.003 });
+  });
+});
+
 describe('countAlarms and filterAlarms', () => {
   const alarms = [alarm(3), alarm(1), alarm(2, { clearedAt: 9 }), alarm(4, { acknowledgedAt: 7 })];
 

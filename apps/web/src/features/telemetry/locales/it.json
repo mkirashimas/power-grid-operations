@@ -71,5 +71,29 @@
     "body": "Prova un altro asset, zona o stato, oppure cancella i filtri."
   },
   "synthetic": "Sintetico",
-  "source": "Profilo di carico da:"
+  "source": "Profilo di carico da:",
+  "assetChart": {
+    "title": "Asset selezionato: {{name}}",
+    "mwPane": "Potenza",
+    "loadingPane": "Carico",
+    "mw": "MW",
+    "loading": "Carico",
+    "unitMw": "{{value}} MW",
+    "unitPct": "{{value}} %",
+    "summary": "{{title}}, da {{from}} a {{to}}: {{series}}.",
+    "summaryItem": "{{label}} da {{min}} a {{max}}",
+    "toolbar": "Controlli del grafico",
+    "zoomIn": "Ingrandisci",
+    "zoomOut": "Riduci",
+    "reset": "Mostra l’intero intervallo",
+    "presets": "Intervallo",
+    "day": "24 h",
+    "week": "7 g",
+    "month": "30 g",
+    "showTable": "Mostra come tabella",
+    "hideTable": "Nascondi tabella",
+    "time": "Ora (CT)",
+    "overview": "Panoramica: trascina la finestra o usa le frecce per spostare l’intervallo visibile",
+    "keyboardHint": "Grafico interattivo. Le frecce spostano il cursore, Maiusc con le frecce scorre, più e meno ingrandiscono, Home e Fine vanno ai bordi, Esc cancella il cursore."
+  }
 }
