@@ -1,0 +1,100 @@
+{
+  "title": "Alarme",
+  "intro": "Un flux de alarme în timp real din rețeaua sintetică, transmis prin WebSocket de serviciul realtime. Confirmările sunt vizibile pentru toți cei care văd această pagină.",
+  "synthetic": "Sintetic",
+  "connection": {
+    "connecting": "Conectare…",
+    "live": "Live",
+    "liveLatency": "Live · {{ms}} ms",
+    "reconnecting": "Reconectare…",
+    "offline": "Offline, se reîncearcă"
+  },
+  "kpi": {
+    "activeAlarms": "Alarme active",
+    "activeWarnings": "Avertizări active",
+    "unacknowledged": "Neconfirmate",
+    "updates": "Actualizări pe secundă",
+    "updatesCaption": "Tick-uri și mesaje de alarmă"
+  },
+  "chart": {
+    "title": "Sarcina sistemului, ultimele 10 minute",
+    "load": "Sarcina sistemului",
+    "waiting": "Se așteaptă date…",
+    "summary": "{{title}}, de la {{from}} la {{to}}: {{series}}.",
+    "summaryItem": "{{label}} de la {{min}} la {{max}}",
+    "keyboardHint": "Grafic live. Săgețile mută cursorul, Escape îl șterge.",
+    "time": "Ora (CT)",
+    "showTable": "Afișează ca tabel",
+    "hideTable": "Ascunde tabelul",
+    "toolbar": "Comenzile graficului",
+    "zoomIn": "Mărește",
+    "zoomOut": "Micșorează",
+    "reset": "Afișează tot intervalul",
+    "presets": "Interval",
+    "day": "24 h",
+    "week": "7 z",
+    "month": "30 z",
+    "overview": "Privire de ansamblu"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "filters": {
+    "label": "Filtre pentru alarme",
+    "severity": "Gravitate",
+    "zone": "Zonă",
+    "all": "Toate",
+    "allZones": "Toate zonele",
+    "alarm": "Alarme",
+    "warning": "Avertizări"
+  },
+  "pause": "Pauză",
+  "resume": "Reia",
+  "paused": "În pauză: tabelul este înghețat, iar alarmele noi nu sunt adăugate.",
+  "table": {
+    "label": "Alarme",
+    "raised": "Început",
+    "severity": "Gravitate",
+    "asset": "Echipament",
+    "zone": "Zonă",
+    "condition": "Condiție",
+    "value": "Valoare",
+    "state": "Stare",
+    "acknowledged": "Confirmată",
+    "empty": "Încă nu există alarme."
+  },
+  "severities": {
+    "alarm": "Alarmă",
+    "warning": "Avertizare"
+  },
+  "conditions": {
+    "overload": "Suprasarcină",
+    "undervoltage": "Subtensiune",
+    "overvoltage": "Supratensiune"
+  },
+  "states": {
+    "active": "Activă",
+    "cleared": "Încheiată {{time}}"
+  },
+  "acknowledge": "Confirmă",
+  "acknowledgeLabel": "Confirmă alarma {{id}} pe {{asset}}",
+  "announce": "Alarmă nouă: {{condition}} pe {{asset}}",
+  "zones": {
+    "coast": "Coastă",
+    "east": "Est",
+    "far-west": "Vestul Îndepărtat",
+    "north": "Nord",
+    "north-central": "Centru-Nord",
+    "south-central": "Centru-Sud",
+    "southern": "Sud",
+    "west": "Vest"
+  },
+  "kinds": {
+    "substation": "Stație",
+    "line": "Linie",
+    "generator": "Generator",
+    "load": "Consumator"
+  }
+}

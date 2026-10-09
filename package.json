@@ -10,7 +10,9 @@
     "services/*"
   ],
   "scripts": {
-    "dev": "yarn workspace @pgo/web dev",
+    "dev": "concurrently --kill-others --names web,realtime --prefix-colors blue,magenta \"yarn workspace @pgo/web dev\" \"yarn workspace @pgo/realtime dev\"",
+    "dev:web": "yarn workspace @pgo/web dev",
+    "dev:realtime": "yarn workspace @pgo/realtime dev",
     "build": "yarn workspace @pgo/web build",
     "start": "yarn workspace @pgo/web start",
     "lint": "yarn workspaces run lint",
@@ -26,6 +28,7 @@
     "build:storybook": "yarn workspace @pgo/ui build:storybook"
   },
   "devDependencies": {
+    "concurrently": "^10.0.6",
     "prettier": "^3.9.9"
   },
   "engines": {

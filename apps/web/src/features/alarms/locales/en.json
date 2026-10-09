@@ -1,0 +1,100 @@
+{
+  "title": "Alarms",
+  "intro": "A live alarm feed from the synthetic grid, streamed over a WebSocket by the realtime service. Acknowledgements are shared with everyone viewing this page.",
+  "synthetic": "Synthetic",
+  "connection": {
+    "connecting": "Connecting…",
+    "live": "Live",
+    "liveLatency": "Live · {{ms}} ms",
+    "reconnecting": "Reconnecting…",
+    "offline": "Offline, retrying"
+  },
+  "kpi": {
+    "activeAlarms": "Active alarms",
+    "activeWarnings": "Active warnings",
+    "unacknowledged": "Unacknowledged",
+    "updates": "Updates per second",
+    "updatesCaption": "Ticks and alarm messages"
+  },
+  "chart": {
+    "title": "System load, last 10 minutes",
+    "load": "System load",
+    "waiting": "Waiting for data…",
+    "summary": "{{title}}, {{from}} to {{to}}: {{series}}.",
+    "summaryItem": "{{label}} from {{min}} to {{max}}",
+    "keyboardHint": "Live chart. Arrow keys move the crosshair, Escape clears it.",
+    "time": "Time (CT)",
+    "showTable": "Show as table",
+    "hideTable": "Hide table",
+    "toolbar": "Chart controls",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "reset": "Show the whole range",
+    "presets": "Time range",
+    "day": "24 h",
+    "week": "7 d",
+    "month": "30 d",
+    "overview": "Overview"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "filters": {
+    "label": "Alarm filters",
+    "severity": "Severity",
+    "zone": "Zone",
+    "all": "All",
+    "allZones": "All zones",
+    "alarm": "Alarms",
+    "warning": "Warnings"
+  },
+  "pause": "Pause",
+  "resume": "Resume",
+  "paused": "Paused: the table is frozen and new alarms are not added.",
+  "table": {
+    "label": "Alarms",
+    "raised": "Raised",
+    "severity": "Severity",
+    "asset": "Asset",
+    "zone": "Zone",
+    "condition": "Condition",
+    "value": "Value",
+    "state": "State",
+    "acknowledged": "Acknowledged",
+    "empty": "No alarms yet."
+  },
+  "severities": {
+    "alarm": "Alarm",
+    "warning": "Warning"
+  },
+  "conditions": {
+    "overload": "Overload",
+    "undervoltage": "Undervoltage",
+    "overvoltage": "Overvoltage"
+  },
+  "states": {
+    "active": "Active",
+    "cleared": "Cleared {{time}}"
+  },
+  "acknowledge": "Acknowledge",
+  "acknowledgeLabel": "Acknowledge alarm {{id}} on {{asset}}",
+  "announce": "New alarm: {{condition}} on {{asset}}",
+  "zones": {
+    "coast": "Coast",
+    "east": "East",
+    "far-west": "Far West",
+    "north": "North",
+    "north-central": "North Central",
+    "south-central": "South Central",
+    "southern": "Southern",
+    "west": "West"
+  },
+  "kinds": {
+    "substation": "Substation",
+    "line": "Line",
+    "generator": "Generator",
+    "load": "Load"
+  }
+}

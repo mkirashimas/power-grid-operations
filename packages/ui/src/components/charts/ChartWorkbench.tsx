@@ -31,8 +31,10 @@ export interface ChartWorkbenchProps {
   /** IANA zone for time axes, e.g. 'America/Chicago'. */
   timeZone: string;
   labels: ChartLabels;
-  /** Drawn in the overview brush under the panes. */
-  overview: ChartSeries;
+  /** Drawn in the overview brush under the panes; no brush without it. */
+  overview?: ChartSeries;
+  /** Shows the zoom toolbar (default). Off for views that follow live data. */
+  controls?: boolean;
   /** TimeSeriesPane elements. */
   children: ReactNode;
 }
@@ -49,6 +51,7 @@ export const ChartWorkbench = ({
   timeZone,
   labels,
   overview,
+  controls = true,
   children,
 }: ChartWorkbenchProps) => {
   const [crosshair, setCrosshair] = useState<number | null>(null);
@@ -81,35 +84,37 @@ export const ChartWorkbench = ({
           useFlexGap
           sx={{ alignItems: 'center', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap' }}
         >
-          <Toolbar label={labels.toolbar}>
-            <IconButton
-              label={labels.zoomIn}
-              onClick={() => onDomainChange(zoomAround(domain, center, 0.5, full))}
-            >
-              <ZoomInOutlined />
-            </IconButton>
-            <IconButton
-              label={labels.zoomOut}
-              onClick={() => onDomainChange(zoomAround(domain, center, 2, full))}
-            >
-              <ZoomOutOutlined />
-            </IconButton>
-            <IconButton label={labels.reset} onClick={() => onDomainChange(full)}>
-              <RestartAltOutlined />
-            </IconButton>
-            <ButtonGroup size="small" aria-label={labels.presetsLabel}>
-              {PRESETS.map(({ key, span }) => (
-                <Button
-                  key={key}
-                  aria-pressed={isPreset(span)}
-                  variant={isPreset(span) ? 'contained' : 'outlined'}
-                  onClick={() => onDomainChange(lastSpan(full, span))}
-                >
-                  {labels.presets[key]}
-                </Button>
-              ))}
-            </ButtonGroup>
-          </Toolbar>
+          {controls && (
+            <Toolbar label={labels.toolbar}>
+              <IconButton
+                label={labels.zoomIn}
+                onClick={() => onDomainChange(zoomAround(domain, center, 0.5, full))}
+              >
+                <ZoomInOutlined />
+              </IconButton>
+              <IconButton
+                label={labels.zoomOut}
+                onClick={() => onDomainChange(zoomAround(domain, center, 2, full))}
+              >
+                <ZoomOutOutlined />
+              </IconButton>
+              <IconButton label={labels.reset} onClick={() => onDomainChange(full)}>
+                <RestartAltOutlined />
+              </IconButton>
+              <ButtonGroup size="small" aria-label={labels.presetsLabel}>
+                {PRESETS.map(({ key, span }) => (
+                  <Button
+                    key={key}
+                    aria-pressed={isPreset(span)}
+                    variant={isPreset(span) ? 'contained' : 'outlined'}
+                    onClick={() => onDomainChange(lastSpan(full, span))}
+                  >
+                    {labels.presets[key]}
+                  </Button>
+                ))}
+              </ButtonGroup>
+            </Toolbar>
+          )}
           <Typography variant="body2" color="text.secondary" data-testid="chart-range">
             {formatRange(domain, locale, timeZone)}
           </Typography>
@@ -117,12 +122,14 @@ export const ChartWorkbench = ({
 
         <Stack spacing={3}>{children}</Stack>
 
-        <Box>
-          <Typography variant="caption" color="text.secondary" component="p" sx={{ mb: 0.5 }}>
-            {labels.overview}
-          </Typography>
-          <OverviewBrush series={overview} />
-        </Box>
+        {overview && (
+          <Box>
+            <Typography variant="caption" color="text.secondary" component="p" sx={{ mb: 0.5 }}>
+              {labels.overview}
+            </Typography>
+            <OverviewBrush series={overview} />
+          </Box>
+        )}
       </Stack>
     </ChartContext.Provider>
   );

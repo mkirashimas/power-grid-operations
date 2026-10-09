@@ -253,6 +253,15 @@ export const VirtualGrid = ({
         } else if (isGroup) {
           event.preventDefault();
           onToggleGroup?.(groupRow.groupKey, !groupRow.expanded);
+        } else if (row >= 0) {
+          // A cell holding one control (e.g. an "Acknowledge" button) activates it.
+          const widget = scrollRef.current?.querySelector<HTMLElement>(
+            `[data-cell="${row}:${col}"] button, [data-cell="${row}:${col}"] a[href]`,
+          );
+          if (widget && event.target !== widget) {
+            event.preventDefault();
+            widget.click();
+          }
         }
         return;
       default:

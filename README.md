@@ -31,7 +31,7 @@ Requires Node 22+ and Yarn 1.
 ```bash
 yarn install
 cp apps/web/.env.example apps/web/.env.local   # optional: add your EIA API key
-yarn dev                                        # http://localhost:3000
+yarn dev                                        # web on :3000, realtime service on :8081
 ```
 
 Without a key, the app runs on the committed EIA snapshot. Rust is only needed to change the
@@ -51,7 +51,7 @@ WebAssembly code: the built module is committed (see
 | Compute        | Rust compiled to WebAssembly (`wasm-bindgen`, `wasm-pack`), run in Web Workers          |
 | Map            | MapLibre GL with OpenFreeMap tiles (no API key)                                         |
 | Tests          | Vitest + Testing Library + axe-core, Playwright + axe (pages and every Storybook story) |
-| Hosting        | Google Cloud Run: the web app and a small real-time service                             |
+| Hosting        | Google Cloud Run: the web app and a WebSocket service (`ws`, Node 22)                   |
 | Tooling        | Yarn workspaces, ESLint, Prettier, GitHub Actions                                       |
 
 All other UI libraries are open source and need no API keys.
@@ -112,6 +112,7 @@ apps/web/          Next.js app
     telemetry/     /telemetry: 1M+ row grid; query engine and Web Worker
     charts/        /charts: chart workbench over EIA data and a 2.6M-point series;
                    downsampling worker (JS or WASM) and benchmark
+    alarms/        /alarms: live alarm feed over a WebSocket (RTK Query streaming)
   src/i18n/        i18next setup, server and client
   src/store/       Redux store and the base RTK Query api
   src/theme/       MUI locales (the theme itself lives in packages/ui)
@@ -126,6 +127,8 @@ packages/
     data/          committed EIA snapshot
   ui/              design system: theme, accessible components, Storybook stories
     src/components/charts/  canvas chart workbench: panes, brush, downsampling
+services/
+  realtime/        WebSocket service (Cloud Run pgo-realtime): live load, asset updates, alarms
 docs/              deployment guide and one plan per milestone
 ```
 
@@ -134,18 +137,20 @@ docs/              deployment guide and one plan per milestone
 <details>
 <summary><b>All commands</b></summary>
 
-| Command                        | What it does                                                                             |
-| ------------------------------ | ---------------------------------------------------------------------------------------- |
-| `yarn build` / `yarn start`    | production build and server                                                              |
-| `yarn lint` / `yarn typecheck` | ESLint / TypeScript                                                                      |
-| `yarn test`                    | unit and component tests (Vitest), in every workspace                                    |
-| `yarn data:fetch`              | downloads the last 30 days of ERCOT data from EIA into the committed snapshot            |
-| `yarn wasm:build`              | rebuilds the Rust/WASM module into `packages/downsample/pkg` (needs Rust and wasm-pack)  |
-| `yarn wasm:test`               | `cargo fmt --check`, `cargo clippy` and `cargo test` for the Rust crate                  |
-| `yarn storybook`               | local Storybook at http://localhost:6006, with hot reload                                |
-| `yarn build:storybook`         | static Storybook into `apps/web/public/storybook`, served by the web app at `/storybook` |
-| `yarn e2e`                     | builds, starts and runs the Playwright tests (desktop and mobile, with axe checks)       |
-| `yarn format`                  | Prettier                                                                                 |
+| Command                              | What it does                                                                             |
+| ------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `yarn dev`                           | web (http://localhost:3000) and realtime service (ws://localhost:8081) with hot reload   |
+| `yarn dev:web` / `yarn dev:realtime` | one of the two                                                                           |
+| `yarn build` / `yarn start`          | production build and server                                                              |
+| `yarn lint` / `yarn typecheck`       | ESLint / TypeScript                                                                      |
+| `yarn test`                          | unit and component tests (Vitest), in every workspace                                    |
+| `yarn data:fetch`                    | downloads the last 30 days of ERCOT data from EIA into the committed snapshot            |
+| `yarn wasm:build`                    | rebuilds the Rust/WASM module into `packages/downsample/pkg` (needs Rust and wasm-pack)  |
+| `yarn wasm:test`                     | `cargo fmt --check`, `cargo clippy` and `cargo test` for the Rust crate                  |
+| `yarn storybook`                     | local Storybook at http://localhost:6006, with hot reload                                |
+| `yarn build:storybook`               | static Storybook into `apps/web/public/storybook`, served by the web app at `/storybook` |
+| `yarn e2e`                           | builds, starts and runs the Playwright tests (desktop and mobile, with axe checks)       |
+| `yarn format`                        | Prettier                                                                                 |
 
 Run `yarn workspace @pgo/web playwright install chromium` once before the first `yarn e2e`.
 
@@ -184,6 +189,14 @@ Run `yarn workspace @pgo/web playwright install chromium` once before the first 
   search, so it only scans the values, not the timestamps. At 2.6M points both engines are
   limited by memory bandwidth, and WASM is about as fast as JS. On the arithmetic-heavy
   LTTB, WASM is about 1.4× faster.
+- **Real time over one WebSocket.** A second Cloud Run service runs a seeded grid simulator
+  and streams load, asset updates and alarms. The page reads it through an RTK Query
+  streaming endpoint (`onCacheEntryAdded`), so components use an ordinary query hook.
+  - **Reconnects:** the socket reconnects with backoff (1 s up to 30 s), and every new
+    connection starts with a `hello` snapshot. Cloud Run's 60-minute WebSocket limit is
+    therefore invisible to the page.
+  - **Shared acknowledgements:** they go to the server and are broadcast, so every tab sees
+    them. One instance holds that shared state.
 - **Accessibility checked in CI.** Every Playwright page test runs axe (WCAG 2.1 AA) in both
   color schemes. The shell has a skip link, labelled landmarks and `aria-current` navigation.
 - **Open demo.** There is no sign-in. All data is public or synthetic.
@@ -289,6 +302,7 @@ Pull requests run the checks only. The workflow is `.github/workflows/ci.yml`.
 | GCP project number           | `142186164859`                                                                              |
 | Cloud Run region             | `us-central1`                                                                               |
 | Cloud Run service (web)      | `pgo-web`                                                                                   |
+| Cloud Run service (realtime) | `pgo-realtime` (WebSocket, max 1 instance, 60 min timeout)                                  |
 | Artifact Registry repository | `web` (Docker, `us-central1`)                                                               |
 | Deploy service account       | `deployer@power-grid-operations.iam.gserviceaccount.com`                                    |
 | Deploy account roles         | `run.admin`, `artifactregistry.writer`, `iam.serviceAccountUser`                            |
@@ -320,3 +334,4 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 - [M3: Telemetry table](docs/m3-telemetry-table.md)
 - [M4: Chart workbench](docs/m4-chart-workbench.md)
 - [M5: Rust/WASM downsampling](docs/m5-wasm-downsampling.md)
+- [M6: Real-time + alarm feed](docs/m6-realtime-alarms.md)

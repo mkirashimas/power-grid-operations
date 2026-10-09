@@ -29,7 +29,7 @@ not the roadmap.
 | `hoc/App.tsx`, `hoc/Routing.tsx`            | `src/app/layout.tsx` + `hoc/Providers.tsx`; routes are the `src/app` folders                                   |
 | `store/themeSlice.ts`                       | MUI CSS-variable color schemes: `useColorScheme()` and `InitColorSchemeScript`                                 |
 | `store/authSlice.ts`                        | none                                                                                                           |
-| `src/firebase/*`                            | none; RTK Query uses `fetchBaseQuery({ baseUrl: '/api' })`                                                     |
+| `src/firebase/*`                            | none; RTK Query uses `fetchBaseQuery({ baseUrl: '/api' })`, plus a WebSocket for live data                     |
 | i18n detector (localStorage, navigator)     | `lang` cookie, then `Accept-Language` (`i18n/language.ts`)                                                     |
 | Drawer variant via `useMediaQuery`          | two drawers switched with CSS media queries (correct server markup)                                            |
 
@@ -90,6 +90,19 @@ not the roadmap.
   - Toolchain: rustup stable with `wasm32-unknown-unknown` (`rust-toolchain.toml`), wasm-pack 0.15.
 - **Large tables** use `VirtualGrid` from `@pgo/ui`. It handles millions of rows (scaled
   scrolling) and the ARIA grid keyboard pattern.
+- **Real-time data** comes from `services/realtime` (`@pgo/realtime`, Cloud Run `pgo-realtime`).
+  - The simulator (`live.ts`) and the message types (`live-protocol.ts`) live in
+    `@pgo/grid-model`, shared by the service and the app. Change the protocol there, never in
+    one side only.
+  - The app reads it through an RTK Query streaming endpoint: `queryFn` returns an empty state,
+    `onCacheEntryAdded` opens the socket, and a pure `applyMessage` folds messages into the
+    cache (see `features/alarms`). Components use the query hook, not the socket.
+  - The page gets the URL from `getRealtimeUrl()` (`src/server/realtime.ts`, env `REALTIME_URL`,
+    read per request), never from a `NEXT_PUBLIC_` variable.
+  - The service validates every client message (`parseClientMessage`), keeps `maxPayload` small
+    and rate-limits acks. It holds no secrets.
+  - The service runs its TypeScript with `node --experimental-strip-types` (no build). Its image
+    is `services/realtime/Dockerfile`; e2e starts it from `playwright.config.ts`.
 - **Cross-feature state** (e.g. linked selection) goes in a slice in `src/store`, never in a
   feature.
 - **`PATHS`** in `src/types/paths.ts` holds every link target and must match the `src/app`
@@ -113,8 +126,11 @@ not the roadmap.
 ## Infrastructure
 
 - GCP project `power-grid-operations` (number `142186164859`), region **`us-central1`**.
-- The workflow deploys `main` to the Cloud Run service `pgo-web`. The image is
-  `us-central1-docker.pkg.dev/power-grid-operations/web/pgo-web:<sha>`.
+- The workflow deploys `main` to two Cloud Run services:
+  - `pgo-realtime`, first: image `.../web/pgo-realtime:<sha>`, `--max-instances 1`,
+    `--timeout 3600`
+  - `pgo-web`: image `us-central1-docker.pkg.dev/power-grid-operations/web/pgo-web:<sha>`,
+    with `REALTIME_URL` set to the realtime service's `wss://` URL
 - The workflow reads the GitHub repository variables `GCP_PROJECT_ID`, `GCP_REGION`,
   `GCP_SERVICE_ACCOUNT` and `GCP_WORKLOAD_IDENTITY_PROVIDER` as `vars.*`. They are variables, not
   secrets.

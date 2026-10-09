@@ -19,7 +19,8 @@
   "nav": {
     "home": "Resumen",
     "telemetry": "Telemetría",
-    "charts": "Gráficos"
+    "charts": "Gráficos",
+    "alarms": "Alarmas"
   },
   "notFound": {
     "title": "Página no encontrada",

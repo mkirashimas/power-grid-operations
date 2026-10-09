@@ -135,6 +135,40 @@ describe('VirtualGrid', () => {
     expect(screen.getByRole('gridcell', { name: 'Asset 0' })).toHaveFocus();
   });
 
+  it('activates the button in a cell with Enter or Space, keeping one tab stop', async () => {
+    const user = userEvent.setup();
+    const onAcknowledge = vi.fn();
+    renderWithTheme(
+      <VirtualGrid
+        label="Alarms"
+        columns={COLUMNS}
+        rowCount={3}
+        height={400}
+        getRow={(index) => ({
+          kind: 'data',
+          cells: [
+            `Asset ${index}`,
+            String(index),
+            <button key="ack" type="button" tabIndex={-1} onClick={() => onAcknowledge(index)}>
+              Acknowledge
+            </button>,
+          ],
+        })}
+      />,
+    );
+
+    await user.tab();
+    expect(document.querySelectorAll('[tabindex="0"]')).toHaveLength(1);
+    await user.keyboard('{ArrowDown}{ArrowDown}{End}');
+    expect(document.activeElement).toHaveAttribute('data-cell', '1:2');
+    await user.keyboard('{Enter}');
+    expect(onAcknowledge).toHaveBeenCalledWith(1);
+    await user.keyboard('{ArrowUp} ');
+    expect(onAcknowledge).toHaveBeenLastCalledWith(0);
+    await user.click(screen.getAllByRole('button', { name: 'Acknowledge' })[2]);
+    expect(onAcknowledge).toHaveBeenLastCalledWith(2);
+  });
+
   it('shows the empty state under the header when there are no rows', () => {
     renderWithTheme(<Grid rowCount={0} />);
     expect(screen.getByRole('columnheader', { name: 'MW' })).toBeInTheDocument();
