@@ -102,6 +102,7 @@ export const createHub = ({
       tickMs,
       history,
       alarms: simulator.recentAlarms(helloAlarms),
+      assets: simulator.snapshotAssets(),
     };
     send(socket, JSON.stringify(hello));
     clients.add(socket);

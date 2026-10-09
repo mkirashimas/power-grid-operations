@@ -54,7 +54,9 @@ WebAssembly code: the built module is committed (see
 | Hosting        | Google Cloud Run: the web app and a WebSocket service (`ws`, Node 22)                   |
 | Tooling        | Yarn workspaces, ESLint, Prettier, GitHub Actions                                       |
 
-All other UI libraries are open source and need no API keys.
+All other UI libraries are open source and need no API keys. Map tiles by
+[OpenFreeMap](https://openfreemap.org), © OpenMapTiles, data ©
+[OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
 
 </details>
 
@@ -113,8 +115,10 @@ apps/web/          Next.js app
     charts/        /charts: chart workbench over EIA data and a 2.6M-point series;
                    downsampling worker (JS or WASM) and benchmark
     alarms/        /alarms: live alarm feed over a WebSocket (RTK Query streaming)
+    map/           /map: MapLibre map of the grid, coloured by live loading
   src/i18n/        i18next setup, server and client
-  src/store/       Redux store and the base RTK Query api
+  src/store/       Redux store, the base RTK Query api, the linked selection and the
+                   shared live feed (store/live: WebSocket client used by alarms and map)
   src/theme/       MUI locales (the theme itself lives in packages/ui)
   src/types/       app-wide types and PATHS
   src/server/      server-only data access (EIA client with snapshot fallback, assets)
@@ -205,6 +209,14 @@ Run `yarn workspace @pgo/web playwright install chromium` once before the first 
     link.
   - **Live follow-up:** the alarm feed asks the realtime service to `watch` the selected asset
     and gets its values every tick.
+- **A live map without redrawing the map.** The grid is one GeoJSON source per asset kind,
+  built once from the deterministic asset list.
+  - **Feature-state updates:** live values only update the feature-state of the assets that
+    changed, so about 90 updates a second don't rebuild 1,869 features.
+  - **Selection:** the map shares the linked selection, so clicking an asset selects it
+    everywhere.
+  - **Accessible alternative:** **Show as table** lists every asset with live values for
+    keyboard and screen-reader users.
 - **Accessibility checked in CI.** Every Playwright page test runs axe (WCAG 2.1 AA) in both
   color schemes. The shell has a skip link, labelled landmarks and `aria-current` navigation.
 - **Open demo.** There is no sign-in. All data is public or synthetic.
@@ -344,3 +356,4 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 - [M5: Rust/WASM downsampling](docs/m5-wasm-downsampling.md)
 - [M6: Real-time + alarm feed](docs/m6-realtime-alarms.md)
 - [M7: Linked selection](docs/m7-linked-selection.md)
+- [M8: Live map](docs/m8-live-map.md)

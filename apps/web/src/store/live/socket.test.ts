@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ConnectionStatus } from './live';
+import type { ConnectionStatus } from './feed';
 import { openLiveSocket } from './socket';
 
 /** Just enough of a WebSocket to drive the reconnect logic. */

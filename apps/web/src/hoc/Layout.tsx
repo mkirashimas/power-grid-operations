@@ -4,6 +4,7 @@
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import HomeOutlined from '@mui/icons-material/HomeOutlined';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
+import MapOutlined from '@mui/icons-material/MapOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsActiveOutlined from '@mui/icons-material/NotificationsActiveOutlined';
 import ShowChartOutlined from '@mui/icons-material/ShowChartOutlined';
@@ -50,6 +51,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'telemetry', to: PATHS.TELEMETRY, icon: <TableRowsOutlined /> },
   { key: 'charts', to: PATHS.CHARTS, icon: <ShowChartOutlined /> },
   { key: 'alarms', to: PATHS.ALARMS, icon: <NotificationsActiveOutlined /> },
+  { key: 'map', to: PATHS.MAP, icon: <MapOutlined /> },
 ];
 
 const isSelected = (item: NavItem, pathname: string) =>

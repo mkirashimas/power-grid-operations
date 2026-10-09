@@ -1,0 +1,74 @@
+{
+  "title": "Mappa",
+  "intro": "La rete sintetica sul Texas, colorata in base al carico in tempo reale dal servizio realtime. Fai clic su un asset per selezionarlo ovunque; Mostra come tabella elenca tutti gli asset.",
+  "synthetic": "Sintetico",
+  "connection": {
+    "connecting": "Connessione…",
+    "live": "In diretta",
+    "liveLatency": "In diretta · {{ms}} ms",
+    "reconnecting": "Riconnessione…",
+    "offline": "Offline, nuovo tentativo"
+  },
+  "layers": {
+    "label": "Livelli",
+    "withCount": "{{layer}} ({{count}})",
+    "lines": "Linee",
+    "substations": "Sottostazioni",
+    "generators": "Generatori",
+    "loads": "Carichi"
+  },
+  "legend": {
+    "label": "Stato",
+    "normal": "Normale",
+    "warning": "Avviso",
+    "alarm": "Allarme"
+  },
+  "summary": "Mappa di {{count}} asset della rete in Texas: {{alarm}} in allarme, {{warning}} in avviso. Usa Mostra come tabella per un elenco.",
+  "failed": "La mappa non può essere mostrata in questo browser (WebGL non è disponibile). La tabella qui sotto elenca tutti gli asset con i valori in tempo reale.",
+  "panel": {
+    "label": "Asset selezionato",
+    "empty": "Seleziona un asset sulla mappa o nella tabella.",
+    "kind": "Tipo",
+    "zone": "Zona",
+    "capacity": "Potenza nominale",
+    "loading": "Carico",
+    "voltage": "Tensione"
+  },
+  "table": {
+    "label": "Asset",
+    "show": "Mostra come tabella",
+    "hide": "Nascondi tabella",
+    "asset": "Asset",
+    "kind": "Tipo",
+    "zone": "Zona",
+    "loading": "Carico",
+    "voltage": "Tensione",
+    "status": "Stato"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "credit": {
+    "prefix": "Tessere della mappa:",
+    "data": "dati",
+    "osm": "© contributori di OpenStreetMap"
+  },
+  "kinds": {
+    "substation": "Sottostazione",
+    "line": "Linea",
+    "generator": "Generatore",
+    "load": "Carico"
+  },
+  "zones": {
+    "coast": "Costa",
+    "east": "Est",
+    "far-west": "Estremo Ovest",
+    "north": "Nord",
+    "north-central": "Centro Nord",
+    "south-central": "Centro Sud",
+    "southern": "Sud",
+    "west": "Ovest"
+  }
+}

@@ -48,6 +48,7 @@ An acknowledgement goes to the server, which broadcasts it: every open tab sees 
 | server → client | `alarm`: one alarm raised, escalated, cleared or acknowledged          |
 | client → server | `ack`: acknowledge an alarm by id                                      |
 | client → server | `watch`: follow one asset every tick (added in M7)                     |
+| server → client | `hello.assets`: every asset's loading and voltage (added in M8)        |
 | server → client | `asset`: the watched asset's loading and voltage (added in M7)         |
 
 ### 2. Service `services/realtime` (`@pgo/realtime`)

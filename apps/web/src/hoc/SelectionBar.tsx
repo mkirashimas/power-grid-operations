@@ -15,6 +15,7 @@ import { PATHS } from '../types';
 const VIEWS = [
   { key: 'telemetry', to: PATHS.TELEMETRY },
   { key: 'alarms', to: PATHS.ALARMS },
+  { key: 'map', to: PATHS.MAP },
 ] as const;
 
 /** The selected asset, shown on every page with links to the views that follow it. */

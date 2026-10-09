@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { toLanguage } from '../../../i18n/language';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { selectAsset, selectSelectedAssetId } from '../../../store/selectionSlice';
-import { useAcknowledgeAlarmMutation } from '../api';
+import { useAcknowledgeAlarmMutation } from '../../../store/live/liveApi';
 import { ALARMS_NAMESPACE } from '../i18n';
 import { filterAlarms, type SeverityFilter, type ZoneFilter } from '../live';
 import { selectFilters, setSeverity, setZone } from '../slice';

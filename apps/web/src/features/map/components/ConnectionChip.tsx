@@ -3,7 +3,7 @@
 import { StatusChip, VisuallyHidden, type Status } from '@pgo/ui';
 import { Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ALARMS_NAMESPACE } from '../i18n';
+import { MAP_NAMESPACE } from '../i18n';
 import type { ConnectionStatus } from '../../../store/live/feed';
 
 const CHIP_STATUS: Record<ConnectionStatus, Status> = {
@@ -24,7 +24,7 @@ export const ConnectionChip = ({
   status: ConnectionStatus;
   latencyMs: number | null;
 }) => {
-  const { t } = useTranslation(ALARMS_NAMESPACE);
+  const { t } = useTranslation(MAP_NAMESPACE);
   const label =
     status === 'live' && latencyMs !== null
       ? t('connection.liveLatency', { ms: Math.round(latencyMs) })

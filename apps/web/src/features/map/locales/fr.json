@@ -1,0 +1,74 @@
+{
+  "title": "Carte",
+  "intro": "Le réseau synthétique sur le Texas, coloré selon la charge en direct du service temps réel. Cliquez sur un équipement pour le sélectionner partout ; Afficher en tableau liste tous les équipements.",
+  "synthetic": "Synthétique",
+  "connection": {
+    "connecting": "Connexion…",
+    "live": "En direct",
+    "liveLatency": "En direct · {{ms}} ms",
+    "reconnecting": "Reconnexion…",
+    "offline": "Hors ligne, nouvelle tentative"
+  },
+  "layers": {
+    "label": "Couches",
+    "withCount": "{{layer}} ({{count}})",
+    "lines": "Lignes",
+    "substations": "Postes",
+    "generators": "Générateurs",
+    "loads": "Charges"
+  },
+  "legend": {
+    "label": "État",
+    "normal": "Normal",
+    "warning": "Avertissement",
+    "alarm": "Alarme"
+  },
+  "summary": "Carte de {{count}} équipements du réseau au Texas : {{alarm}} en alarme, {{warning}} en avertissement. Utilisez Afficher en tableau pour une liste.",
+  "failed": "La carte ne peut pas s’afficher dans ce navigateur (WebGL n’est pas disponible). Le tableau ci-dessous liste tous les équipements avec leurs valeurs en direct.",
+  "panel": {
+    "label": "Équipement sélectionné",
+    "empty": "Sélectionnez un équipement sur la carte ou dans le tableau.",
+    "kind": "Type",
+    "zone": "Zone",
+    "capacity": "Puissance nominale",
+    "loading": "Charge",
+    "voltage": "Tension"
+  },
+  "table": {
+    "label": "Équipements",
+    "show": "Afficher en tableau",
+    "hide": "Masquer le tableau",
+    "asset": "Équipement",
+    "kind": "Type",
+    "zone": "Zone",
+    "loading": "Charge",
+    "voltage": "Tension",
+    "status": "État"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "credit": {
+    "prefix": "Tuiles de la carte :",
+    "data": "données",
+    "osm": "© contributeurs d’OpenStreetMap"
+  },
+  "kinds": {
+    "substation": "Poste",
+    "line": "Ligne",
+    "generator": "Générateur",
+    "load": "Charge"
+  },
+  "zones": {
+    "coast": "Côte",
+    "east": "Est",
+    "far-west": "Extrême Ouest",
+    "north": "Nord",
+    "north-central": "Centre Nord",
+    "south-central": "Centre Sud",
+    "southern": "Sud",
+    "west": "Ouest"
+  }
+}

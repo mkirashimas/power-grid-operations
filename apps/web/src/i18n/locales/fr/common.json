@@ -20,7 +20,8 @@
     "home": "Vue d’ensemble",
     "telemetry": "Télémesures",
     "charts": "Graphiques",
-    "alarms": "Alarmes"
+    "alarms": "Alarmes",
+    "map": "Carte"
   },
   "notFound": {
     "title": "Page introuvable",

@@ -96,9 +96,11 @@ not the roadmap.
   - The simulator (`live.ts`) and the message types (`live-protocol.ts`) live in
     `@pgo/grid-model`, shared by the service and the app. Change the protocol there, never in
     one side only.
-  - The app reads it through an RTK Query streaming endpoint: `queryFn` returns an empty state,
-    `onCacheEntryAdded` opens the socket, and a pure `applyMessage` folds messages into the
-    cache (see `features/alarms`). Components use the query hook, not the socket.
+  - The app reads it through one shared RTK Query streaming endpoint in `src/store/live`
+    (infrastructure, used by alarms and map): `queryFn` returns an empty state,
+    `onCacheEntryAdded` opens the socket, and a pure `applyMessage` (`feed.ts`) folds messages
+    into the cache. Components use `useLiveFeedQuery`, never the socket. Features never import
+    each other's live code; shared live logic belongs in `store/live`.
   - The page gets the URL from `getRealtimeUrl()` (`src/server/realtime.ts`, env `REALTIME_URL`,
     read per request), never from a `NEXT_PUBLIC_` variable.
   - The service validates every client message (`parseClientMessage`), keeps `maxPayload` small
@@ -158,4 +160,12 @@ not the roadmap.
   - Credit "U.S. Energy Information Administration" wherever EIA data is shown.
   - Never use the EIA logo, and never imply endorsement.
   - Label generated data **synthetic** in the UI and docs, and never present it as EIA data.
-- **Map:** OpenFreeMap tiles need no key, but the attribution must stay visible.
+- **Map:** OpenFreeMap tiles need no key, but the attribution must stay visible
+  (`AttributionControl` with `compact: false`, plus the credit line on `/map`).
+  - Load `maplibre-gl` with a dynamic `import()` in a client component, and keep the
+    `setWorkerUrl(new URL('maplibre-gl/dist/maplibre-gl-worker.mjs', import.meta.url))` call:
+    without it the bundled worker is not found and nothing but the background draws.
+  - Live values go through feature-state on changed assets only (feature id = asset index),
+    never `setData` per tick.
+  - e2e routes `tiles.openfreemap.org` to a minimal local style; wait for `data-ready` on the
+    map container before clicking the map.

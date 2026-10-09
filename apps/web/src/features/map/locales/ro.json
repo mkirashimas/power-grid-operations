@@ -1,0 +1,74 @@
+{
+  "title": "Hartă",
+  "intro": "Rețeaua sintetică peste Texas, colorată după încărcarea live de la serviciul realtime. Fă clic pe un echipament pentru a-l selecta peste tot; Afișează ca tabel listează toate echipamentele.",
+  "synthetic": "Sintetic",
+  "connection": {
+    "connecting": "Conectare…",
+    "live": "Live",
+    "liveLatency": "Live · {{ms}} ms",
+    "reconnecting": "Reconectare…",
+    "offline": "Offline, se reîncearcă"
+  },
+  "layers": {
+    "label": "Straturi",
+    "withCount": "{{layer}} ({{count}})",
+    "lines": "Linii",
+    "substations": "Stații",
+    "generators": "Generatoare",
+    "loads": "Consumatori"
+  },
+  "legend": {
+    "label": "Stare",
+    "normal": "Normal",
+    "warning": "Avertizare",
+    "alarm": "Alarmă"
+  },
+  "summary": "Hartă cu {{count}} echipamente ale rețelei din Texas: {{alarm}} în alarmă, {{warning}} în avertizare. Folosește Afișează ca tabel pentru o listă.",
+  "failed": "Harta nu poate fi afișată în acest browser (WebGL nu este disponibil). Tabelul de mai jos listează toate echipamentele cu valorile lor live.",
+  "panel": {
+    "label": "Echipament selectat",
+    "empty": "Selectează un echipament pe hartă sau în tabel.",
+    "kind": "Tip",
+    "zone": "Zonă",
+    "capacity": "Putere nominală",
+    "loading": "Încărcare",
+    "voltage": "Tensiune"
+  },
+  "table": {
+    "label": "Echipamente",
+    "show": "Afișează ca tabel",
+    "hide": "Ascunde tabelul",
+    "asset": "Echipament",
+    "kind": "Tip",
+    "zone": "Zonă",
+    "loading": "Încărcare",
+    "voltage": "Tensiune",
+    "status": "Stare"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "credit": {
+    "prefix": "Plăcile hărții:",
+    "data": "date",
+    "osm": "© contribuitorii OpenStreetMap"
+  },
+  "kinds": {
+    "substation": "Stație",
+    "line": "Linie",
+    "generator": "Generator",
+    "load": "Consumator"
+  },
+  "zones": {
+    "coast": "Coastă",
+    "east": "Est",
+    "far-west": "Vestul Îndepărtat",
+    "north": "Nord",
+    "north-central": "Centru-Nord",
+    "south-central": "Centru-Sud",
+    "southern": "Sud",
+    "west": "Vest"
+  }
+}
