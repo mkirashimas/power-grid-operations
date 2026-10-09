@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  findSeries,
-  generateHighResLoad,
-  type EiaSnapshot,
-  type HighResSeries,
-} from '@pgo/grid-model';
+import { findSeries, type EiaSnapshot } from '@pgo/grid-model';
 import { Stack, Typography } from '@mui/material';
 import {
   ChartWorkbench,
@@ -20,14 +15,24 @@ import {
   type PaneSummaryInput,
   type RenderStats,
 } from '@pgo/ui';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toLanguage } from '../../../i18n/language';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { prepareChartData } from '../data';
-import { useDomainUrlSync } from '../hooks/useDomainUrlSync';
+import { useChartsUrlSync } from '../hooks/useChartsUrlSync';
+import { useDownsampleWorker } from '../hooks/useDownsampleWorker';
 import { CHARTS_NAMESPACE } from '../i18n';
-import { selectDomain, setDomain } from '../slice';
+import {
+  selectAlgorithm,
+  selectDomain,
+  selectEngine,
+  setAlgorithm,
+  setDomain,
+  setEngine,
+} from '../slice';
+import { DownsampleBenchmark } from './DownsampleBenchmark';
+import { DownsampleControls } from './DownsampleControls';
 
 const DAY = 24 * 3_600_000;
 // ERCOT operates on Central Time.
@@ -38,7 +43,7 @@ export const ChartsView = ({ snapshot }: { snapshot: EiaSnapshot }) => {
   const { t, i18n } = useTranslation(CHARTS_NAMESPACE);
   const language = toLanguage(i18n.resolvedLanguage);
   const dispatch = useAppDispatch();
-  useDomainUrlSync();
+  useChartsUrlSync();
 
   const data = useMemo(() => prepareChartData(snapshot), [snapshot]);
   const stored = useAppSelector(selectDomain);
@@ -48,22 +53,12 @@ export const ChartsView = ({ snapshot }: { snapshot: EiaSnapshot }) => {
     [dispatch],
   );
 
-  // The 1-second series (about 2.6M points) is generated after the first paint.
-  const demandPoints = findSeries(snapshot, 'demand')?.points;
-  const demandKey = `${demandPoints?.length}:${demandPoints?.at(-1)?.period}`;
-  const [highRes, setHighRes] = useState<{ series: HighResSeries; ms: number } | null>(null);
+  // The 1-second series (about 2.6M points) is generated and downsampled in a Web Worker.
+  const engine = useAppSelector(selectEngine);
+  const algorithm = useAppSelector(selectAlgorithm);
+  const worker = useDownsampleWorker(findSeries(snapshot, 'demand')?.points, engine, algorithm);
+  const highRes = worker.state.status === 'ready' ? worker.state : null;
   const [stats, setStats] = useState<RenderStats>();
-  useEffect(() => {
-    if (!demandPoints) return;
-    const timer = setTimeout(() => {
-      const started = performance.now();
-      const series = generateHighResLoad(demandPoints);
-      setHighRes({ series, ms: performance.now() - started });
-    });
-    return () => clearTimeout(timer);
-    // Regenerate only when the demand data itself changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [demandKey]);
 
   const formats = useMemo(
     () => ({
@@ -134,7 +129,7 @@ export const ChartsView = ({ snapshot }: { snapshot: EiaSnapshot }) => {
         time: fuel.time,
         value: fuel.value,
       })),
-      load: highRes ? make('load', 'series3', highRes.series) : undefined,
+      load: highRes ? make('load', 'series3', highRes) : undefined,
     };
   }, [data, highRes, t]);
 
@@ -176,30 +171,43 @@ export const ChartsView = ({ snapshot }: { snapshot: EiaSnapshot }) => {
           formatValue={formatValue}
           summarize={summarize(t('panes.interchange'))}
         />
-        {series.load ? (
-          <TimeSeriesPane
-            title={t('panes.highRes')}
-            series={[series.load]}
-            formatValue={formatValue}
-            summarize={summarize(t('panes.highRes'))}
-            onRenderStats={setStats}
-            badge={
-              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                <SyntheticBadge label={t('synthetic')} />
-                {stats && (
-                  <Typography variant="caption" color="text.secondary" data-testid="highres-stats">
-                    {t('highResStats', {
-                      input: formats.count.format(stats.inputPoints),
-                      drawn: formats.count.format(stats.drawnPoints),
-                      ms: formats.ms.format(stats.ms),
-                    })}
-                  </Typography>
-                )}
-              </Stack>
-            }
-          />
+        {series.load && highRes ? (
+          <Stack spacing={1.5}>
+            <TimeSeriesPane
+              title={t('panes.highRes')}
+              series={[series.load]}
+              formatValue={formatValue}
+              summarize={summarize(t('panes.highRes'))}
+              onRenderStats={setStats}
+              downsample={worker.downsample}
+              badge={<SyntheticBadge label={t('synthetic')} />}
+            />
+            <Typography variant="body2" color="text.secondary" data-testid="highres-stats">
+              {stats?.downsampleMs !== undefined &&
+                t('downsampling.stats', {
+                  input: formats.count.format(stats.inputPoints),
+                  drawn: formats.count.format(stats.drawnPoints),
+                  engine: t(`downsampling.${worker.lastEngine ?? engine}`),
+                  algorithm: t(`downsampling.${algorithm}`),
+                  downsampleMs: formats.ms.format(stats.downsampleMs),
+                  drawMs: formats.ms.format(stats.ms),
+                })}
+            </Typography>
+            <DownsampleControls
+              engine={engine}
+              algorithm={algorithm}
+              wasmAvailable={highRes.wasm}
+              onEngineChange={(value) => dispatch(setEngine(value))}
+              onAlgorithmChange={(value) => dispatch(setAlgorithm(value))}
+            />
+            <DownsampleBenchmark run={worker.runBenchmark} />
+          </Stack>
         ) : (
-          <Typography color="text.secondary">{t('loadingHighRes')}</Typography>
+          <Typography color="text.secondary" role="status">
+            {worker.state.status === 'error'
+              ? t('highResFailed', { message: worker.state.message })
+              : t('loadingHighRes')}
+          </Typography>
         )}
       </ChartWorkbench>
     </Panel>

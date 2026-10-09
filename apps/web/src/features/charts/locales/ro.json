@@ -43,9 +43,33 @@
   },
   "summary": "{{title}}, între {{from}} și {{to}}: {{series}}.",
   "summaryItem": "{{label}} între {{min}} și {{max}}",
-  "highResStats": "{{input}} → {{drawn}} puncte desenate în {{ms}} ms",
   "loadingHighRes": "Se generează seria la secundă…",
+  "highResFailed": "Seria la o secundă nu a putut fi generată: {{message}}",
   "synthetic": "Sintetic",
   "source": "Sursă:",
-  "live": "în timp real, actualizat orar"
+  "live": "în timp real, actualizat orar",
+  "downsampling": {
+    "engine": "Motor",
+    "algorithm": "Algoritm",
+    "js": "JS",
+    "wasm": "WASM",
+    "minmax": "Min/max",
+    "lttb": "LTTB",
+    "note": "Min/max păstrează toate vârfurile (până la 4 puncte pe coloană de pixeli). LTTB păstrează forma cu un punct pe coloană, dar poate pierde un vârf care durează o singură secundă.",
+    "wasmUnavailable": "WebAssembly nu a putut fi încărcat în acest browser, așa că eșantionarea rulează în JS.",
+    "stats": "{{input}} → {{drawn}} puncte · {{engine}} {{algorithm}} în {{downsampleMs}} ms într-un worker · desenat în {{drawMs}} ms"
+  },
+  "benchmark": {
+    "run": "Rulează benchmark",
+    "running": "Benchmark în curs…",
+    "done": "Benchmark încheiat.",
+    "failed": "Benchmark-ul a eșuat: {{message}}",
+    "caption": "Mediana a 7 rulări într-un Web Worker pe acest dispozitiv, reduse la {{buckets}} coloane de pixeli",
+    "range": "Interval",
+    "algorithm": "Algoritm",
+    "points": "Puncte în interval",
+    "speedup": "Accelerare WASM",
+    "ms": "{{value}} ms",
+    "times": "{{value}}×"
+  }
 }

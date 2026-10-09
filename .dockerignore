@@ -6,3 +6,4 @@
 .git
 .github
 *.md
+packages/downsample/rust/target

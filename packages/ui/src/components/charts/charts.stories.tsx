@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { downsampleLttb } from '@pgo/downsample';
 import { useState } from 'react';
 import { SyntheticBadge } from '../SyntheticBadge/SyntheticBadge.tsx';
 import { ChartWorkbench } from './ChartWorkbench.tsx';
 import type { Domain } from './domain.ts';
 import { TimeSeriesPane } from './TimeSeriesPane.tsx';
-import type { ChartLabels, ChartSeries, RenderStats } from './types.ts';
+import type { ChartLabels, ChartSeries, PaneDownsampler, RenderStats } from './types.ts';
 
 const HOUR = 3_600_000;
 const START = Date.UTC(2026, 8, 8);
@@ -72,7 +73,23 @@ const summarize =
   ({ series: list }: { series: { label: string; min: number; max: number }[] }) =>
     `${title}. ${list.map((s) => `${s.label} from ${formatMw(s.min)} to ${formatMw(s.max)}`).join('; ')}.`;
 
-const Workbench = ({ withHighRes }: { withHighRes: boolean }) => {
+// Stands in for a Web Worker: answers on a later task, here with LTTB.
+const lttbLater: PaneDownsampler = (series, from, to, buckets) =>
+  new Promise((resolve) =>
+    setTimeout(() => {
+      const started = performance.now();
+      const result = downsampleLttb(series, from, to, buckets);
+      resolve({ ...result, ms: performance.now() - started });
+    }),
+  );
+
+const Workbench = ({
+  withHighRes,
+  downsample,
+}: {
+  withHighRes: boolean;
+  downsample?: PaneDownsampler;
+}) => {
   const [domain, setDomain] = useState<Domain>([FULL[1] - 7 * 24 * HOUR, FULL[1]]);
   const [stats, setStats] = useState<RenderStats>();
   return (
@@ -140,6 +157,7 @@ const Workbench = ({ withHighRes }: { withHighRes: boolean }) => {
           formatValue={formatMw}
           summarize={summarize('1-second load')}
           onRenderStats={setStats}
+          downsample={downsample}
         />
       )}
     </ChartWorkbench>
@@ -164,4 +182,14 @@ export const Workbench3Panes: Story = {
 export const MillionsOfPoints: Story = {
   name: 'Millions of points',
   render: () => <Workbench withHighRes />,
+};
+
+/**
+ * The 1-second pane with a `downsample` function, as the app uses with its Web Worker: the
+ * lines are requested asynchronously (here LTTB, one point per pixel) and stale answers are
+ * dropped.
+ */
+export const AsyncDownsampling: Story = {
+  name: 'Async downsampling',
+  render: () => <Workbench withHighRes downsample={lttbLater} />,
 };

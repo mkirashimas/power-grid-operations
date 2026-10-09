@@ -17,7 +17,14 @@ import { prepareCanvas, useCanvasColors, withAlpha } from './canvas.ts';
 import { useChart } from './ChartContext.ts';
 import { lowerBound, nearestIndex, panBy, zoomAround, type Domain } from './domain.ts';
 import { formatInstant, timeTickFormat, timeTicks, valueScale } from './ticks.ts';
-import type { ChartBand, ChartSeries, PaneSummaryInput, RenderStats } from './types.ts';
+import type { DownsampleResult } from './downsample.ts';
+import type {
+  ChartBand,
+  ChartSeries,
+  PaneDownsampler,
+  PaneSummaryInput,
+  RenderStats,
+} from './types.ts';
 import { buildPaneView, type PaneView } from './view.ts';
 
 const MARGIN = { top: 8, right: 12, bottom: 22, left: 60 };
@@ -40,6 +47,16 @@ export interface TimeSeriesPaneProps {
   /** Shown next to the title, e.g. a SyntheticBadge. */
   badge?: ReactNode;
   onRenderStats?: (stats: RenderStats) => void;
+  /**
+   * Downsamples the lines asynchronously (e.g. in a Web Worker) instead of with min/max on the
+   * main thread. The previous result stays on screen until the new one arrives.
+   */
+  downsample?: PaneDownsampler;
+}
+
+interface AsyncLines {
+  lines: Record<string, DownsampleResult>;
+  ms: number;
 }
 
 /**
@@ -58,6 +75,7 @@ export const TimeSeriesPane = ({
   summarize,
   badge,
   onRenderStats,
+  downsample,
 }: TimeSeriesPaneProps) => {
   const { full, domain, setDomain, crosshair, setCrosshair, locale, timeZone, labels } = useChart();
   const { colors, scheme } = useCanvasColors();
@@ -70,9 +88,39 @@ export const TimeSeriesPane = ({
   const [showTable, setShowTable] = useState(false);
 
   const plotWidth = Math.max(10, width - MARGIN.left - MARGIN.right);
+  const asyncMode = Boolean(downsample) && !stacked;
+
+  // Async downsampling: request every line for the current range; only the latest answer counts.
+  const [asyncLines, setAsyncLines] = useState<AsyncLines | null>(null);
+  const latestRequest = useRef(0);
+  useEffect(() => {
+    if (!downsample || stacked || width === 0) return;
+    latestRequest.current += 1;
+    const request = latestRequest.current;
+    const buckets = Math.floor(plotWidth);
+    Promise.all(series.map((s) => downsample(s, domain[0], domain[1], buckets)))
+      .then((results) => {
+        if (request !== latestRequest.current) return;
+        setAsyncLines({
+          lines: Object.fromEntries(results.map((result, i) => [series[i].id, result])),
+          ms: results.reduce((sum, result) => sum + result.ms, 0),
+        });
+      })
+      // A failed request leaves the previous lines on screen; the next change retries.
+      .catch(() => undefined);
+  }, [downsample, stacked, series, domain, plotWidth, width]);
+
   const view: PaneView = useMemo(
-    () => buildPaneView(series, band, stacked, domain, plotWidth),
-    [series, band, stacked, domain, plotWidth],
+    () =>
+      buildPaneView(
+        series,
+        band,
+        stacked,
+        domain,
+        plotWidth,
+        asyncMode ? (asyncLines?.lines ?? {}) : undefined,
+      ),
+    [series, band, stacked, domain, plotWidth, asyncMode, asyncLines],
   );
 
   // Latest values for event listeners and callbacks that outlive a render.
@@ -231,10 +279,12 @@ export const TimeSeriesPane = ({
       }
       context.restore();
 
+      if (asyncMode && !asyncLines) return;
       latest.current.onRenderStats?.({
         inputPoints: view.inputPoints,
         drawnPoints: view.drawnPoints,
         ms: view.ms + performance.now() - started,
+        downsampleMs: asyncMode ? asyncLines?.ms : undefined,
       });
     });
     return () => cancelAnimationFrame(frame);

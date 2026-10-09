@@ -7,6 +7,7 @@ WORKDIR /repo
 # Add each new workspace's package.json here.
 COPY package.json yarn.lock ./
 COPY apps/web/package.json apps/web/
+COPY packages/downsample/package.json packages/downsample/
 COPY packages/grid-model/package.json packages/grid-model/
 COPY packages/ui/package.json packages/ui/
 RUN yarn install --frozen-lockfile --non-interactive

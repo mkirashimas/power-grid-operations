@@ -1,3 +1,5 @@
+import { lowerBound } from '@pgo/downsample';
+
 /** A time range in epoch milliseconds: [from, to]. */
 export type Domain = readonly [from: number, to: number];
 
@@ -36,17 +38,7 @@ export const panBy = (domain: Domain, deltaMs: number, full: Domain): Domain =>
 export const lastSpan = (full: Domain, spanMs: number): Domain =>
   clampDomain([full[1] - spanMs, full[1]], full);
 
-/** Index of the first time ≥ t in an ascending array (binary search). */
-export const lowerBound = (time: ArrayLike<number>, t: number) => {
-  let low = 0;
-  let high = time.length;
-  while (low < high) {
-    const mid = (low + high) >>> 1;
-    if (time[mid] < t) low = mid + 1;
-    else high = mid;
-  }
-  return low;
-};
+export { lowerBound };
 
 /** Index of the point closest to t, or -1 for an empty array. */
 export const nearestIndex = (time: ArrayLike<number>, t: number) => {

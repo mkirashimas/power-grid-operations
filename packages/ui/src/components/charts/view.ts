@@ -1,5 +1,5 @@
 import { lowerBound, type Domain } from './domain.ts';
-import { downsampleMinMax } from './downsample.ts';
+import { downsampleMinMax, type DownsampleResult } from './downsample.ts';
 import type { ChartBand, ChartSeries } from './types.ts';
 
 export interface LineView {
@@ -60,6 +60,8 @@ const slice = (values: ArrayLike<number>, start: number, end: number) =>
 /**
  * Prepares what a pane draws for the visible range: lines are min/max-downsampled to the plot
  * width, stacked areas are summed (they share one time axis), and the band is clipped.
+ * With `prepared` (lines downsampled elsewhere, by series id), lines are taken from it as they
+ * are, and series not in it yet are left out.
  */
 export const buildPaneView = (
   series: ChartSeries[],
@@ -67,6 +69,7 @@ export const buildPaneView = (
   stacked: boolean,
   domain: Domain,
   plotWidth: number,
+  prepared?: Readonly<Record<string, DownsampleResult>>,
 ): PaneView => {
   const started = performance.now();
   let inputPoints = 0;
@@ -103,7 +106,10 @@ export const buildPaneView = (
     });
   } else {
     series.forEach((s) => {
-      const result = downsampleMinMax(s, domain[0], domain[1], plotWidth);
+      const result = prepared
+        ? prepared[s.id]
+        : downsampleMinMax(s, domain[0], domain[1], plotWidth);
+      if (!result) return;
       const { min, max } = extent(result.value);
       include(min, max);
       inputPoints += result.inputCount;

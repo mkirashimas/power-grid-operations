@@ -17,7 +17,7 @@ const expectNoAxeViolations = async (page: Page) => {
 
 const openCharts = async (page: Page, search = '') => {
   await page.goto(`/charts${search}`);
-  // The 1-second series is generated after the first paint; wait for its draw statistics.
+  // The 1-second series is generated in a worker; wait for its draw statistics.
   await expect(page.getByTestId('highres-stats')).toBeVisible({ timeout: 30_000 });
 };
 
@@ -42,8 +42,9 @@ test('draws four panes with EIA credit and the downsampled synthetic series', as
   ).toBeVisible();
   await expect(page.getByText('Synthetic').first()).toBeVisible();
   // Hundreds of thousands of points in a 7-day window, drawn as a few thousand.
+  // Downsampled by default with Rust/WASM min/max in the worker.
   await expect(page.getByTestId('highres-stats')).toHaveText(
-    /^[\d,]{7,} → [\d,]{3,5} points drawn in [\d.]+ ms$/,
+    /^[\d,]{7,} → [\d,]{3,5} points · WASM Min\/max in [\d.]+ ms in a worker · drawn in [\d.]+ ms$/,
   );
   await expectNoAxeViolations(page);
 
@@ -110,6 +111,51 @@ test('lists the visible data as a table', async ({ page }) => {
   await expect(grid).toBeVisible();
   await expect(grid.getByRole('columnheader', { name: 'Day-ahead forecast' })).toBeVisible();
   await expect(grid.getByRole('gridcell').first()).toContainText(/\d/);
+});
+
+test('switches the downsampling engine and algorithm, and keeps them in the URL', async ({
+  page,
+}) => {
+  await openCharts(page);
+  const stats = page.getByTestId('highres-stats');
+  const engine = page.getByRole('group', { name: 'Engine' });
+  const algorithm = page.getByRole('group', { name: 'Algorithm' });
+  await expect(engine.getByRole('button', { name: 'WASM' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+
+  await engine.getByRole('button', { name: 'JS' }).click();
+  await expect(stats).toContainText('JS Min/max');
+  await algorithm.getByRole('button', { name: 'LTTB' }).click();
+  await expect(stats).toContainText('JS LTTB');
+  await expect(page).toHaveURL(/engine=js&algo=lttb/);
+
+  await page.goto(page.url());
+  await expect(page.getByTestId('highres-stats')).toContainText('JS LTTB', { timeout: 30_000 });
+  await expect(
+    page.getByRole('group', { name: 'Algorithm' }).getByRole('button', { name: 'LTTB' }),
+  ).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('benchmarks JS against WASM in the worker', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await openCharts(page);
+
+  await page.getByRole('button', { name: 'Run benchmark' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Benchmark finished.' })).toBeVisible({
+    timeout: 60_000,
+  });
+  const table = page.getByRole('table', { name: /Median of 7 runs/ });
+  // 3 ranges × 2 algorithms, plus the header row.
+  await expect(table.getByRole('row')).toHaveCount(7);
+  await expect(table.getByRole('row').nth(1)).toContainText(/24 h.*Min\/max.*ms.*ms.*×/);
+  await expectNoAxeViolations(page);
+
+  await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+  await page.mouse.move(0, 0);
+  await expect(page.getByRole('tooltip')).toBeHidden();
+  await expectNoAxeViolations(page);
 });
 
 test('has no horizontal page scroll on narrow screens', async ({ page, isMobile }) => {

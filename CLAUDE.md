@@ -74,6 +74,20 @@ not the roadmap.
   - Canvas code resolves theme CSS variables to concrete colours (`charts/canvas.ts`) and redraws when
     the scheme changes.
   - Every pane needs a translated `summarize` for its `role="img"` label.
+  - Long series are downsampled off the main thread: pass the pane a `downsample` function
+    (`PaneDownsampler`) backed by a feature worker, as `features/charts` does.
+- **Rust/WASM** lives in `packages/downsample` (`@pgo/downsample`).
+  - `rust/` is the crate. `pkg/` is its `wasm-pack` output and is **committed**, so `yarn dev`,
+    the Docker build and the main CI job need no Rust.
+  - After changing Rust code, run `yarn wasm:build` and commit `pkg/` with the change.
+    `yarn wasm:test` runs `cargo fmt --check`, `clippy -D warnings` and `cargo test`. CI's
+    `rust` job rebuilds the module and runs the parity test against the fresh build.
+  - Each algorithm exists in TypeScript and in Rust, with the same operations in the same order.
+    `src/parity.test.ts` checks that both return identical points.
+  - Import the loader (`@pgo/downsample/wasm`) only in workers. The main entry stays WASM-free,
+    because `@pgo/ui` imports it.
+  - WASM loading can fail: fall back to JS and say so in the UI.
+  - Toolchain: rustup stable with `wasm32-unknown-unknown` (`rust-toolchain.toml`), wasm-pack 0.15.
 - **Large tables** use `VirtualGrid` from `@pgo/ui`. It handles millions of rows (scaled
   scrolling) and the ARIA grid keyboard pattern.
 - **Cross-feature state** (e.g. linked selection) goes in a slice in `src/store`, never in a

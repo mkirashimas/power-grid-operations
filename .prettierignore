@@ -6,3 +6,6 @@ playwright-report
 yarn.lock
 packages/grid-model/data
 apps/web/public/storybook
+# Built by wasm-pack (yarn wasm:build) and cargo
+packages/downsample/pkg
+packages/downsample/rust/target

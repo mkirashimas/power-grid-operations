@@ -18,6 +18,8 @@
     "test": "yarn workspaces run test",
     "e2e": "yarn workspace @pgo/web e2e",
     "data:fetch": "yarn workspace @pgo/grid-model fetch:eia",
+    "wasm:build": "yarn workspace @pgo/downsample build:wasm",
+    "wasm:test": "yarn workspace @pgo/downsample test:rust",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "storybook": "yarn workspace @pgo/ui storybook",
