@@ -162,6 +162,31 @@ describe('ChartWorkbench and TimeSeriesPane', () => {
     );
   });
 
+  it('can hide the zoom toolbar and the overview, e.g. for a live view', () => {
+    renderWithTheme(
+      <ChartWorkbench
+        full={FULL}
+        domain={FULL}
+        onDomainChange={() => {}}
+        locale="en-US"
+        timeZone="UTC"
+        labels={LABELS}
+        controls={false}
+      >
+        <TimeSeriesPane
+          title="Live load"
+          series={[DEMAND]}
+          formatValue={String}
+          summarize={() => 'Live load'}
+        />
+      </ChartWorkbench>,
+    );
+    expect(screen.getByRole('img', { name: 'Live load' })).toBeInTheDocument();
+    expect(screen.queryByRole('toolbar')).not.toBeInTheDocument();
+    expect(screen.queryByText('Overview')).not.toBeInTheDocument();
+    expect(screen.getByTestId('chart-range')).toBeInTheDocument();
+  });
+
   it('does not fire render stats without a canvas (jsdom) and fails outside a workbench', () => {
     const onRenderStats = vi.fn();
     renderWithTheme(<Charts onRenderStats={onRenderStats} />);

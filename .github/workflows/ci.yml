@@ -37,6 +37,11 @@ jobs:
 
       - run: yarn e2e
 
+      # The realtime image is only deployed from main; build it on every run so a broken
+      # Dockerfile shows up in the PR.
+      - name: Build realtime image
+        run: docker build -f services/realtime/Dockerfile -t pgo-realtime:ci .
+
       - uses: actions/upload-artifact@v5
         if: failure()
         with:
@@ -79,7 +84,7 @@ jobs:
       - run: yarn workspace @pgo/downsample test
 
   deploy-web:
-    name: Deploy web to Cloud Run
+    name: Deploy to Cloud Run
     needs: [checks, rust]
     # Deploys only pushes to main, once the GCP variables exist (see docs/deploy.md).
     # Pushes to development and pull requests run the checks only.
@@ -91,6 +96,7 @@ jobs:
       id-token: write # Workload Identity Federation: no service-account key in GitHub.
     env:
       IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/web/pgo-web:${{ github.sha }}
+      REALTIME_IMAGE: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/web/pgo-realtime:${{ github.sha }}
     steps:
       - uses: actions/checkout@v5
 
@@ -103,12 +109,34 @@ jobs:
 
       - run: gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev --quiet
 
-      - name: Build and push image
+      - name: Build and push images
         run: |
           docker build -f apps/web/Dockerfile -t "$IMAGE" .
+          docker build -f services/realtime/Dockerfile -t "$REALTIME_IMAGE" .
           docker push "$IMAGE"
+          docker push "$REALTIME_IMAGE"
 
-      - name: Deploy
+      # First, so the web app can be given its URL.
+      - name: Deploy realtime service
+        id: realtime
+        run: |
+          # One instance holds the shared alarm state. A WebSocket lasts at most --timeout
+          # (60 min); the page then reconnects.
+          gcloud run deploy pgo-realtime \
+            --image "$REALTIME_IMAGE" \
+            --region ${{ vars.GCP_REGION }} \
+            --allow-unauthenticated \
+            --port 8080 \
+            --cpu 1 \
+            --memory 512Mi \
+            --timeout 3600 \
+            --min-instances 0 \
+            --max-instances 1 \
+            --quiet
+          URL=$(gcloud run services describe pgo-realtime --region ${{ vars.GCP_REGION }} --format 'value(status.url)')
+          echo "url=wss://${URL#https://}" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy web
         env:
           # Name of the Secret Manager secret holding the EIA key. Until the repository variable
           # EIA_SECRET_NAME is set, the app serves the committed EIA snapshot.
@@ -120,6 +148,7 @@ jobs:
           fi
           gcloud run deploy pgo-web \
             "${SECRETS[@]}" \
+            --update-env-vars "REALTIME_URL=${{ steps.realtime.outputs.url }}" \
             --image "$IMAGE" \
             --region ${{ vars.GCP_REGION }} \
             --allow-unauthenticated \
