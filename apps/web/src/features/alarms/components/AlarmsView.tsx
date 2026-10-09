@@ -4,7 +4,10 @@ import { Panel, useAnnounce } from '@pgo/ui';
 import { Stack } from '@mui/material';
 import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLiveFeedQuery } from '../api';
+import { useAppSelector } from '../../../store';
+import { findAsset } from '../../../store/assets';
+import { selectSelectedAssetId } from '../../../store/selectionSlice';
+import { useLiveFeedQuery, useWatchAssetMutation } from '../api';
 import { useAlarmsUrlSync } from '../hooks/useAlarmsUrlSync';
 import { useMessageRate } from '../hooks/useMessageRate';
 import { ALARMS_NAMESPACE } from '../i18n';
@@ -13,6 +16,7 @@ import { AlarmKpis } from './AlarmKpis';
 import { AlarmTable } from './AlarmTable';
 import { ConnectionChip } from './ConnectionChip';
 import { LiveLoadChart } from './LiveLoadChart';
+import { SelectedAssetLive } from './SelectedAssetLive';
 
 const EMPTY_FEED = initialLiveFeed();
 /** At most one spoken alarm per this many ms, so screen readers are not flooded. */
@@ -25,6 +29,16 @@ export const AlarmsView = ({ url }: { url: string }) => {
   const { data: feed = EMPTY_FEED } = useLiveFeedQuery(url);
   const counts = useMemo(() => countAlarms(feed.alarms), [feed.alarms]);
   const updatesPerSecond = useMessageRate(feed.messageCount);
+
+  // Follow the linked selection: the server then sends its values every tick. Sent again
+  // after a reconnect, since a new connection starts without a watch.
+  const selected = findAsset(useAppSelector(selectSelectedAssetId));
+  const [watch] = useWatchAssetMutation();
+  const live = feed.status === 'live';
+  const selectedIndex = selected?.index ?? null;
+  useEffect(() => {
+    if (live) watch({ url, index: selectedIndex });
+  }, [live, selectedIndex, url, watch]);
 
   // Announce new alarms (not warnings) politely, throttled; the first `hello` is not news.
   const announce = useAnnounce();
@@ -51,6 +65,12 @@ export const AlarmsView = ({ url }: { url: string }) => {
     <Stack spacing={3}>
       <ConnectionChip status={feed.status} latencyMs={feed.latencyMs} />
       <AlarmKpis counts={counts} updatesPerSecond={updatesPerSecond} />
+      {selected && (
+        <SelectedAssetLive
+          asset={selected}
+          values={feed.watched?.index === selected.index ? feed.watched : null}
+        />
+      )}
       <Panel title={t('chart.title')}>
         <LiveLoadChart history={feed.history} />
       </Panel>

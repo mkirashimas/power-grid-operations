@@ -71,5 +71,29 @@
     "body": "Essayez un autre actif, une autre zone ou un autre état, ou effacez les filtres."
   },
   "synthetic": "Synthétique",
-  "source": "Profil de charge :"
+  "source": "Profil de charge :",
+  "assetChart": {
+    "title": "Équipement sélectionné : {{name}}",
+    "mwPane": "Puissance",
+    "loadingPane": "Charge",
+    "mw": "MW",
+    "loading": "Charge",
+    "unitMw": "{{value}} MW",
+    "unitPct": "{{value}} %",
+    "summary": "{{title}}, du {{from}} au {{to}} : {{series}}.",
+    "summaryItem": "{{label}} de {{min}} à {{max}}",
+    "toolbar": "Commandes du graphique",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "reset": "Afficher toute la plage",
+    "presets": "Plage",
+    "day": "24 h",
+    "week": "7 j",
+    "month": "30 j",
+    "showTable": "Afficher en tableau",
+    "hideTable": "Masquer le tableau",
+    "time": "Heure (CT)",
+    "overview": "Vue d’ensemble : faites glisser la fenêtre ou utilisez les flèches pour déplacer la plage visible",
+    "keyboardHint": "Graphique interactif. Les flèches déplacent le curseur, Maj avec les flèches fait défiler, plus et moins zooment, Début et Fin vont aux bords, Échap efface le curseur."
+  }
 }

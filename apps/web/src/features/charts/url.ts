@@ -6,6 +6,9 @@ const toHour = (ms: number) => new Date(ms).toISOString().slice(0, 16) + 'Z';
 const oneOf = <T extends string>(options: readonly T[], value: string | null, fallback: T): T =>
   options.find((option) => option === value) ?? fallback;
 
+/** Search params this view owns; the rest of the URL (e.g. `asset`) is kept. */
+export const SEARCH_KEYS = ['from', 'to', 'engine', 'algo'] as const;
+
 /**
  * View → search params: `from`/`to` as UTC minutes (e.g. 2026-10-01T05:00Z), plus `engine` and
  * `algo` when they differ from the defaults.

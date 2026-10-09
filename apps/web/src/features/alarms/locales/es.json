@@ -96,5 +96,12 @@
     "line": "Línea",
     "generator": "Generador",
     "load": "Carga"
+  },
+  "selected": {
+    "title": "Activo seleccionado, en vivo",
+    "values": "Carga {{loading}} · Tensión {{voltage}}",
+    "updated": "Actualizado {{time}}",
+    "waiting": "Esperando la próxima actualización…",
+    "only": "Solo el activo seleccionado"
   }
 }

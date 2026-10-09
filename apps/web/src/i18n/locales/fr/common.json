@@ -26,5 +26,26 @@
     "title": "Page introuvable",
     "body": "La page que vous cherchez n’existe pas.",
     "home": "Retour à la vue d’ensemble"
+  },
+  "selection": {
+    "label": "Équipement sélectionné",
+    "openIn": "Ouvrir dans {{view}}",
+    "clear": "Effacer la sélection",
+    "kinds": {
+      "substation": "Poste",
+      "line": "Ligne",
+      "generator": "Générateur",
+      "load": "Charge"
+    },
+    "zones": {
+      "coast": "Côte",
+      "east": "Est",
+      "far-west": "Extrême Ouest",
+      "north": "Nord",
+      "north-central": "Centre Nord",
+      "south-central": "Centre Sud",
+      "southern": "Sud",
+      "west": "Ouest"
+    }
   }
 }

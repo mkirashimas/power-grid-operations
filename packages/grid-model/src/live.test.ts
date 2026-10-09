@@ -96,6 +96,15 @@ describe('createLiveSimulator', () => {
     expect(escalated!.every((a) => a.condition === 'overload')).toBe(true);
   });
 
+  it('reports the current values of one asset', () => {
+    const { simulator, results } = run(5);
+    const last = results.at(-1)!.tick.assets;
+    const index = last[0];
+    expect(simulator.assetValues(index)).toEqual({ loadingPct: last[1], voltagePu: last[2] });
+    expect(simulator.assetValues(-1)).toBeUndefined();
+    expect(simulator.assetValues(assets.length)).toBeUndefined();
+  });
+
   it('acknowledges an alarm once', () => {
     const { simulator } = run(600, { eventRate: 1 / 10 });
     const [alarm] = simulator.recentAlarms(1);
@@ -115,5 +124,17 @@ describe('parseClientMessage', () => {
     expect(parseClientMessage('{"type":"drop-table"}')).toBeNull();
     expect(parseClientMessage('not json')).toBeNull();
     expect(parseClientMessage('null')).toBeNull();
+  });
+
+  it('accepts watch messages with a valid asset index or null', () => {
+    expect(parseClientMessage('{"type":"watch","index":42}')).toEqual({ type: 'watch', index: 42 });
+    expect(parseClientMessage('{"type":"watch","index":null}')).toEqual({
+      type: 'watch',
+      index: null,
+    });
+    expect(parseClientMessage('{"type":"watch","index":-1}')).toBeNull();
+    expect(parseClientMessage('{"type":"watch","index":1.5}')).toBeNull();
+    expect(parseClientMessage('{"type":"watch","index":"7"}')).toBeNull();
+    expect(parseClientMessage('{"type":"watch"}')).toBeNull();
   });
 });

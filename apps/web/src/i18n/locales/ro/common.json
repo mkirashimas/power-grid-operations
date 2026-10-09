@@ -26,5 +26,26 @@
     "title": "Pagina nu a fost găsită",
     "body": "Pagina pe care o cauți nu există.",
     "home": "Înapoi la prezentarea generală"
+  },
+  "selection": {
+    "label": "Echipament selectat",
+    "openIn": "Deschide în {{view}}",
+    "clear": "Șterge selecția",
+    "kinds": {
+      "substation": "Stație",
+      "line": "Linie",
+      "generator": "Generator",
+      "load": "Consumator"
+    },
+    "zones": {
+      "coast": "Coastă",
+      "east": "Est",
+      "far-west": "Vestul Îndepărtat",
+      "north": "Nord",
+      "north-central": "Centru-Nord",
+      "south-central": "Centru-Sud",
+      "southern": "Sud",
+      "west": "Vest"
+    }
   }
 }

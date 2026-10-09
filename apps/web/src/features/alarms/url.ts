@@ -8,6 +8,9 @@ const ZONES: ZoneFilter[] = ['all', ...WEATHER_ZONES];
 const oneOf = <T extends string>(options: readonly T[], value: string | null, fallback: T): T =>
   options.find((option) => option === value) ?? fallback;
 
+/** Search params this view owns; the rest of the URL (e.g. `asset`) is kept. */
+export const SEARCH_KEYS = ['severity', 'zone'] as const;
+
 /** Filters → `severity` / `zone` search params, left out when they are the defaults. */
 export const toSearchParams = ({ severity, zone }: AlarmFilters): URLSearchParams => {
   const params = new URLSearchParams();

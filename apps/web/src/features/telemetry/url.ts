@@ -11,6 +11,9 @@ import { DEFAULT_QUERY } from './slice';
 const oneOf = <T extends string>(options: readonly T[], value: string | null, fallback: T): T =>
   options.find((option) => option === value) ?? fallback;
 
+/** Search params this view owns; the rest of the URL (e.g. `asset`) is kept. */
+export const SEARCH_KEYS = ['q', 'kind', 'zone', 'status', 'sort', 'group'] as const;
+
 /** Query → URL search params. Defaults are omitted; expanded groups are not shared. */
 export const toSearchParams = (query: TelemetryQuery): URLSearchParams => {
   const params = new URLSearchParams();

@@ -2,11 +2,20 @@
 
 import { WEATHER_ZONES, type LiveAlarm } from '@pgo/grid-model';
 import { StatusChip, Toolbar, VirtualGrid, type GridColumn, type GridRow } from '@pgo/ui';
-import { Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import {
+  Button,
+  FormControlLabel,
+  MenuItem,
+  Stack,
+  Switch,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toLanguage } from '../../../i18n/language';
 import { useAppDispatch, useAppSelector } from '../../../store';
+import { selectAsset, selectSelectedAssetId } from '../../../store/selectionSlice';
 import { useAcknowledgeAlarmMutation } from '../api';
 import { ALARMS_NAMESPACE } from '../i18n';
 import { filterAlarms, type SeverityFilter, type ZoneFilter } from '../live';
@@ -59,6 +68,9 @@ export const AlarmTable = ({ url, alarms }: { url: string; alarms: LiveAlarm[] }
   const [acknowledge] = useAcknowledgeAlarmMutation();
   // Ids shown while paused, in their order at the moment of pausing.
   const [frozenIds, setFrozenIds] = useState<string[] | null>(null);
+  const selectedId = useAppSelector(selectSelectedAssetId);
+  const [onlySelected, setOnlySelected] = useState(false);
+  const showOnlySelected = onlySelected && selectedId !== null;
 
   const formats = useMemo(
     () => ({
@@ -75,11 +87,13 @@ export const AlarmTable = ({ url, alarms }: { url: string; alarms: LiveAlarm[] }
   );
 
   const rows = useMemo(() => {
-    const filtered = filterAlarms(alarms, severity, zone);
+    const filtered = filterAlarms(alarms, severity, zone).filter(
+      (alarm) => !showOnlySelected || alarm.assetId === selectedId,
+    );
     if (!frozenIds) return filtered;
     const byId = new Map(filtered.map((alarm) => [alarm.id, alarm]));
     return frozenIds.flatMap((id) => byId.get(id) ?? []);
-  }, [alarms, severity, zone, frozenIds]);
+  }, [alarms, severity, zone, frozenIds, showOnlySelected, selectedId]);
 
   const togglePause = () =>
     setFrozenIds((current) => (current ? null : alarms.map((alarm) => alarm.id)));
@@ -155,6 +169,16 @@ export const AlarmTable = ({ url, alarms }: { url: string; alarms: LiveAlarm[] }
           value={zone}
           onChange={(next) => dispatch(setZone(next))}
         />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={showOnlySelected}
+              disabled={selectedId === null}
+              onChange={(event) => setOnlySelected(event.target.checked)}
+            />
+          }
+          label={t('selected.only')}
+        />
         <Button
           variant={frozenIds ? 'contained' : 'outlined'}
           aria-pressed={frozenIds !== null}
@@ -175,6 +199,11 @@ export const AlarmTable = ({ url, alarms }: { url: string; alarms: LiveAlarm[] }
         getRow={getRow}
         height="min(60vh, 520px)"
         empty={t('table.empty')}
+        isRowSelected={(index) => rows[index]?.assetId === selectedId}
+        onRowSelect={(index) => {
+          const alarm = rows[index];
+          if (alarm) dispatch(selectAsset(alarm.assetId));
+        }}
       />
     </Stack>
   );

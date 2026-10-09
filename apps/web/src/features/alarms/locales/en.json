@@ -96,5 +96,12 @@
     "line": "Line",
     "generator": "Generator",
     "load": "Load"
+  },
+  "selected": {
+    "title": "Selected asset, live",
+    "values": "Loading {{loading}} · Voltage {{voltage}}",
+    "updated": "Updated {{time}}",
+    "waiting": "Waiting for the next update…",
+    "only": "Only the selected asset"
   }
 }

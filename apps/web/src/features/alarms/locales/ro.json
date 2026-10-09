@@ -96,5 +96,12 @@
     "line": "Linie",
     "generator": "Generator",
     "load": "Consumator"
+  },
+  "selected": {
+    "title": "Echipament selectat, live",
+    "values": "Încărcare {{loading}} · Tensiune {{voltage}}",
+    "updated": "Actualizat {{time}}",
+    "waiting": "Se așteaptă următoarea actualizare…",
+    "only": "Doar echipamentul selectat"
   }
 }

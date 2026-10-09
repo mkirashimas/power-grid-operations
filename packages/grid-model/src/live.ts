@@ -83,6 +83,8 @@ export interface LiveSimulator {
   acknowledge: (id: string, now: number) => LiveAlarm | undefined;
   /** Newest first. */
   recentAlarms: (limit?: number) => LiveAlarm[];
+  /** Latest loading (%) and voltage (pu) of one asset, or undefined for an unknown index. */
+  assetValues: (index: number) => { loadingPct: number; voltagePu: number } | undefined;
 }
 
 interface Disturbance {
@@ -303,5 +305,15 @@ export const createLiveSimulator = ({
     return acknowledged;
   };
 
-  return { step, acknowledge, recentAlarms: (limit = keep) => recent.slice(0, limit) };
+  const assetValues = (index: number) =>
+    Number.isInteger(index) && index >= 0 && index < n
+      ? { loadingPct: round(loading[index], 1), voltagePu: round(voltage[index], 3) }
+      : undefined;
+
+  return {
+    step,
+    acknowledge,
+    recentAlarms: (limit = keep) => recent.slice(0, limit),
+    assetValues,
+  };
 };

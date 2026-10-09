@@ -96,5 +96,12 @@
     "line": "Linea",
     "generator": "Generatore",
     "load": "Carico"
+  },
+  "selected": {
+    "title": "Asset selezionato, in diretta",
+    "values": "Carico {{loading}} · Tensione {{voltage}}",
+    "updated": "Aggiornato {{time}}",
+    "waiting": "In attesa del prossimo aggiornamento…",
+    "only": "Solo l’asset selezionato"
   }
 }

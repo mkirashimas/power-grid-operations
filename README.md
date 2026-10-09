@@ -197,6 +197,14 @@ Run `yarn workspace @pgo/web playwright install chromium` once before the first 
     therefore invisible to the page.
   - **Shared acknowledgements:** they go to the server and are broadcast, so every tab sees
     them. One instance holds that shared state.
+- **Linked selection in the store and the URL.** Selecting an asset in any table sets one
+  shared value (`store/selectionSlice`), shown in a selection bar on every page and kept in the
+  URL as `asset`.
+  - **Parameters merged per owner:** each view writes only its own URL parameters
+    (`replaceSearchParams`), so filters, chart ranges and the selection share one shareable
+    link.
+  - **Live follow-up:** the alarm feed asks the realtime service to `watch` the selected asset
+    and gets its values every tick.
 - **Accessibility checked in CI.** Every Playwright page test runs axe (WCAG 2.1 AA) in both
   color schemes. The shell has a skip link, labelled landmarks and `aria-current` navigation.
 - **Open demo.** There is no sign-in. All data is public or synthetic.
@@ -335,3 +343,4 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 - [M4: Chart workbench](docs/m4-chart-workbench.md)
 - [M5: Rust/WASM downsampling](docs/m5-wasm-downsampling.md)
 - [M6: Real-time + alarm feed](docs/m6-realtime-alarms.md)
+- [M7: Linked selection](docs/m7-linked-selection.md)

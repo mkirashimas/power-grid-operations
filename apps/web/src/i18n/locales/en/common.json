@@ -26,5 +26,26 @@
     "title": "Page not found",
     "body": "The page you are looking for does not exist.",
     "home": "Back to overview"
+  },
+  "selection": {
+    "label": "Selected asset",
+    "openIn": "Open in {{view}}",
+    "clear": "Clear selection",
+    "kinds": {
+      "substation": "Substation",
+      "line": "Line",
+      "generator": "Generator",
+      "load": "Load"
+    },
+    "zones": {
+      "coast": "Coast",
+      "east": "East",
+      "far-west": "Far West",
+      "north": "North",
+      "north-central": "North Central",
+      "south-central": "South Central",
+      "southern": "Southern",
+      "west": "West"
+    }
   }
 }

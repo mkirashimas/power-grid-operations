@@ -36,6 +36,7 @@ import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toLanguage } from '../../../i18n/language';
 import { useAppDispatch, useAppSelector } from '../../../store';
+import { selectAsset, selectSelectedAssetId } from '../../../store/selectionSlice';
 import {
   COLUMN_IDS,
   GROUP_BY_OPTIONS,
@@ -58,6 +59,7 @@ import {
   setGroupExpanded,
   setSort,
 } from '../slice';
+import { SelectedAssetChart } from './SelectedAssetChart';
 
 const COLUMN_WIDTHS: Record<ColumnId, number> = {
   asset: 200,
@@ -114,6 +116,7 @@ export const TelemetryView = ({ demand, seed }: TelemetryViewProps) => {
   const dispatch = useAppDispatch();
   const announce = useAnnounce();
   const query = useAppSelector(selectQuery);
+  const selectedId = useAppSelector(selectSelectedAssetId);
   useQueryUrlSync();
 
   // Typing in the filter waits for a pause before querying; other changes apply at once.
@@ -152,6 +155,21 @@ export const TelemetryView = ({ demand, seed }: TelemetryViewProps) => {
     [ready?.assets],
   );
   const expanded = useMemo(() => new Set(query.expanded), [query.expanded]);
+  const selectedAsset = selectedId ? assetsById.get(selectedId) : undefined;
+
+  // Linked selection: a row selects its asset, and every row of that asset is highlighted.
+  const rowAssetIndex = (index: number) => {
+    const value = result?.order[index];
+    return ready && value !== undefined && !isGroupMarker(value)
+      ? ready.columns.assetIndex[value]
+      : undefined;
+  };
+  const isRowSelected = (index: number) =>
+    selectedAsset !== undefined && rowAssetIndex(index) === selectedAsset.index;
+  const onRowSelect = (index: number) => {
+    const assetIndex = rowAssetIndex(index);
+    if (ready && assetIndex !== undefined) dispatch(selectAsset(ready.assets[assetIndex].id));
+  };
 
   const matched = result?.matchedRows;
   useEffect(() => {
@@ -246,112 +264,119 @@ export const TelemetryView = ({ demand, seed }: TelemetryViewProps) => {
     : '';
 
   return (
-    <Panel title={t('title')} actions={<SyntheticBadge label={t('synthetic')} />}>
-      <Stack spacing={2}>
-        <Toolbar label={t('filters.label')}>
-          <FilterField
-            label={t('filters.asset')}
-            placeholder={t('filters.assetPlaceholder')}
-            clearLabel={t('filters.clear')}
-            {...filter('text')}
-          />
-          <SelectField
-            label={t('filters.kind')}
-            options={['all', ...ASSET_KINDS] as const}
-            optionLabel={(o) => (o === 'all' ? t('filters.all') : t(`kinds.${o}`))}
-            {...filter('kind')}
-          />
-          <SelectField
-            label={t('filters.zone')}
-            options={['all', ...WEATHER_ZONES] as const}
-            optionLabel={(o) => (o === 'all' ? t('filters.all') : t(`zones.${o}`))}
-            {...filter('zone')}
-          />
-          <SelectField
-            label={t('filters.status')}
-            options={['all', ...TELEMETRY_STATUSES] as const}
-            optionLabel={(o) => (o === 'all' ? t('filters.all') : t(`statuses.${o}`))}
-            {...filter('status')}
-          />
-          <SelectField
-            label={t('filters.groupBy')}
-            options={GROUP_BY_OPTIONS}
-            optionLabel={(o) => t(`filters.groupOptions.${o}`)}
-            value={query.groupBy}
-            onChange={(value) => dispatch(setGroupBy(value))}
-          />
-          {query.groupBy !== 'none' && result && (
-            <>
-              <Button
-                size="small"
-                onClick={() => dispatch(setExpanded(result.groups.map((group) => group.key)))}
-              >
-                {t('filters.expandAll')}
-              </Button>
-              <Button size="small" onClick={() => dispatch(setExpanded([]))}>
-                {t('filters.collapseAll')}
-              </Button>
-            </>
+    <Stack spacing={3}>
+      <Panel title={t('title')} actions={<SyntheticBadge label={t('synthetic')} />}>
+        <Stack spacing={2}>
+          <Toolbar label={t('filters.label')}>
+            <FilterField
+              label={t('filters.asset')}
+              placeholder={t('filters.assetPlaceholder')}
+              clearLabel={t('filters.clear')}
+              {...filter('text')}
+            />
+            <SelectField
+              label={t('filters.kind')}
+              options={['all', ...ASSET_KINDS] as const}
+              optionLabel={(o) => (o === 'all' ? t('filters.all') : t(`kinds.${o}`))}
+              {...filter('kind')}
+            />
+            <SelectField
+              label={t('filters.zone')}
+              options={['all', ...WEATHER_ZONES] as const}
+              optionLabel={(o) => (o === 'all' ? t('filters.all') : t(`zones.${o}`))}
+              {...filter('zone')}
+            />
+            <SelectField
+              label={t('filters.status')}
+              options={['all', ...TELEMETRY_STATUSES] as const}
+              optionLabel={(o) => (o === 'all' ? t('filters.all') : t(`statuses.${o}`))}
+              {...filter('status')}
+            />
+            <SelectField
+              label={t('filters.groupBy')}
+              options={GROUP_BY_OPTIONS}
+              optionLabel={(o) => t(`filters.groupOptions.${o}`)}
+              value={query.groupBy}
+              onChange={(value) => dispatch(setGroupBy(value))}
+            />
+            {query.groupBy !== 'none' && result && (
+              <>
+                <Button
+                  size="small"
+                  onClick={() => dispatch(setExpanded(result.groups.map((group) => group.key)))}
+                >
+                  {t('filters.expandAll')}
+                </Button>
+                <Button size="small" onClick={() => dispatch(setExpanded([]))}>
+                  {t('filters.collapseAll')}
+                </Button>
+              </>
+            )}
+          </Toolbar>
+
+          <Box sx={{ minHeight: 24 }}>
+            {result && ready ? (
+              <Typography variant="body2" color="text.secondary" data-testid="telemetry-readout">
+                <strong>
+                  {t('readout.rows', {
+                    matched: formats.count.format(result.matchedRows),
+                    total: formats.count.format(ready.columns.length),
+                  })}
+                </strong>
+                {' · '}
+                {ready.pending ? t('readout.updating') : timings}
+              </Typography>
+            ) : null}
+          </Box>
+
+          {state.status === 'error' ? (
+            <Alert severity="error">{t('error', { message: state.message })}</Alert>
+          ) : !result ? (
+            <Stack spacing={1} sx={{ py: 6, alignItems: 'center' }}>
+              <Typography color="text.secondary">{t('loading')}</Typography>
+              <LinearProgress sx={{ width: '60%' }} aria-label={t('loading')} />
+            </Stack>
+          ) : (
+            <VirtualGrid
+              label={t('gridLabel')}
+              columns={columns}
+              rowCount={result.order.length}
+              getRow={getRow}
+              grouped={query.groupBy !== 'none'}
+              sort={sort}
+              onSortChange={(next) =>
+                dispatch(
+                  setSort(
+                    next.map(({ columnId, direction }) => ({
+                      column: columnId as ColumnId,
+                      direction,
+                    })),
+                  ),
+                )
+              }
+              onToggleGroup={(key, open) => dispatch(setGroupExpanded({ key, expanded: open }))}
+              isRowSelected={isRowSelected}
+              onRowSelect={onRowSelect}
+              height="min(70vh, 720px)"
+              empty={
+                <EmptyState
+                  icon={<FilterAltOffOutlined />}
+                  title={t('empty.title')}
+                  body={t('empty.body')}
+                  action={
+                    <Button variant="outlined" onClick={() => dispatch(resetFilters())}>
+                      {t('filters.reset')}
+                    </Button>
+                  }
+                />
+              }
+            />
           )}
-        </Toolbar>
-
-        <Box sx={{ minHeight: 24 }}>
-          {result && ready ? (
-            <Typography variant="body2" color="text.secondary" data-testid="telemetry-readout">
-              <strong>
-                {t('readout.rows', {
-                  matched: formats.count.format(result.matchedRows),
-                  total: formats.count.format(ready.columns.length),
-                })}
-              </strong>
-              {' · '}
-              {ready.pending ? t('readout.updating') : timings}
-            </Typography>
-          ) : null}
-        </Box>
-
-        {state.status === 'error' ? (
-          <Alert severity="error">{t('error', { message: state.message })}</Alert>
-        ) : !result ? (
-          <Stack spacing={1} sx={{ py: 6, alignItems: 'center' }}>
-            <Typography color="text.secondary">{t('loading')}</Typography>
-            <LinearProgress sx={{ width: '60%' }} aria-label={t('loading')} />
-          </Stack>
-        ) : (
-          <VirtualGrid
-            label={t('gridLabel')}
-            columns={columns}
-            rowCount={result.order.length}
-            getRow={getRow}
-            grouped={query.groupBy !== 'none'}
-            sort={sort}
-            onSortChange={(next) =>
-              dispatch(
-                setSort(
-                  next.map(({ columnId, direction }) => ({
-                    column: columnId as ColumnId,
-                    direction,
-                  })),
-                ),
-              )
-            }
-            onToggleGroup={(key, open) => dispatch(setGroupExpanded({ key, expanded: open }))}
-            height="min(70vh, 720px)"
-            empty={
-              <EmptyState
-                icon={<FilterAltOffOutlined />}
-                title={t('empty.title')}
-                body={t('empty.body')}
-                action={
-                  <Button variant="outlined" onClick={() => dispatch(resetFilters())}>
-                    {t('filters.reset')}
-                  </Button>
-                }
-              />
-            }
-          />
-        )}
-      </Stack>
-    </Panel>
+        </Stack>
+      </Panel>
+      {ready && selectedAsset && (
+        <SelectedAssetChart asset={selectedAsset} columns={ready.columns} />
+      )}
+    </Stack>
   );
 };
