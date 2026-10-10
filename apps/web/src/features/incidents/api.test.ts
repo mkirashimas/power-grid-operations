@@ -27,10 +27,10 @@ describe('incidents API', () => {
   it('lists the samples and refetches the list after a create', async () => {
     const store = makeStore();
     const list = store.dispatch(endpoints.listIncidents.initiate());
-    expect((await list).data).toHaveLength(3);
+    expect((await list).data).toHaveLength(7);
 
     await store.dispatch(endpoints.createIncident.initiate({ title: 'Trip' })).unwrap();
-    await expect.poll(() => endpoints.listIncidents.select()(stateOf(store)).data).toHaveLength(4);
+    await expect.poll(() => endpoints.listIncidents.select()(stateOf(store)).data).toHaveLength(8);
     list.unsubscribe();
   });
 
@@ -73,6 +73,10 @@ describe('incidents API', () => {
       'inc-sample-01',
       'inc-sample-02',
       'inc-sample-03',
+      'inc-sample-04',
+      'inc-sample-05',
+      'inc-sample-06',
+      'inc-sample-07',
     ]);
   });
 });

@@ -77,6 +77,7 @@ export const PAGES: AppPage[] = [
     ready: (page) =>
       expect(page.locator('[data-page-number="1"]')).toHaveAttribute('data-rendered', 'true'),
   },
+  { name: 'offline', path: '/offline', ready: heading },
   { name: 'not found', path: '/no-such-page', ready: heading },
 ];
 

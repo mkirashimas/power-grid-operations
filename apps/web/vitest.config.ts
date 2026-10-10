@@ -17,8 +17,8 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text-summary', 'json-summary', 'html'],
-      // About 2 points below the measured values (M11): CI fails if coverage drops.
-      thresholds: { statements: 50, branches: 38, functions: 47, lines: 50 },
+      // About 2 points below the measured values (M12): CI fails if coverage drops.
+      thresholds: { statements: 51, branches: 40, functions: 48, lines: 51 },
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['**/*.test.{ts,tsx}', '**/*.stories.tsx', '**/*.d.ts', 'src/test/**'],
     },

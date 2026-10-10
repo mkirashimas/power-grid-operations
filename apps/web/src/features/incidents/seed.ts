@@ -155,4 +155,156 @@ const forcedOutage: Incident = {
   updatedAt: at('2026-10-02T11:30:00Z'),
 };
 
-export const SAMPLE_INCIDENTS: readonly Incident[] = [lineTrip, undervoltage, forcedOutage];
+const windOverload: Incident = {
+  id: 'inc-sample-04',
+  title: 'L0711 overloaded during high West wind output',
+  severity: 'warning',
+  status: 'resolved',
+  assetIds: ['ln-0711'],
+  startedAt: at('2026-08-28T20:15:00Z'),
+  resolvedAt: at('2026-08-28T22:05:00Z'),
+  body: doc(
+    heading('Summary'),
+    paragraph(
+      text('Strong evening wind pushed '),
+      mention('gen-wst-280'),
+      text(' and its neighbours to full output, and '),
+      mention('ln-0711'),
+      text(' reached '),
+      bold('104%'),
+      text(' of its normal rating out of '),
+      mention('sub-wst-001'),
+      text('. It stayed below the emergency rating throughout.'),
+    ),
+    heading('Timeline'),
+    bullets(
+      [text('15:15 Loading crossed 100% of the normal rating.')],
+      [text('15:30 Curtailment instruction issued to the West wind units.')],
+      [text('17:05 Loading back under 90% as the wind eased.')],
+    ),
+    heading('Action items'),
+    tasks(
+      [true, 'Release the curtailment once loading is below 90%.'],
+      [true, 'Record the event for the West export study.'],
+    ),
+  ),
+  attachments: [],
+  sample: true,
+  createdAt: at('2026-08-28T20:40:00Z'),
+  updatedAt: at('2026-08-29T15:00:00Z'),
+};
+
+const batteryDispatch: Incident = {
+  id: 'inc-sample-05',
+  title: 'SCT Battery 198 did not follow its dispatch signal',
+  severity: 'warning',
+  status: 'investigating',
+  assetIds: ['gen-sct-198'],
+  startedAt: at('2026-09-08T21:30:00Z'),
+  body: doc(
+    heading('Summary'),
+    paragraph(
+      mention('gen-sct-198'),
+      text(' was dispatched to discharge 80 MW for the evening ramp but held at '),
+      bold('0 MW'),
+      text(' for 25 minutes. Other units in the South Central zone covered the shortfall.'),
+    ),
+    heading('Findings so far'),
+    bullets(
+      [text('The site controller reported a communications fault at the time.')],
+      [
+        text('Telemetry from '),
+        mention('sub-sct-001'),
+        text(' shows the dispatch signal arrived normally.'),
+      ],
+    ),
+    heading('Action items'),
+    tasks(
+      [false, 'Get the controller event log from the operator.'],
+      [false, 'Confirm the unit follows a test dispatch before the next ramp.'],
+    ),
+  ),
+  attachments: [],
+  sample: true,
+  createdAt: at('2026-09-08T22:00:00Z'),
+  updatedAt: at('2026-09-09T16:20:00Z'),
+};
+
+const transformerTrip: Incident = {
+  id: 'inc-sample-06',
+  title: 'STH-002 transformer tripped on its sudden pressure relay',
+  severity: 'alarm',
+  status: 'resolved',
+  assetIds: ['sub-sth-002'],
+  startedAt: at('2026-09-27T08:44:00Z'),
+  resolvedAt: at('2026-09-27T13:10:00Z'),
+  body: doc(
+    heading('Summary'),
+    paragraph(
+      text('At 03:44 CDT the sudden pressure relay tripped a 138/69 kV transformer at '),
+      mention('sub-sth-002'),
+      text('. '),
+      mention('ld-sth-321'),
+      text(' was picked up by the second transformer within '),
+      bold('4 minutes'),
+      text(', so no customers stayed out.'),
+    ),
+    heading('Timeline'),
+    bullets(
+      [text('03:44 Transformer trip and automatic transfer of the load.')],
+      [text('05:30 Crew on site; oil sample taken and visual inspection done.')],
+      [text('08:10 Transformer returned to service after the tests came back normal.')],
+    ),
+    heading('Action items'),
+    tasks(
+      [true, 'Return the transformer to service.'],
+      [false, 'Test the sudden pressure relay at the next planned outage.'],
+    ),
+  ),
+  attachments: [],
+  sample: true,
+  createdAt: at('2026-09-27T09:00:00Z'),
+  updatedAt: at('2026-09-28T09:00:00Z'),
+};
+
+const runback: Incident = {
+  id: 'inc-sample-07',
+  title: 'L0352 near its emergency rating after an NCT Nuclear 001 runback',
+  severity: 'alarm',
+  status: 'open',
+  assetIds: ['ln-0352', 'gen-nct-001'],
+  startedAt: at('2026-10-06T19:20:00Z'),
+  body: doc(
+    heading('Summary'),
+    paragraph(
+      mention('gen-nct-001'),
+      text(' ran back by about 500 MW on a cooling water alarm. Replacement flow into '),
+      mention('sub-nct-001'),
+      text(' loaded '),
+      mention('ln-0352'),
+      text(' to '),
+      bold('97%'),
+      text(' of its emergency rating.'),
+    ),
+    heading('Action items'),
+    tasks(
+      [true, 'Redispatch North Central units to bring L0352 under its normal rating.'],
+      [false, 'Get the expected return to full output from the plant.'],
+      [false, 'Keep the redispatch in place until the unit is back.'],
+    ),
+  ),
+  attachments: [],
+  sample: true,
+  createdAt: at('2026-10-06T19:35:00Z'),
+  updatedAt: at('2026-10-07T13:00:00Z'),
+};
+
+export const SAMPLE_INCIDENTS: readonly Incident[] = [
+  lineTrip,
+  undervoltage,
+  forcedOutage,
+  windOverload,
+  batteryDispatch,
+  transformerTrip,
+  runback,
+];

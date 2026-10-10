@@ -35,6 +35,7 @@ import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { persistLanguage, toLanguage } from '../i18n/language';
 import { LANGUAGES, PATHS, type Language, type Path } from '../types';
+import { InstallButton, OfflineBanner, UpdatePrompt } from './Pwa';
 import { SelectionBar } from './SelectionBar';
 import { useSelectionUrlSync } from './useSelectionUrlSync';
 
@@ -221,6 +222,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
           <LanguageSelect />
           <ThemeModeToggle />
+          <InstallButton />
         </Toolbar>
       </AppBar>
 
@@ -261,10 +263,13 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             [theme.breakpoints.down('md')]: { py: 2, px: 2 },
           })}
         >
+          <OfflineBanner />
           <SelectionBar />
           {children}
         </Container>
       </Box>
+
+      <UpdatePrompt />
     </Box>
   );
 };

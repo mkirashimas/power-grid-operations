@@ -134,6 +134,15 @@ not the roadmap.
     and rate-limits acks. It holds no secrets.
   - The service runs its TypeScript with `node --experimental-strip-types` (no build). Its image
     is `services/realtime/Dockerfile`; e2e starts it from `playwright.config.ts`.
+- **PWA** (`src/pwa`, infrastructure like `store/`; see `docs/m12-pwa.md`):
+  - The service worker is `src/pwa/sw.ts`, built by `@serwist/turbopack` and served by
+    `src/app/serwist/[path]/route.ts` at `PATHS.SERVICE_WORKER`. It registers in production
+    builds only.
+  - Request routing lives in the pure `classifyRequest` (`caching.ts`), with tests. Never cache
+    other origins, the WebSocket or Storybook.
+  - Updates wait for the user (`skipWaiting: false`, the update prompt in `hoc/Pwa.tsx`).
+  - Manifest screenshot sizes must match `public/screenshots/*` (written by the demo tour).
+  - e2e blocks service workers except in `e2e/pwa.spec.ts`.
 - **Cross-feature state** (e.g. linked selection) goes in a slice in `src/store`, never in a
   feature.
   - **Linked selection:** `store/selectionSlice` holds one asset id. Views dispatch

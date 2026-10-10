@@ -165,3 +165,22 @@ test('demo tour', async ({ page }) => {
   await page.close();
   await page.video()?.saveAs(fileURLToPath(VIDEO));
 });
+
+// The install dialog's screenshots (manifest `screenshots`, src/app/manifest.ts): the overview
+// on a desktop and on a phone. The manifest states their sizes, so keep them in step.
+const INSTALL_SHOTS = new URL('../public/screenshots/', import.meta.url);
+
+test('install screenshots', async ({ page }) => {
+  mkdirSync(INSTALL_SHOTS, { recursive: true });
+  const overview = async () => {
+    await go(page, '/');
+    await expect(page.getByText(/\d MW/).first()).toBeVisible({ timeout: 30_000 });
+  };
+
+  await overview();
+  await page.screenshot({ path: fileURLToPath(new URL('wide.png', INSTALL_SHOTS)) });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await overview();
+  await page.screenshot({ path: fileURLToPath(new URL('narrow.png', INSTALL_SHOTS)) });
+});

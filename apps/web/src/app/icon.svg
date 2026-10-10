@@ -1,1 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#2f3a44" d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <title>Power Grid Operations</title>
+  <rect width="100" height="100" rx="22" fill="#0B1524"/>
+  <path d="M16 30H84M16 50H84M16 70H84" fill="none" stroke="#E8EEF7" stroke-width="2" opacity="0.14"/>
+  <path d="M14 58H31L42 26L57 76L67 44H82" fill="none" stroke="#FFB224" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="82" cy="44" r="7" fill="#E8EEF7"/>
+</svg>
