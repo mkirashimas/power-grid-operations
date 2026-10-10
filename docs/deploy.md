@@ -154,15 +154,16 @@ start).
 
 ## Troubleshooting
 
-| Symptom in the deploy job                                                           | Cause and fix                                                                                    |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `auth` step: `Permission 'iam.serviceAccounts.getAccessToken' denied`               | The repo binding is missing or the repo name differs. Re-check `roles/iam.workloadIdentityUser`. |
-| `docker push`: `name unknown: Repository "web" not found`                           | The Artifact Registry repository is missing. Run the create command above.                       |
-| `docker push`: `denied: Permission "artifactregistry.repositories.uploadArtifacts"` | The deploy account lacks `roles/artifactregistry.writer`.                                        |
-| `gcloud run deploy`: `PERMISSION_DENIED ... iam.serviceaccounts.actAs`              | The deploy account lacks `roles/iam.serviceAccountUser`.                                         |
-| `gcloud run deploy`: `Permission denied on secret ... for Revision service account` | The runtime account cannot read the secret. Run step 2 of "EIA API key".                         |
-| The deploy job is skipped                                                           | The push wasn't to `main`, the checks failed, or `GCP_PROJECT_ID` isn't set.                     |
-| `/alarms` stays on **Connecting…** or **Reconnecting…**                             | `REALTIME_URL` is missing on `pgo-web`, or `pgo-realtime` failed to start. Run the checks above. |
+| Symptom in the deploy job                                                           | Cause and fix                                                                                                                                                                                      |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth` step: `Permission 'iam.serviceAccounts.getAccessToken' denied`               | The repo binding is missing or the repo name differs. Re-check `roles/iam.workloadIdentityUser`.                                                                                                   |
+| `docker push`: `name unknown: Repository "web" not found`                           | The Artifact Registry repository is missing. Run the create command above.                                                                                                                         |
+| `docker push`: `denied: Permission "artifactregistry.repositories.uploadArtifacts"` | The deploy account lacks `roles/artifactregistry.writer`.                                                                                                                                          |
+| `gcloud run deploy`: `PERMISSION_DENIED ... iam.serviceaccounts.actAs`              | The deploy account lacks `roles/iam.serviceAccountUser`.                                                                                                                                           |
+| `gcloud run deploy`: `Permission denied on secret ... for Revision service account` | The runtime account cannot read the secret. Run step 2 of "EIA API key".                                                                                                                           |
+| The deploy job is skipped                                                           | The push wasn't to `main`, the checks failed, or `GCP_PROJECT_ID` isn't set.                                                                                                                       |
+| `/alarms` stays on **Connecting…** or **Reconnecting…**                             | `REALTIME_URL` is missing on `pgo-web`, or `pgo-realtime` failed to start. Run the checks above.                                                                                                   |
+| After a deploy, the app still shows the old version                                 | Expected: the service worker waits for **Reload** in the update prompt. If no prompt appears, check that `curl -sI <url>/serwist/sw.js` shows `Cache-Control: no-cache` (set in `next.config.ts`). |
 
 ## Testing the container locally (optional, needs Docker)
 

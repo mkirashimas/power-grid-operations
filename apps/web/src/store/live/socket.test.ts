@@ -91,4 +91,47 @@ describe('openLiveSocket', () => {
     expect(sockets).toHaveLength(1);
     expect(statuses).toEqual(['connecting']);
   });
+
+  describe('while the browser is offline', () => {
+    const setOnline = (online: boolean) => {
+      vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(online);
+      window.dispatchEvent(new Event(online ? 'online' : 'offline'));
+    };
+    afterEach(() => vi.restoreAllMocks());
+
+    it('reports offline at once and does not retry until the browser is back online', () => {
+      const { sockets, statuses } = setup();
+      sockets[0].open();
+      setOnline(false);
+      expect(statuses.at(-1)).toBe('offline');
+      sockets[0].drop();
+      vi.advanceTimersByTime(60_000);
+      expect(sockets).toHaveLength(1);
+      expect(statuses.at(-1)).toBe('offline');
+
+      setOnline(true);
+      expect(sockets).toHaveLength(2);
+      expect(statuses.at(-1)).toBe('reconnecting');
+    });
+
+    it('replaces a socket that still looks open when the browser comes back online', () => {
+      const { sockets, statuses } = setup();
+      sockets[0].open();
+      setOnline(false);
+      setOnline(true);
+      expect(sockets).toHaveLength(2);
+      expect(sockets[0].readyState).toBe(3);
+      // The old socket's close is not a failure of the new one.
+      expect(statuses.at(-1)).toBe('reconnecting');
+      vi.advanceTimersByTime(60_000);
+      expect(sockets).toHaveLength(2);
+    });
+
+    it('stops listening once closed', () => {
+      const { live, sockets } = setup();
+      live.close();
+      setOnline(true);
+      expect(sockets).toHaveLength(1);
+    });
+  });
 });

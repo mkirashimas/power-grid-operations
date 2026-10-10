@@ -19,6 +19,7 @@ export default defineConfig({
     viewport: SIZE,
     deviceScaleFactor: 1,
     colorScheme: 'light',
+    serviceWorkers: 'block',
     video: { mode: 'on', size: SIZE },
   },
   webServer: [

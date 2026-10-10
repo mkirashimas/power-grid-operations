@@ -1,5 +1,6 @@
 {
   "appName": "Power Grid Operations",
+  "appShortName": "Grid Ops",
   "appDescription": "Consolă de operare pentru rețeaua electrică din Texas: telemetrie, prognoze, alarme și topologia rețelei.",
   "language": "Limbă",
   "openMenu": "Deschide meniul",
@@ -29,6 +30,20 @@
     "title": "Pagina nu a fost găsită",
     "body": "Pagina pe care o cauți nu există.",
     "home": "Înapoi la prezentarea generală"
+  },
+  "offline": {
+    "title": "Ești offline",
+    "body": "Această pagină nu este încă salvată pe acest dispozitiv. Paginile deschise anterior și rapoartele de incident funcționează fără conexiune.",
+    "home": "Înapoi la prezentare"
+  },
+  "pwa": {
+    "install": "Instalează aplicația",
+    "iosHint": "Pentru instalare, atinge Partajează, apoi Adaugă pe ecranul principal.",
+    "offline": "Ești offline. Paginile și datele deschise anterior funcționează în continuare; datele în timp real revin la reconectare.",
+    "updateReady": "Este disponibilă o versiune nouă.",
+    "reload": "Reîncarcă",
+    "dismiss": "Închide",
+    "shortcutNewIncident": "Incident nou"
   },
   "selection": {
     "label": "Echipament selectat",

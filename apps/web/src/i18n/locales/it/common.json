@@ -1,5 +1,6 @@
 {
   "appName": "Power Grid Operations",
+  "appShortName": "Grid Ops",
   "appDescription": "Console operativa della rete elettrica del Texas: telemetria, previsioni, allarmi e topologia di rete.",
   "language": "Lingua",
   "openMenu": "Apri menu",
@@ -29,6 +30,20 @@
     "title": "Pagina non trovata",
     "body": "La pagina che cerchi non esiste.",
     "home": "Torna alla panoramica"
+  },
+  "offline": {
+    "title": "Sei offline",
+    "body": "Questa pagina non è ancora salvata su questo dispositivo. Le pagine già aperte e i tuoi rapporti di incidente funzionano senza connessione.",
+    "home": "Torna alla panoramica"
+  },
+  "pwa": {
+    "install": "Installa l’app",
+    "iosHint": "Per installarla, tocca Condividi, poi Aggiungi alla schermata Home.",
+    "offline": "Sei offline. Le pagine e i dati già aperti funzionano ancora; i dati in tempo reale riprendono alla riconnessione.",
+    "updateReady": "È disponibile una nuova versione.",
+    "reload": "Ricarica",
+    "dismiss": "Ignora",
+    "shortcutNewIncident": "Nuovo incidente"
   },
   "selection": {
     "label": "Asset selezionato",
