@@ -40,9 +40,9 @@ test.use({ locale: 'en-US' });
 test('lists the sample reports, with filters kept in the URL', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light' });
   await openList(page);
-  // A header row and the three samples.
-  await expect(rows(page)).toHaveCount(4);
-  await expect(page.getByText('Reports: 3')).toBeVisible();
+  // A header row and the seven samples.
+  await expect(rows(page)).toHaveCount(8);
+  await expect(page.getByText('Reports: 7')).toBeVisible();
   await expectNoAxeViolations(page);
   await switchToDark(page);
   await expectNoAxeViolations(page);
@@ -50,7 +50,7 @@ test('lists the sample reports, with filters kept in the URL', async ({ page }) 
   await page.getByRole('combobox', { name: 'Status' }).click();
   await page.getByRole('option', { name: 'Open' }).click();
   await expect(page).toHaveURL(/status=open/);
-  await expect(rows(page)).toHaveCount(2);
+  await expect(rows(page)).toHaveCount(3);
   await expect(table(page)).toContainText('CST Gas 003 forced outage');
 
   await page.goto('/incidents?q=insulator');
@@ -192,11 +192,11 @@ test('Reset demo data restores the samples', async ({ page }) => {
   await page.getByRole('button', { name: 'Delete report' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Delete' }).click();
   await expect(page).toHaveURL(/\/incidents$/);
-  await expect(rows(page)).toHaveCount(3);
+  await expect(rows(page)).toHaveCount(7);
 
   await page.getByRole('button', { name: 'Reset demo data' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Reset' }).click();
-  await expect(rows(page)).toHaveCount(4);
+  await expect(rows(page)).toHaveCount(8);
 });
 
 test('an unknown report says so', async ({ page }) => {

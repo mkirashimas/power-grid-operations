@@ -100,7 +100,7 @@ yarn dev
 
 Expected at http://localhost:3000/incidents:
 
-- the three sample reports are listed
+- the seven sample reports are listed
 - in a report, edits survive a reload
 - typing **@** suggests assets
 - the sample PDFs render, and search and zoom work

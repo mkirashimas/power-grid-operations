@@ -288,7 +288,8 @@ export const VirtualGrid = ({
       Number.isInteger(col) &&
       (row !== focus.row || col !== focus.col)
     ) {
-      setFocus({ row, col: getRow(row)?.kind === 'group' ? focus.col : col });
+      const isGroup = row >= 0 && getRow(row)?.kind === 'group';
+      setFocus({ row, col: isGroup ? focus.col : col });
     }
   };
 

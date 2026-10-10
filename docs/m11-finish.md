@@ -209,7 +209,7 @@ tour after UI changes to refresh both the video and the screenshots.
    - every sidebar page opens
    - `/alarms` shows **Live** within a few seconds
    - `/storybook` opens
-   - `/incidents` lists the three samples
+   - `/incidents` lists the seven samples
 5. **Live-demo link:** send me the URL. I add it to the top of the README, and it goes out in a
    small PR to `development` and then `main`.
 6. **Optional, while applications are open:** keep one web instance warm, so a first visit has

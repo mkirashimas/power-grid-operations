@@ -36,7 +36,7 @@ describe('IncidentList', () => {
   it('lists the samples and filters them', async () => {
     const user = userEvent.setup();
     wrap(<IncidentList />);
-    expect(within(await table()).getAllByRole('row')).toHaveLength(4);
+    expect(within(await table()).getAllByRole('row')).toHaveLength(8);
 
     await user.type(screen.getByRole('searchbox', { name: 'Search reports' }), 'insulator');
     expect(within(await table()).getAllByRole('row')).toHaveLength(2);
@@ -45,7 +45,7 @@ describe('IncidentList', () => {
     await user.type(screen.getByRole('searchbox', { name: 'Search reports' }), ' nothing');
     expect(await screen.findByText('No report matches these filters.')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Clear filters' }));
-    expect(within(await table()).getAllByRole('row')).toHaveLength(4);
+    expect(within(await table()).getAllByRole('row')).toHaveLength(8);
   });
 
   it('creates a report and opens it', async () => {
