@@ -1,12 +1,14 @@
 import { InitColorSchemeScript } from '@mui/material';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
 import type { Metadata, Viewport } from 'next';
+import { cookies } from 'next/headers';
 import { Roboto } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { Layout } from '../hoc/Layout';
 import { Providers } from '../hoc/Providers';
 import { getRequestLanguage, getServerTranslation } from '../i18n/server';
 import { pageBackground } from '../pwa/colors';
+import { isSidebarCollapsed, SIDEBAR_COOKIE } from '../shell/sidebar';
 
 const roboto = Roboto({
   weight: ['400', '500', '600', '700'],
@@ -37,7 +39,8 @@ export const viewport: Viewport = {
 };
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
-  const language = await getRequestLanguage();
+  const [language, cookieStore] = await Promise.all([getRequestLanguage(), cookies()]);
+  const sidebarCollapsed = isSidebarCollapsed(cookieStore.get(SIDEBAR_COOKIE)?.value);
 
   return (
     <html lang={language} className={roboto.variable} suppressHydrationWarning>
@@ -45,7 +48,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
         {/* Applies the stored or system color scheme before first paint. */}
         <InitColorSchemeScript attribute="class" />
         <AppRouterCacheProvider>
-          <Providers language={language}>
+          <Providers language={language} sidebarCollapsed={sidebarCollapsed}>
             <Layout>{children}</Layout>
           </Providers>
         </AppRouterCacheProvider>

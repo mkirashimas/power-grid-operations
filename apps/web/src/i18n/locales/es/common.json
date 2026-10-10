@@ -66,5 +66,64 @@
       "southern": "Sur",
       "west": "Oeste"
     }
+  },
+  "sidebar": {
+    "collapse": "Contraer menú",
+    "expand": "Expandir menú"
+  },
+  "help": {
+    "open": "Acerca de esta sección",
+    "close": "Cerrar ayuda",
+    "title": "Acerca de {{section}}",
+    "headings": {
+      "what": "¿Qué es esto?",
+      "looking": "¿Qué estoy viendo?",
+      "how": "¿Cómo se usa?",
+      "why": "¿Por qué importa?"
+    },
+    "sections": {
+      "home": {
+        "what": "La portada de la consola. Muestra las últimas cifras de la red eléctrica real de Texas y un resumen de la red de práctica que usan las demás páginas.",
+        "looking": "Las tarjetas superiores son datos reales publicados por la Administración de Información Energética de EE. UU.: cuánta electricidad consume Texas, cuánto se había previsto y de dónde procede la energía. Debajo hay un recuento de las subestaciones, líneas y centrales ficticias que aparecen en otras páginas.",
+        "how": "Léala como un panel de control. Abra una sección desde el menú para ver más detalle y use este botón de ayuda en cualquier página para saber qué hace.",
+        "why": "Los operadores de la red empiezan cada turno con un resumen como este: ¿la demanda es normal?, ¿se cumple la previsión?, ¿ocurre algo fuera de lo común?"
+      },
+      "telemetry": {
+        "what": "Una tabla muy grande con lecturas de todos los equipos de la red de práctica, registradas cada 15 minutos durante seis días.",
+        "looking": "Cada fila es una lectura: de qué equipo se trata, dónde está, cuánto trabaja y si eso es normal. Hay más de un millón de filas.",
+        "how": "Haga clic en el título de una columna para ordenar. Use los filtros para acotar la lista o agrupe filas para ver totales por zona o tipo. Haga clic en una fila para seleccionar ese equipo; las demás páginas también lo resaltan.",
+        "why": "Los operadores usan tablas como esta para encontrar equipos sobrecargados o con un comportamiento extraño, y para comprobar qué pasó en un momento dado."
+      },
+      "charts": {
+        "what": "Gráficos de líneas de los últimos 30 días en la red de Texas: cuánta electricidad se consumió, cuánto se había previsto, cómo se produjo y cuánta llegó de redes vecinas.",
+        "looking": "Datos horarios reales de la Administración de Información Energética de EE. UU., más una serie de práctica con una lectura por segundo, unos 2,6 millones de puntos.",
+        "how": "Amplíe cualquier gráfico y arrástrelo para moverse en el tiempo. Los demás gráficos lo siguen, así que puede compararlos en el mismo instante.",
+        "why": "Comparar la demanda con la previsión y con la forma en que se produjo la energía muestra cuándo estuvo la red bajo presión y cómo respondió."
+      },
+      "alarms": {
+        "what": "Una lista en directo de avisos de la red de práctica, como una línea que transporta demasiada electricidad o una tensión demasiado baja.",
+        "looking": "Las nuevas alarmas aparecen en cuanto se producen. Los contadores superiores muestran cuántas están activas y cuántas no ha atendido nadie todavía.",
+        "how": "Filtre por gravedad o zona, y pause el flujo para leer sin que la lista se mueva. Reconozca una alarma para indicar a todos los que la ven que usted se ocupa; lo ven al instante.",
+        "why": "En una sala de control real, las alarmas avisan a los operadores de que algo requiere atención. Reconocerlas evita que dos personas persigan el mismo problema."
+      },
+      "map": {
+        "what": "Un mapa de Texas con todas las subestaciones, centrales, zonas de consumo y líneas eléctricas de la red de práctica.",
+        "looking": "Los colores muestran la carga de cada equipo en este momento, actualizada en directo. La leyenda explica los colores y los interruptores de capas ocultan o muestran cada tipo de equipo.",
+        "how": "Amplíe y arrastre el mapa como cualquier mapa en línea. Haga clic en un punto o una línea para seleccionarlo y ver sus detalles; las demás páginas también lo resaltan. Elija Mostrar como tabla para ver una lista de todo lo que hay en el mapa.",
+        "why": "Ver dónde está la presión ayuda a los operadores a entender un problema de un vistazo, por ejemplo varias líneas muy cargadas en la misma región."
+      },
+      "network": {
+        "what": "La red de práctica dibujada como una red: qué subestaciones están conectadas entre sí y mediante qué líneas.",
+        "looking": "Un árbol enumera cada zona y cada equipo, y un diagrama dibuja las conexiones. El color de las líneas muestra la carga en directo o el resultado de un estudio hipotético.",
+        "how": "Seleccione un equipo en el árbol o en el diagrama. En el estudio hipotético, dispare una línea, deje un equipo fuera de servicio o cambie una carga, y vea cómo circularía la energía tras el cambio. Puede deshacer o reiniciar en cualquier momento.",
+        "why": "Antes de retirar una línea para repararla, los ingenieros comprueban que el resto de la red puede transportar la energía adicional. Esta página muestra esa comprobación de forma sencilla."
+      },
+      "incidents": {
+        "what": "Informes escritos sobre sucesos en la red, por ejemplo un apagón o un equipo que falló.",
+        "looking": "Una lista de informes con su estado y gravedad. Un informe de ejemplo muestra cómo es uno terminado.",
+        "how": "Cree un informe, vincule los equipos implicados, añada acciones de seguimiento y adjunte documentos PDF. Los informes se guardan solo en este navegador; no se envía nada a ningún sitio.",
+        "why": "Dejar por escrito qué pasó y qué se hará al respecto es como los equipos aprenden de los incidentes y evitan que se repitan."
+      }
+    }
   }
 }

@@ -19,12 +19,18 @@ export {
 } from './components/ConfirmDialog/ConfirmDialog.tsx';
 export { EmptyState, type EmptyStateProps } from './components/EmptyState/EmptyState.tsx';
 export { FilterField, type FilterFieldProps } from './components/FilterField/FilterField.tsx';
+export {
+  HelpPanel,
+  type HelpPanelProps,
+  type HelpSection,
+} from './components/HelpPanel/HelpPanel.tsx';
 export { IconButton, type IconButtonProps } from './components/IconButton/IconButton.tsx';
 export {
   LiveAnnouncer,
   useAnnounce,
   type Politeness,
 } from './components/LiveAnnouncer/LiveAnnouncer.tsx';
+export { PageHeader, type PageHeaderProps } from './components/PageHeader/PageHeader.tsx';
 export { Panel, type PanelProps } from './components/Panel/Panel.tsx';
 export {
   SegmentedControl,

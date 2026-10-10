@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { HelpButton } from '../shell/HelpButton';
 import { Layout } from './Layout';
 import { Providers } from './Providers';
 
@@ -11,19 +12,23 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ refresh }),
 }));
 
-const renderLayout = () =>
+const renderLayout = (sidebarCollapsed?: boolean) =>
   render(
-    <Providers language="en">
+    <Providers language="en" sidebarCollapsed={sidebarCollapsed}>
       <Layout>
         <p>Page content</p>
+        <HelpButton />
       </Layout>
     </Providers>,
   );
+
+const desktopNav = () => screen.getAllByRole('navigation', { name: 'Main navigation' })[0];
 
 describe('Layout', () => {
   beforeEach(() => {
     refresh.mockClear();
     document.cookie = 'lang=; max-age=0; path=/';
+    document.cookie = 'sidebar=; max-age=0; path=/';
   });
 
   it('renders the app shell around the page', () => {
@@ -45,6 +50,50 @@ describe('Layout', () => {
       'aria-current',
       'page',
     );
+  });
+
+  it('collapses the sidebar to an icon rail and remembers it in a cookie', async () => {
+    const user = userEvent.setup();
+    renderLayout();
+
+    await user.click(within(desktopNav()).getByRole('button', { name: 'Collapse menu' }));
+
+    expect(document.cookie).toContain('sidebar=collapsed');
+    const link = within(desktopNav()).getByRole('link', { name: 'Overview' });
+    expect(link).not.toHaveTextContent('Overview');
+
+    await user.click(within(desktopNav()).getByRole('button', { name: 'Expand menu' }));
+
+    expect(document.cookie).toContain('sidebar=expanded');
+    expect(within(desktopNav()).getByRole('link', { name: 'Overview' })).toHaveTextContent(
+      'Overview',
+    );
+  });
+
+  it('starts as a rail when the server read a collapsed cookie', () => {
+    renderLayout(true);
+
+    expect(within(desktopNav()).getByRole('button', { name: 'Expand menu' })).toBeInTheDocument();
+  });
+
+  it('opens section help beside the page, folding the sidebar until it closes', async () => {
+    const user = userEvent.setup();
+    renderLayout();
+
+    const helpButton = screen.getByRole('button', { name: 'About this section' });
+    await user.click(helpButton);
+
+    const panel = screen.getByRole('complementary', { name: 'About Overview' });
+    expect(helpButton).toHaveAttribute('aria-expanded', 'true');
+    expect(helpButton).toHaveAttribute('aria-controls', panel.id);
+    expect(within(panel).getByRole('heading', { name: 'What is this?' })).toBeVisible();
+    expect(within(desktopNav()).getByRole('button', { name: 'Expand menu' })).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+
+    expect(helpButton).toHaveAttribute('aria-expanded', 'false');
+    expect(helpButton).toHaveFocus();
+    expect(within(desktopNav()).getByRole('button', { name: 'Collapse menu' })).toBeInTheDocument();
   });
 
   it('toggles the color scheme', async () => {

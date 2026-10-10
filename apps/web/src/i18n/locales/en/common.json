@@ -66,5 +66,64 @@
       "southern": "Southern",
       "west": "West"
     }
+  },
+  "sidebar": {
+    "collapse": "Collapse menu",
+    "expand": "Expand menu"
+  },
+  "help": {
+    "open": "About this section",
+    "close": "Close help",
+    "title": "About {{section}}",
+    "headings": {
+      "what": "What is this?",
+      "looking": "What am I looking at?",
+      "how": "How do I use it?",
+      "why": "Why does it matter?"
+    },
+    "sections": {
+      "home": {
+        "what": "The front page of the console. It shows the latest figures for the real Texas power grid and a summary of the practice grid that the other pages use.",
+        "looking": "The top cards are real numbers published by the U.S. Energy Information Administration: how much electricity Texas is using, what was forecast, and where the power comes from. Below them is a count of the made-up substations, power lines and power plants shown elsewhere.",
+        "how": "Read it like a dashboard. Open a section from the menu to see more detail, and use this help button on any page to learn what it does.",
+        "why": "Grid operators start each shift with a quick overview like this one: is demand normal, is the forecast holding, and is anything unusual going on?"
+      },
+      "telemetry": {
+        "what": "A very large table of readings from every piece of equipment on the practice grid, recorded every 15 minutes over six days.",
+        "looking": "Each row is one reading: which equipment it is, where it is, how hard it is working and whether that is normal. There are more than a million rows.",
+        "how": "Click a column title to sort. Use the filters to narrow the list, or group rows to see totals by area or type. Click a row to select that equipment; the other pages highlight it too.",
+        "why": "Operators use tables like this to find equipment that is overloaded or behaving oddly, and to check what happened at a given time."
+      },
+      "charts": {
+        "what": "Line charts of the last 30 days on the Texas grid: how much electricity was used, what was forecast, how it was produced and how much came from neighbouring grids.",
+        "looking": "Real hourly data from the U.S. Energy Information Administration, plus one practice series with a reading every second, about 2.6 million points.",
+        "how": "Zoom into any chart and drag to move through time. The other charts follow, so you can compare them at the same moment.",
+        "why": "Comparing demand with the forecast and with how power was produced shows when the grid was under strain and how it coped."
+      },
+      "alarms": {
+        "what": "A live list of warnings from the practice grid, such as a power line carrying too much electricity or a voltage that is too low.",
+        "looking": "New alarms appear as they happen. The counters at the top show how many are active and how many nobody has handled yet.",
+        "how": "Filter by severity or area, and pause the feed to read without the list moving. Acknowledge an alarm to tell everyone else watching that you are dealing with it; they see it straight away.",
+        "why": "In a real control room, alarms are how operators learn that something needs attention. Acknowledging them stops two people chasing the same problem."
+      },
+      "map": {
+        "what": "A map of Texas with every substation, power plant, customer area and power line of the practice grid.",
+        "looking": "Colours show how heavily each piece of equipment is loaded right now, updated live. The legend explains the colours, and the layer switches hide or show each kind of equipment.",
+        "how": "Zoom and drag the map like any online map. Click a dot or a line to select it and see its details; the other pages highlight it too. Choose Show as table for a list of everything on the map.",
+        "why": "Seeing where the strain is helps operators understand a problem at a glance, for example several busy lines in the same region."
+      },
+      "network": {
+        "what": "The practice grid drawn as a network: which substations are connected to which, and through which power lines.",
+        "looking": "A tree lists every area and piece of equipment, and a diagram draws the connections. Line colours show either live loading or the result of a what-if study.",
+        "how": "Select equipment in the tree or the diagram. In the what-if study, trip a line, take equipment offline or change a load, and see how the power would flow after the change. Undo or reset at any time.",
+        "why": "Before taking a line out for repairs, engineers check that the rest of the grid can carry the extra power. This page shows that check in a simple form."
+      },
+      "incidents": {
+        "what": "Written reports about events on the grid, for example an outage or a piece of equipment that failed.",
+        "looking": "A list of reports with their status and severity. A sample report shows what a finished one looks like.",
+        "how": "Create a report, link the equipment involved, add follow-up actions and attach PDF documents. Reports are saved in this browser only; nothing is sent anywhere.",
+        "why": "Writing down what happened, and what will be done about it, is how teams learn from incidents and stop them happening again."
+      }
+    }
   }
 }

@@ -46,6 +46,8 @@ Across every module:
 - **Shared component library:** accessible and tested.
 - **Installable and offline-ready (PWA):** pages you have opened, and your incident reports,
   work without a connection. See [M12: Progressive Web App](docs/m12-pwa.md).
+- **Section help:** every section explains itself in plain language, in a side panel next to the
+  page. The sidebar folds to icons to make room. See [M13: Enhanced UI](docs/m13-enhanced-ui.md).
 
 ## Getting started
 
@@ -459,3 +461,4 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 - [M10: Incident reports](docs/m10-incident-reports.md)
 - [M11: Finish](docs/m11-finish.md)
 - [M12: Progressive Web App](docs/m12-pwa.md)
+- [M13: Enhanced UI](docs/m13-enhanced-ui.md)

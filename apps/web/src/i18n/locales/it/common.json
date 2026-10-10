@@ -66,5 +66,64 @@
       "southern": "Sud",
       "west": "Ovest"
     }
+  },
+  "sidebar": {
+    "collapse": "Comprimi menu",
+    "expand": "Espandi menu"
+  },
+  "help": {
+    "open": "Informazioni su questa sezione",
+    "close": "Chiudi guida",
+    "title": "Informazioni: {{section}}",
+    "headings": {
+      "what": "Che cos'è?",
+      "looking": "Che cosa sto guardando?",
+      "how": "Come si usa?",
+      "why": "Perché è importante?"
+    },
+    "sections": {
+      "home": {
+        "what": "La pagina iniziale della console. Mostra gli ultimi dati della vera rete elettrica del Texas e un riepilogo della rete di prova usata dalle altre pagine.",
+        "looking": "Le schede in alto sono dati reali pubblicati dalla U.S. Energy Information Administration: quanta elettricità consuma il Texas, quanto era previsto e da dove arriva l'energia. Sotto c'è il conteggio di sottostazioni, linee e centrali fittizie mostrate nelle altre pagine.",
+        "how": "Leggila come un cruscotto. Apri una sezione dal menu per vedere più dettagli e usa questo pulsante di aiuto in ogni pagina per scoprire a cosa serve.",
+        "why": "Gli operatori di rete iniziano ogni turno con una panoramica come questa: la domanda è normale, la previsione regge, sta succedendo qualcosa di insolito?"
+      },
+      "telemetry": {
+        "what": "Una tabella molto grande con le letture di ogni apparecchiatura della rete di prova, registrate ogni 15 minuti per sei giorni.",
+        "looking": "Ogni riga è una lettura: di quale apparecchiatura si tratta, dove si trova, quanto sta lavorando e se è normale. Ci sono più di un milione di righe.",
+        "how": "Fai clic sul titolo di una colonna per ordinare. Usa i filtri per restringere l'elenco o raggruppa le righe per vedere i totali per zona o tipo. Fai clic su una riga per selezionare quell'apparecchiatura; anche le altre pagine la evidenziano.",
+        "why": "Gli operatori usano tabelle come questa per trovare apparecchiature sovraccariche o con un comportamento anomalo, e per verificare cosa è successo in un dato momento."
+      },
+      "charts": {
+        "what": "Grafici a linee degli ultimi 30 giorni sulla rete del Texas: quanta elettricità è stata consumata, quanto era previsto, come è stata prodotta e quanta è arrivata dalle reti vicine.",
+        "looking": "Dati orari reali della U.S. Energy Information Administration, più una serie di prova con una lettura al secondo, circa 2,6 milioni di punti.",
+        "how": "Ingrandisci un grafico qualsiasi e trascinalo per spostarti nel tempo. Gli altri grafici lo seguono, così puoi confrontarli nello stesso istante.",
+        "why": "Confrontare la domanda con la previsione e con il modo in cui l'energia è stata prodotta mostra quando la rete era sotto sforzo e come ha reagito."
+      },
+      "alarms": {
+        "what": "Un elenco in diretta degli avvisi della rete di prova, come una linea che trasporta troppa elettricità o una tensione troppo bassa.",
+        "looking": "I nuovi allarmi compaiono appena si verificano. I contatori in alto mostrano quanti sono attivi e quanti non sono ancora stati presi in carico.",
+        "how": "Filtra per gravità o zona e metti in pausa il flusso per leggere senza che l'elenco si muova. Conferma un allarme per far sapere a chi sta guardando che te ne stai occupando; lo vedono subito.",
+        "why": "In una vera sala controllo, gli allarmi avvisano gli operatori che qualcosa richiede attenzione. Confermarli evita che due persone inseguano lo stesso problema."
+      },
+      "map": {
+        "what": "Una mappa del Texas con tutte le sottostazioni, centrali, aree di consumo e linee elettriche della rete di prova.",
+        "looking": "I colori mostrano quanto è carica ogni apparecchiatura in questo momento, aggiornati in diretta. La legenda spiega i colori e gli interruttori dei livelli mostrano o nascondono ogni tipo di apparecchiatura.",
+        "how": "Ingrandisci e trascina la mappa come qualsiasi mappa online. Fai clic su un punto o una linea per selezionarlo e vederne i dettagli; anche le altre pagine lo evidenziano. Scegli Mostra come tabella per un elenco di tutto ciò che è sulla mappa.",
+        "why": "Vedere dove si concentra lo sforzo aiuta gli operatori a capire un problema a colpo d’occhio, per esempio diverse linee molto cariche nella stessa regione."
+      },
+      "network": {
+        "what": "La rete di prova disegnata come una rete: quali sottostazioni sono collegate tra loro e tramite quali linee.",
+        "looking": "Un albero elenca ogni zona e apparecchiatura, e un diagramma disegna i collegamenti. Il colore delle linee mostra il carico in diretta o il risultato di uno studio ipotetico.",
+        "how": "Seleziona un'apparecchiatura nell'albero o nel diagramma. Nello studio ipotetico, fai scattare una linea, metti fuori servizio un'apparecchiatura o cambia un carico, e guarda come scorrerebbe l'energia dopo la modifica. Puoi annullare o ripristinare in qualsiasi momento.",
+        "why": "Prima di mettere fuori servizio una linea per la manutenzione, gli ingegneri verificano che il resto della rete possa trasportare l'energia in più. Questa pagina mostra quel controllo in forma semplice."
+      },
+      "incidents": {
+        "what": "Rapporti scritti su eventi della rete, per esempio un'interruzione o un'apparecchiatura guasta.",
+        "looking": "Un elenco di rapporti con stato e gravità. Un rapporto di esempio mostra come appare uno completato.",
+        "how": "Crea un rapporto, collega le apparecchiature coinvolte, aggiungi azioni di follow-up e allega documenti PDF. I rapporti sono salvati solo in questo browser; non viene inviato nulla.",
+        "why": "Scrivere cosa è successo e cosa verrà fatto è il modo in cui i team imparano dagli incidenti ed evitano che si ripetano."
+      }
+    }
   }
 }

@@ -66,5 +66,64 @@
       "southern": "Sud",
       "west": "Vest"
     }
+  },
+  "sidebar": {
+    "collapse": "Restrânge meniul",
+    "expand": "Extinde meniul"
+  },
+  "help": {
+    "open": "Despre această secțiune",
+    "close": "Închide ajutorul",
+    "title": "Despre {{section}}",
+    "headings": {
+      "what": "Ce este?",
+      "looking": "Ce văd aici?",
+      "how": "Cum se folosește?",
+      "why": "De ce contează?"
+    },
+    "sections": {
+      "home": {
+        "what": "Pagina principală a consolei. Arată cele mai recente cifre ale rețelei electrice reale din Texas și un rezumat al rețelei de exercițiu folosite de celelalte pagini.",
+        "looking": "Cardurile de sus sunt date reale publicate de Administrația pentru Informații Energetice a SUA: câtă electricitate consumă Texasul, cât se prognozase și de unde vine energia. Dedesubt este numărul stațiilor, liniilor și centralelor fictive afișate în alte pagini.",
+        "how": "Citiți-o ca pe un tablou de bord. Deschideți o secțiune din meniu pentru mai multe detalii și folosiți acest buton de ajutor pe orice pagină ca să aflați ce face.",
+        "why": "Operatorii rețelei încep fiecare tură cu o privire de ansamblu ca aceasta: este consumul normal, se confirmă prognoza, se întâmplă ceva neobișnuit?"
+      },
+      "telemetry": {
+        "what": "Un tabel foarte mare cu citiri de la fiecare echipament al rețelei de exercițiu, înregistrate la fiecare 15 minute timp de șase zile.",
+        "looking": "Fiecare rând este o citire: despre ce echipament e vorba, unde se află, cât de încărcat este și dacă asta e normal. Sunt peste un milion de rânduri.",
+        "how": "Faceți clic pe titlul unei coloane pentru sortare. Folosiți filtrele pentru a restrânge lista sau grupați rândurile pentru totaluri pe zone ori tipuri. Faceți clic pe un rând pentru a selecta echipamentul; celelalte pagini îl evidențiază și ele.",
+        "why": "Operatorii folosesc astfel de tabele pentru a găsi echipamente supraîncărcate sau cu un comportament ciudat și pentru a verifica ce s-a întâmplat la un anumit moment."
+      },
+      "charts": {
+        "what": "Grafice cu ultimele 30 de zile din rețeaua Texasului: câtă electricitate s-a consumat, cât se prognozase, cum a fost produsă și câtă a venit din rețelele vecine.",
+        "looking": "Date orare reale de la Administrația pentru Informații Energetice a SUA, plus o serie de exercițiu cu o citire pe secundă, aproximativ 2,6 milioane de puncte.",
+        "how": "Măriți orice grafic și trageți de el pentru a vă deplasa în timp. Celelalte grafice îl urmează, ca să le puteți compara în același moment.",
+        "why": "Compararea consumului cu prognoza și cu modul în care a fost produsă energia arată când rețeaua a fost solicitată și cum a făcut față."
+      },
+      "alarms": {
+        "what": "O listă în timp real cu avertizările din rețeaua de exercițiu, de exemplu o linie care transportă prea multă electricitate sau o tensiune prea mică.",
+        "looking": "Alarmele noi apar pe măsură ce se produc. Contoarele de sus arată câte sunt active și câte nu au fost încă preluate de nimeni.",
+        "how": "Filtrați după gravitate sau zonă și puneți fluxul pe pauză ca să citiți fără ca lista să se miște. Confirmați o alarmă ca să le arătați tuturor celor care urmăresc că vă ocupați de ea; o văd imediat.",
+        "why": "Într-o cameră de comandă reală, alarmele le arată operatorilor că ceva necesită atenție. Confirmarea lor evită ca doi oameni să urmărească aceeași problemă."
+      },
+      "map": {
+        "what": "O hartă a Texasului cu toate stațiile, centralele, zonele de consum și liniile electrice ale rețelei de exercițiu.",
+        "looking": "Culorile arată cât de încărcat este fiecare echipament chiar acum, actualizate în timp real. Legenda explică culorile, iar comutatoarele de straturi ascund sau afișează fiecare tip de echipament.",
+        "how": "Măriți și trageți harta ca pe orice hartă online. Faceți clic pe un punct sau pe o linie pentru a-l selecta și a vedea detaliile; celelalte pagini îl evidențiază și ele. Alegeți Afișează ca tabel pentru o listă cu tot ce apare pe hartă.",
+        "why": "Faptul că vedeți unde este solicitarea îi ajută pe operatori să înțeleagă o problemă dintr-o privire, de exemplu mai multe linii încărcate în aceeași regiune."
+      },
+      "network": {
+        "what": "Rețeaua de exercițiu desenată ca o rețea: ce stații sunt legate între ele și prin ce linii.",
+        "looking": "Un arbore listează fiecare zonă și echipament, iar o diagramă desenează legăturile. Culoarea liniilor arată încărcarea în timp real sau rezultatul unui studiu de tip „ce-ar fi dacă”.",
+        "how": "Selectați un echipament în arbore sau în diagramă. În studiul „ce-ar fi dacă”, declanșați o linie, scoateți un echipament din funcțiune sau modificați o sarcină și vedeți cum ar circula energia după schimbare. Puteți anula sau reseta oricând.",
+        "why": "Înainte de a scoate o linie pentru reparații, inginerii verifică dacă restul rețelei poate prelua energia în plus. Această pagină arată acea verificare într-o formă simplă."
+      },
+      "incidents": {
+        "what": "Rapoarte scrise despre evenimente din rețea, de exemplu o întrerupere sau un echipament care s-a defectat.",
+        "looking": "O listă de rapoarte cu starea și gravitatea lor. Un raport exemplu arată cum arată unul finalizat.",
+        "how": "Creați un raport, legați echipamentele implicate, adăugați acțiuni de urmărire și atașați documente PDF. Rapoartele sunt salvate doar în acest browser; nu se trimite nimic nicăieri.",
+        "why": "A scrie ce s-a întâmplat și ce se va face este felul în care echipele învață din incidente și împiedică repetarea lor."
+      }
+    }
   }
 }

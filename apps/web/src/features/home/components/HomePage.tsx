@@ -1,7 +1,8 @@
 import { EIA_SOURCE, EIA_SOURCE_URL, periodToMs, type AssetKind } from '@pgo/grid-model';
 import { Alert, Box, Stack, Typography } from '@mui/material';
-import { SourceNote, StatCard, SyntheticBadge } from '@pgo/ui';
+import { PageHeader, SourceNote, StatCard, SyntheticBadge } from '@pgo/ui';
 import { getRequestLanguage, getServerTranslation } from '../../../i18n/server';
+import { HelpButton } from '../../../shell/HelpButton';
 import { getAssets } from '../../../server/assets';
 import { getErcotData } from '../../../server/eia';
 import { HOME_NAMESPACE } from '../i18n';
@@ -48,12 +49,7 @@ export const HomePage = async () => {
 
   return (
     <Stack spacing={4}>
-      <Box>
-        <Typography variant="h4" component="h1" sx={{ mb: 1 }}>
-          {t('title')}
-        </Typography>
-        <Typography color="text.secondary">{t('intro')}</Typography>
-      </Box>
+      <PageHeader title={t('title')} intro={t('intro')} action={<HelpButton />} />
 
       <Box component="section" aria-labelledby="ercot-heading">
         <Typography id="ercot-heading" variant="h6" component="h2" sx={{ mb: 2 }}>

@@ -1,6 +1,7 @@
-import { SyntheticBadge } from '@pgo/ui';
-import { Box, Stack, Typography } from '@mui/material';
+import { PageHeader, SyntheticBadge } from '@pgo/ui';
+import { Stack } from '@mui/material';
 import { getServerTranslation } from '../../../i18n/server';
+import { HelpButton } from '../../../shell/HelpButton';
 import { getRealtimeUrl } from '../../../server/realtime';
 import { ALARMS_NAMESPACE } from '../i18n';
 import { AlarmsView } from './AlarmsView';
@@ -11,15 +12,12 @@ export const AlarmsPage = async () => {
 
   return (
     <Stack spacing={3}>
-      <Box>
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', mb: 1 }}>
-          <Typography variant="h4" component="h1">
-            {t('title')}
-          </Typography>
-          <SyntheticBadge label={t('synthetic')} />
-        </Stack>
-        <Typography color="text.secondary">{t('intro')}</Typography>
-      </Box>
+      <PageHeader
+        title={t('title')}
+        intro={t('intro')}
+        badge={<SyntheticBadge label={t('synthetic')} />}
+        action={<HelpButton />}
+      />
       <AlarmsView url={getRealtimeUrl()} />
     </Stack>
   );

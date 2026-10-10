@@ -2,6 +2,8 @@
 
 // Per-icon imports: the package index pulls in thousands of modules.
 import AccountTreeOutlined from '@mui/icons-material/AccountTreeOutlined';
+import ChevronLeftOutlined from '@mui/icons-material/ChevronLeftOutlined';
+import ChevronRightOutlined from '@mui/icons-material/ChevronRightOutlined';
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import HomeOutlined from '@mui/icons-material/HomeOutlined';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
@@ -25,21 +27,35 @@ import {
   MenuItem,
   Select,
   Toolbar,
+  Tooltip,
   useColorScheme,
+  useMediaQuery,
   type SelectChangeEvent,
 } from '@mui/material';
-import { IconButton } from '@pgo/ui';
+import { HelpPanel, IconButton } from '@pgo/ui';
 import NextLink from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { persistLanguage, toLanguage } from '../i18n/language';
 import { LANGUAGES, PATHS, type Language, type Path } from '../types';
+import { HELP_PANEL_ID } from '../shell/HelpButton';
+import { persistSidebarCollapsed } from '../shell/sidebar';
+import { useAppDispatch, useAppSelector } from '../store';
+import {
+  closeHelp,
+  selectHelpOpen,
+  selectSidebarCollapsed,
+  selectSidebarRail,
+  toggleSidebar,
+} from '../store/shellSlice';
 import { InstallButton, OfflineBanner, UpdatePrompt } from './Pwa';
 import { SelectionBar } from './SelectionBar';
 import { useSelectionUrlSync } from './useSelectionUrlSync';
 
 const SIDEBAR_WIDTH = 240;
+/** Icon-only sidebar: the icon plus its button padding on both sides. */
+const RAIL_SPACING = 9;
 const MAIN_CONTENT_ID = 'main-content';
 
 interface NavItem {
@@ -62,7 +78,18 @@ const NAV_ITEMS: NavItem[] = [
 const isSelected = (item: NavItem, pathname: string) =>
   item.to === PATHS.HOME ? pathname === PATHS.HOME : pathname.startsWith(item.to);
 
-const Navigation = ({ onNavigate }: { onNavigate?: () => void }) => {
+/** Order of the blocks in every section's help panel (`help.headings.*`, `help.sections.<key>.*`). */
+const HELP_BLOCKS = ['what', 'looking', 'how', 'why'] as const;
+
+interface NavigationProps {
+  onNavigate?: () => void;
+  /** Icon rail: labels move to tooltips. */
+  collapsed?: boolean;
+  /** Shows the collapse/expand button (desktop sidebar only). */
+  onToggleCollapsed?: () => void;
+}
+
+const Navigation = ({ onNavigate, collapsed = false, onToggleCollapsed }: NavigationProps) => {
   const { t } = useTranslation('common');
   const pathname = usePathname();
 
@@ -70,27 +97,76 @@ const Navigation = ({ onNavigate }: { onNavigate?: () => void }) => {
     <>
       <Toolbar />
       <Box component="nav" aria-label={t('mainNavigation')} sx={{ p: 1.5 }}>
+        {onToggleCollapsed && (
+          <Box sx={{ display: 'flex', justifyContent: collapsed ? 'center' : 'flex-end', mb: 0.5 }}>
+            <IconButton
+              label={t(collapsed ? 'sidebar.expand' : 'sidebar.collapse')}
+              tooltipPlacement="right"
+              aria-expanded={!collapsed}
+              onClick={onToggleCollapsed}
+            >
+              {collapsed ? <ChevronRightOutlined /> : <ChevronLeftOutlined />}
+            </IconButton>
+          </Box>
+        )}
         <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           {NAV_ITEMS.map((item) => {
             const selected = isSelected(item, pathname);
+            const label = t(`nav.${item.key}`);
             return (
               <ListItem key={item.key} disablePadding>
-                <ListItemButton
-                  component={NextLink}
-                  href={item.to}
-                  selected={selected}
-                  aria-current={selected ? 'page' : undefined}
-                  onClick={onNavigate}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={t(`nav.${item.key}`)} />
-                </ListItemButton>
+                <Tooltip title={collapsed ? label : ''} placement="right">
+                  <ListItemButton
+                    component={NextLink}
+                    href={item.to}
+                    selected={selected}
+                    aria-current={selected ? 'page' : undefined}
+                    aria-label={collapsed ? label : undefined}
+                    onClick={onNavigate}
+                    sx={collapsed ? { justifyContent: 'center', px: 1.5 } : undefined}
+                  >
+                    <ListItemIcon sx={collapsed ? { minWidth: 0 } : undefined}>
+                      {item.icon}
+                    </ListItemIcon>
+                    {!collapsed && <ListItemText primary={label} />}
+                  </ListItemButton>
+                </Tooltip>
               </ListItem>
             );
           })}
         </List>
       </Box>
     </>
+  );
+};
+
+/** Plain-language help for the current section: a side panel on desktop, a sheet on phones. */
+const SectionHelp = () => {
+  const { t } = useTranslation('common');
+  const pathname = usePathname();
+  const dispatch = useAppDispatch();
+  const open = useAppSelector(selectHelpOpen);
+  // A behaviour switch, not styling: the panel is closed in the server markup either way.
+  const phone = useMediaQuery((theme) => theme.breakpoints.down('md'));
+  const item = NAV_ITEMS.find((navItem) => isSelected(navItem, pathname));
+
+  if (!item) {
+    return null;
+  }
+
+  return (
+    <HelpPanel
+      id={HELP_PANEL_ID}
+      open={open}
+      onClose={() => dispatch(closeHelp())}
+      variant={phone ? 'sheet' : 'side'}
+      title={t('help.title', { section: t(`nav.${item.key}`) })}
+      closeLabel={t('help.close')}
+      sections={HELP_BLOCKS.map((block) => ({
+        heading: t(`help.headings.${block}`),
+        body: t(`help.sections.${item.key}.${block}`),
+      }))}
+    />
   );
 };
 
@@ -169,6 +245,14 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation('common');
   useSelectionUrlSync();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const dispatch = useAppDispatch();
+  const rail = useAppSelector(selectSidebarRail);
+  const sidebarCollapsed = useAppSelector(selectSidebarCollapsed);
+
+  // The cookie lets the server render the sidebar at the right width (app/layout.tsx).
+  useEffect(() => {
+    persistSidebarCollapsed(sidebarCollapsed);
+  }, [sidebarCollapsed]);
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex' }}>
@@ -230,14 +314,26 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           server-rendered markup is already right for the viewport. */}
       <Drawer
         variant="permanent"
-        sx={(theme) => ({
-          width: SIDEBAR_WIDTH,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': { width: SIDEBAR_WIDTH, boxSizing: 'border-box' },
-          [theme.breakpoints.down('md')]: { display: 'none' },
-        })}
+        sx={(theme) => {
+          const width = rail ? theme.spacing(RAIL_SPACING) : `${SIDEBAR_WIDTH}px`;
+          const transition = theme.transitions.create('width', {
+            duration: theme.transitions.duration.enteringScreen,
+          });
+          return {
+            width,
+            flexShrink: 0,
+            transition,
+            '& .MuiDrawer-paper': {
+              width,
+              boxSizing: 'border-box',
+              overflowX: 'hidden',
+              transition,
+            },
+            [theme.breakpoints.down('md')]: { display: 'none' },
+          };
+        }}
       >
-        <Navigation />
+        <Navigation collapsed={rail} onToggleCollapsed={() => dispatch(toggleSidebar())} />
       </Drawer>
 
       {/* Mobile: temporary sidebar opened from the menu button. */}
@@ -269,6 +365,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         </Container>
       </Box>
 
+      <SectionHelp />
       <UpdatePrompt />
     </Box>
   );

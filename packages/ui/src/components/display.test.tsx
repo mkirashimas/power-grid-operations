@@ -4,6 +4,7 @@ import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { expectNoAxeViolations, renderWithTheme } from '../test/utils.tsx';
 import { EmptyState } from './EmptyState/EmptyState.tsx';
+import { PageHeader } from './PageHeader/PageHeader.tsx';
 import { Panel } from './Panel/Panel.tsx';
 import { SourceNote } from './SourceNote/SourceNote.tsx';
 import { StatCard } from './StatCard/StatCard.tsx';
@@ -110,5 +111,27 @@ describe('VisuallyHidden', () => {
       </button>,
     );
     expect(screen.getByRole('button', { name: '✕Close' })).toBeInTheDocument();
+  });
+});
+
+describe('PageHeader', () => {
+  it('renders the h1 with its badge, action and intro', async () => {
+    renderWithTheme(
+      <PageHeader
+        title="Map"
+        intro="The synthetic grid over Texas."
+        badge={<SyntheticBadge label="Synthetic" />}
+        action={<Button>Help</Button>}
+      >
+        <p>Extra note</p>
+      </PageHeader>,
+    );
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Map' })).toBeVisible();
+    expect(screen.getByText('Synthetic')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Help' })).toBeVisible();
+    expect(screen.getByText('The synthetic grid over Texas.')).toBeVisible();
+    expect(screen.getByText('Extra note')).toBeVisible();
+    await expectNoAxeViolations();
   });
 });
