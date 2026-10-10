@@ -202,6 +202,7 @@ export const TelemetryView = ({ demand, seed }: TelemetryViewProps) => {
   const getRow = (index: number): GridRow | undefined => {
     if (!ready || !result) return undefined;
     const value = result.order[index];
+    if (value === undefined) return undefined;
     if (isGroupMarker(value)) {
       const group = result.groups[groupPosition(value)];
       return {

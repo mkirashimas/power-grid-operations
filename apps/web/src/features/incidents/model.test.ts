@@ -96,9 +96,17 @@ describe('mentions', () => {
 describe('filterIncidents', () => {
   it('filters by status, newest activity first', () => {
     const open = filterIncidents(SAMPLE_INCIDENTS, 'open', '');
-    expect(open.map(({ id }) => id)).toEqual(['inc-sample-03']);
+    expect(open.map(({ id }) => id)).toEqual(['inc-sample-07', 'inc-sample-03']);
     const all = filterIncidents(SAMPLE_INCIDENTS, 'all', '');
-    expect(all.map(({ id }) => id)).toEqual(['inc-sample-03', 'inc-sample-02', 'inc-sample-01']);
+    expect(all.map(({ id }) => id)).toEqual([
+      'inc-sample-07',
+      'inc-sample-03',
+      'inc-sample-06',
+      'inc-sample-02',
+      'inc-sample-01',
+      'inc-sample-05',
+      'inc-sample-04',
+    ]);
   });
 
   it('searches the title, the text and the linked asset ids, ignoring case', () => {

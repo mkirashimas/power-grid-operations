@@ -111,6 +111,35 @@ describe('VirtualGrid', () => {
     ]);
   });
 
+  it('focuses a header by click without asking getRow for the header row', async () => {
+    const user = userEvent.setup();
+    const rowCount = 10;
+    const strictRow = (index: number): GridRow => {
+      if (index < 0 || index >= rowCount) throw new Error(`getRow(${index}) is out of range`);
+      return dataRow(index);
+    };
+    const StrictGrid = () => {
+      const [sort, setSort] = useState<GridSortKey[]>([]);
+      return (
+        <VirtualGrid
+          label="Telemetry rows"
+          columns={COLUMNS}
+          rowCount={rowCount}
+          getRow={strictRow}
+          height={400}
+          sort={sort}
+          onSortChange={setSort}
+        />
+      );
+    };
+    renderWithTheme(<StrictGrid />);
+
+    const mw = screen.getByRole('columnheader', { name: 'MW' });
+    await user.click(mw);
+    expect(mw).toHaveFocus();
+    expect(mw).toHaveAttribute('aria-sort', 'ascending');
+  });
+
   // jsdom cannot scroll, so this grid is small enough to render fully; scrolling a far cell
   // into view is covered by the Playwright tests of the telemetry page.
   it('moves a single focusable cell with the arrow keys, Home/End and Ctrl+End', async () => {
