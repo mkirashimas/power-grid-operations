@@ -27,8 +27,11 @@
   "include": [
     "next-env.d.ts",
     "src",
+    "scripts",
     ".next/types/**/*.ts",
     "e2e",
+    "measure",
+    "e2e-demo",
     "*.config.ts",
     ".next/dev/types/**/*.ts"
   ],

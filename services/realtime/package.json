@@ -1,0 +1,29 @@
+{
+  "name": "@pgo/realtime",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "WebSocket service streaming the synthetic live grid (Cloud Run service pgo-realtime).",
+  "scripts": {
+    "dev": "node --watch --experimental-strip-types --disable-warning=ExperimentalWarning src/main.ts",
+    "start": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/main.ts",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@pgo/grid-model": "0.0.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.13.3",
+    "@types/ws": "^8.5.12",
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.71.1",
+    "vitest": "^5.0.3"
+  }
+}

@@ -17,11 +17,39 @@
     "ro": "Română"
   },
   "nav": {
-    "home": "Prezentare generală"
+    "home": "Prezentare generală",
+    "telemetry": "Telemetrie",
+    "charts": "Grafice",
+    "alarms": "Alarme",
+    "map": "Hartă",
+    "network": "Rețea",
+    "incidents": "Incidente"
   },
   "notFound": {
     "title": "Pagina nu a fost găsită",
     "body": "Pagina pe care o cauți nu există.",
     "home": "Înapoi la prezentarea generală"
+  },
+  "selection": {
+    "label": "Echipament selectat",
+    "openIn": "Deschide în {{view}}",
+    "reportIncident": "Raportează incident",
+    "clear": "Șterge selecția",
+    "kinds": {
+      "substation": "Stație",
+      "line": "Linie",
+      "generator": "Generator",
+      "load": "Consumator"
+    },
+    "zones": {
+      "coast": "Coastă",
+      "east": "Est",
+      "far-west": "Vestul Îndepărtat",
+      "north": "Nord",
+      "north-central": "Centru-Nord",
+      "south-central": "Centru-Sud",
+      "southern": "Sud",
+      "west": "Vest"
+    }
   }
 }

@@ -1,0 +1,99 @@
+{
+  "title": "Telemetria",
+  "intro": "Ogni asset sintetico, ogni 15 minuti, per 6 giorni. Ordinamento, filtri e raggruppamento girano in un Web Worker, così la pagina resta reattiva.",
+  "gridLabel": "Righe di telemetria",
+  "columns": {
+    "asset": "Asset",
+    "kind": "Tipo",
+    "zone": "Zona",
+    "time": "Ora",
+    "mw": "MW",
+    "loading": "Carico %",
+    "voltage": "Tensione (pu)",
+    "status": "Stato"
+  },
+  "kinds": {
+    "substation": "Sottostazione",
+    "line": "Linea",
+    "generator": "Generatore",
+    "load": "Carico"
+  },
+  "zones": {
+    "coast": "Costa",
+    "east": "Est",
+    "far-west": "Estremo Ovest",
+    "north": "Nord",
+    "north-central": "Centro Nord",
+    "south-central": "Centro Sud",
+    "southern": "Sud",
+    "west": "Ovest"
+  },
+  "statuses": {
+    "normal": "Normale",
+    "warning": "Avviso",
+    "alarm": "Allarme"
+  },
+  "filters": {
+    "label": "Controlli della tabella",
+    "asset": "Filtra asset",
+    "assetPlaceholder": "Nome o id",
+    "clear": "Cancella filtro",
+    "kind": "Tipo",
+    "zone": "Zona",
+    "status": "Stato",
+    "all": "Tutti",
+    "groupBy": "Raggruppa per",
+    "groupOptions": {
+      "none": "Nessuno",
+      "kind": "Tipo",
+      "zone": "Zona",
+      "asset": "Asset",
+      "status": "Stato"
+    },
+    "expandAll": "Espandi tutto",
+    "collapseAll": "Comprimi tutto",
+    "reset": "Cancella filtri"
+  },
+  "readout": {
+    "rows": "{{matched}} di {{total}} righe",
+    "generate": "generazione {{ms}} ms",
+    "filter": "filtro {{ms}} ms",
+    "sort": "ordinamento {{ms}} ms",
+    "group": "raggruppamento {{ms}} ms",
+    "updating": "Aggiornamento…",
+    "announce": "{{matched}} righe corrispondono"
+  },
+  "groupSummary": "{{count}} righe · media {{avg}} MW · max {{max}} MW · carico massimo {{loading}} %",
+  "loading": "Generazione di oltre un milione di righe di telemetria…",
+  "error": "Impossibile generare la telemetria: {{message}}",
+  "empty": {
+    "title": "Nessuna riga corrisponde a questi filtri",
+    "body": "Prova un altro asset, zona o stato, oppure cancella i filtri."
+  },
+  "synthetic": "Sintetico",
+  "source": "Profilo di carico da:",
+  "assetChart": {
+    "title": "Asset selezionato: {{name}}",
+    "mwPane": "Potenza",
+    "loadingPane": "Carico",
+    "mw": "MW",
+    "loading": "Carico",
+    "unitMw": "{{value}} MW",
+    "unitPct": "{{value}} %",
+    "summary": "{{title}}, da {{from}} a {{to}}: {{series}}.",
+    "summaryItem": "{{label}} da {{min}} a {{max}}",
+    "toolbar": "Controlli del grafico",
+    "zoomIn": "Ingrandisci",
+    "zoomOut": "Riduci",
+    "reset": "Mostra l’intero intervallo",
+    "presets": "Intervallo",
+    "day": "24 h",
+    "week": "7 g",
+    "month": "30 g",
+    "showTable": "Mostra come tabella",
+    "hideTable": "Nascondi tabella",
+    "time": "Ora (CT)",
+    "overview": "Panoramica: trascina la finestra o usa le frecce per spostare l’intervallo visibile",
+    "keyboardHint": "Grafico interattivo. Le frecce spostano il cursore, Maiusc con le frecce scorre, più e meno ingrandiscono, Home e Fine vanno ai bordi, Esc cancella il cursore."
+  }
+}

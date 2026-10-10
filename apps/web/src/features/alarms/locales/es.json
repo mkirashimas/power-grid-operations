@@ -1,0 +1,107 @@
+{
+  "title": "Alarmas",
+  "intro": "Un flujo de alarmas en vivo de la red sintética, transmitido por WebSocket desde el servicio en tiempo real. Los reconocimientos se comparten con todos los que ven esta página.",
+  "synthetic": "Sintético",
+  "connection": {
+    "connecting": "Conectando…",
+    "live": "En vivo",
+    "liveLatency": "En vivo · {{ms}} ms",
+    "reconnecting": "Reconectando…",
+    "offline": "Sin conexión, reintentando"
+  },
+  "kpi": {
+    "activeAlarms": "Alarmas activas",
+    "activeWarnings": "Avisos activos",
+    "unacknowledged": "Sin reconocer",
+    "updates": "Actualizaciones por segundo",
+    "updatesCaption": "Ticks y mensajes de alarma"
+  },
+  "chart": {
+    "title": "Carga del sistema, últimos 10 minutos",
+    "load": "Carga del sistema",
+    "waiting": "Esperando datos…",
+    "summary": "{{title}}, de {{from}} a {{to}}: {{series}}.",
+    "summaryItem": "{{label}} de {{min}} a {{max}}",
+    "keyboardHint": "Gráfico en vivo. Las flechas mueven el cursor, Escape lo borra.",
+    "time": "Hora (CT)",
+    "showTable": "Mostrar como tabla",
+    "hideTable": "Ocultar tabla",
+    "toolbar": "Controles del gráfico",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
+    "reset": "Mostrar todo el intervalo",
+    "presets": "Intervalo",
+    "day": "24 h",
+    "week": "7 d",
+    "month": "30 d",
+    "overview": "Vista general"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "filters": {
+    "label": "Filtros de alarmas",
+    "severity": "Gravedad",
+    "zone": "Zona",
+    "all": "Todas",
+    "allZones": "Todas las zonas",
+    "alarm": "Alarmas",
+    "warning": "Avisos"
+  },
+  "pause": "Pausar",
+  "resume": "Reanudar",
+  "paused": "En pausa: la tabla está congelada y no se añaden alarmas nuevas.",
+  "table": {
+    "label": "Alarmas",
+    "raised": "Inicio",
+    "severity": "Gravedad",
+    "asset": "Activo",
+    "zone": "Zona",
+    "condition": "Condición",
+    "value": "Valor",
+    "state": "Estado",
+    "acknowledged": "Reconocida",
+    "empty": "Todavía no hay alarmas."
+  },
+  "severities": {
+    "alarm": "Alarma",
+    "warning": "Aviso"
+  },
+  "conditions": {
+    "overload": "Sobrecarga",
+    "undervoltage": "Subtensión",
+    "overvoltage": "Sobretensión"
+  },
+  "states": {
+    "active": "Activa",
+    "cleared": "Despejada {{time}}"
+  },
+  "acknowledge": "Reconocer",
+  "acknowledgeLabel": "Reconocer la alarma {{id}} en {{asset}}",
+  "announce": "Nueva alarma: {{condition}} en {{asset}}",
+  "zones": {
+    "coast": "Costa",
+    "east": "Este",
+    "far-west": "Lejano Oeste",
+    "north": "Norte",
+    "north-central": "Centro Norte",
+    "south-central": "Centro Sur",
+    "southern": "Sur",
+    "west": "Oeste"
+  },
+  "kinds": {
+    "substation": "Subestación",
+    "line": "Línea",
+    "generator": "Generador",
+    "load": "Carga"
+  },
+  "selected": {
+    "title": "Activo seleccionado, en vivo",
+    "values": "Carga {{loading}} · Tensión {{voltage}}",
+    "updated": "Actualizado {{time}}",
+    "waiting": "Esperando la próxima actualización…",
+    "only": "Solo el activo seleccionado"
+  }
+}

@@ -29,7 +29,7 @@ not the roadmap.
 | `hoc/App.tsx`, `hoc/Routing.tsx`            | `src/app/layout.tsx` + `hoc/Providers.tsx`; routes are the `src/app` folders                                   |
 | `store/themeSlice.ts`                       | MUI CSS-variable color schemes: `useColorScheme()` and `InitColorSchemeScript`                                 |
 | `store/authSlice.ts`                        | none                                                                                                           |
-| `src/firebase/*`                            | none; RTK Query uses `fetchBaseQuery({ baseUrl: '/api' })`                                                     |
+| `src/firebase/*`                            | none; RTK Query uses `fetchBaseQuery({ baseUrl: '/api' })`, plus a WebSocket for live data                     |
 | i18n detector (localStorage, navigator)     | `lang` cookie, then `Accept-Language` (`i18n/language.ts`)                                                     |
 | Drawer variant via `useMediaQuery`          | two drawers switched with CSS media queries (correct server markup)                                            |
 
@@ -38,7 +38,19 @@ not the roadmap.
 - **Server vs client components.** Pages are server components by default. Never pass functions
   (an `sx` callback, `component={NextLink}`, event handlers) from a server component to an MUI
   component. Use plain-object `sx`, or move that UI into a `'use client'` component inside the
-  feature.
+  feature. Library components that pass a React element to an MUI prop (`icon`, `avatar`,
+  `startIcon`, …) must be `'use client'`: across the RSC boundary the element can reach SSR as a
+  lazy reference, MUI's `isValidElement` check drops it, and hydration fails.
+- **Design system:** `packages/ui` (`@pgo/ui`) owns the MUI theme (`src/theme`) and the shared
+  components. `apps/web/src/theme` only adds the MUI locales.
+  - Check `@pgo/ui` before building UI in a feature. Add generic, reusable pieces there
+    (with a story and tests), not in a feature.
+  - Library components hold no translations: they take translated strings as props.
+  - Every story must pass axe in light and dark mode (`e2e/storybook-a11y.spec.ts`).
+  - Colours come from palette tokens. New tokens get a check in `src/theme/contrast.test.ts`.
+  - The `index.ts` barrel uses named exports only, because Next.js cannot follow `export *` into
+    `'use client'` modules.
+- **MUI 9 icon names** end in `Outlined` (e.g. `ErrorOutlined`, not `ErrorOutline`).
 - **Theme overrides** use `(theme.vars || theme).palette.*`, so one stylesheet serves both
   schemes. In `sx`, prefer token strings (`'text.secondary'`, `bgcolor: 'background.paper'`),
   and `theme.applyStyles('dark', {...})` for dark-only styles.
@@ -49,12 +61,113 @@ not the roadmap.
   in any language.
 - **Icons:** import one per file (`@mui/icons-material/HomeOutlined`), never from the package
   index.
+- **Feature slices** inject themselves with `slice.injectInto(rootReducer)` and augment
+  `LazyLoadedSlices` in `src/store` (see `features/telemetry/slice.ts`). The store never
+  imports features.
+- **Heavy data work** runs in a Web Worker inside the feature (`features/<f>/worker`).
+  - The query logic stays in pure, Node-tested functions (`engine/`).
+  - Results cross the boundary as transferable typed arrays.
+- **Shareable view state** is mirrored to the URL with `replaceSearchParams(SEARCH_KEYS, params)`
+  from `src/store/url.ts` (history.replaceState, no server round trip), not `router.replace`.
+  Each view declares the keys it owns (`SEARCH_KEYS` in its `url.ts`) and never rewrites the
+  whole query string, so other keys (e.g. `asset`) survive.
+- **Charts** use `ChartWorkbench` + `TimeSeriesPane` from `@pgo/ui`.
+  - Series colours come from `palette.chart.series1..6` (≥ 3:1, checked by the contrast test).
+  - Canvas code resolves theme CSS variables to concrete colours (`charts/canvas.ts`) and redraws when
+    the scheme changes.
+  - Every pane needs a translated `summarize` for its `role="img"` label.
+  - Long series are downsampled off the main thread: pass the pane a `downsample` function
+    (`PaneDownsampler`) backed by a feature worker, as `features/charts` does.
+- **Rust/WASM** lives in `packages/downsample` (`@pgo/downsample`).
+  - `rust/` is the crate. `pkg/` is its `wasm-pack` output and is **committed**, so `yarn dev`,
+    the Docker build and the main CI job need no Rust.
+  - After changing Rust code, run `yarn wasm:build` and commit `pkg/` with the change.
+    `yarn wasm:test` runs `cargo fmt --check`, `clippy -D warnings` and `cargo test`. CI's
+    `rust` job rebuilds the module and runs the parity test against the fresh build.
+  - Each algorithm exists in TypeScript and in Rust, with the same operations in the same order.
+    `src/parity.test.ts` checks that both return identical points.
+  - Import the loader (`@pgo/downsample/wasm`) only in workers. The main entry stays WASM-free,
+    because `@pgo/ui` imports it.
+  - WASM loading can fail: fall back to JS and say so in the UI.
+  - Toolchain: rustup stable with `wasm32-unknown-unknown` (`rust-toolchain.toml`), wasm-pack 0.15.
+- **Network view** (`features/network`):
+  - The study engine (`engine/`: network, DC flow, study) is pure TypeScript with Node tests.
+    Keep it free of React and of the live feed.
+  - React Flow (`@xyflow/react`) and the tree (`@mui/x-tree-view`) are imported only in
+    client components, with React Flow's CSS imported there.
+  - Graph nodes get an explicit width and height (the minimap needs them in read-only mode).
+  - The tree is the keyboard path; graph nodes are not focusable.
+- **Incident reports** (`features/incidents`):
+  - Reports live in the browser only (IndexedDB `pgo-incidents` via `idb`, `storage/db.ts`).
+    Nothing goes to a server. The samples in `seed.ts` are seeded when the database is created
+    and restored by Reset.
+  - RTK Query endpoints call `storage/db.ts` from `queryFn`. Saves go through
+    `db.updateIncident` (one read-modify-write transaction) and patch `getIncident`
+    optimistically. They invalidate only the list, because refetching the report would reset
+    the editor.
+  - Binary files never go into Redux. Uploads are stored by `storage/uploads.ts` (size, MIME
+    type and `%PDF-` signature checks) before the attachment metadata is saved.
+  - Tiptap and `pdfjs-dist` are imported only in the report's client components. pdf.js loads
+    with a dynamic `import()` (`pdf/pdfjs.ts`), and its worker URL is set with
+    `new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url)`.
+  - The text layer CSS is written in `PdfPage.tsx` (pdf.js's `pdf_viewer.css` is 168 kB). It
+    needs `--total-scale-factor` on the page box.
+  - Links in reports must pass `isSafeLink` (http, https, mailto).
+  - Sample PDFs come from `apps/web/scripts/sample-pdfs.ts` (`yarn workspace @pgo/web samples:pdf`),
+    are committed, and say SYNTHETIC on every page. `seed.test.ts` checks their sizes.
+  - Component tests that mount the editor need jsdom layout stubs (`getClientRects`,
+    `elementFromPoint`); see `ReportEditor.test.tsx`.
+- **Large tables** use `VirtualGrid` from `@pgo/ui`. It handles millions of rows (scaled
+  scrolling) and the ARIA grid keyboard pattern.
+- **Real-time data** comes from `services/realtime` (`@pgo/realtime`, Cloud Run `pgo-realtime`).
+  - The simulator (`live.ts`) and the message types (`live-protocol.ts`) live in
+    `@pgo/grid-model`, shared by the service and the app. Change the protocol there, never in
+    one side only.
+  - The app reads it through one shared RTK Query streaming endpoint in `src/store/live`
+    (infrastructure, used by alarms and map): `queryFn` returns an empty state,
+    `onCacheEntryAdded` opens the socket, and a pure `applyMessage` (`feed.ts`) folds messages
+    into the cache. Components use `useLiveFeedQuery`, never the socket. Features never import
+    each other's live code; shared live logic belongs in `store/live`.
+  - The page gets the URL from `getRealtimeUrl()` (`src/server/realtime.ts`, env `REALTIME_URL`,
+    read per request), never from a `NEXT_PUBLIC_` variable.
+  - The service validates every client message (`parseClientMessage`), keeps `maxPayload` small
+    and rate-limits acks. It holds no secrets.
+  - The service runs its TypeScript with `node --experimental-strip-types` (no build). Its image
+    is `services/realtime/Dockerfile`; e2e starts it from `playwright.config.ts`.
 - **Cross-feature state** (e.g. linked selection) goes in a slice in `src/store`, never in a
   feature.
+  - **Linked selection:** `store/selectionSlice` holds one asset id. Views dispatch
+    `selectAsset(id)` and highlight with `selectSelectedAssetId`.
+  - `hoc/useSelectionUrlSync` keeps it in the URL as `asset`, and `hoc/SelectionBar` shows it
+    on every page.
+  - Look assets up with `findAsset(id)` (`store/assets.ts`).
+  - Tables make rows selectable with `VirtualGrid`'s `isRowSelected` / `onRowSelect`.
 - **`PATHS`** in `src/types/paths.ts` holds every link target and must match the `src/app`
   folders. Dynamic routes get builder functions.
 - **Tests.** Every page gets a Playwright test with axe checks in light and dark mode. Components
   with behavior get Vitest + Testing Library tests.
+  - **Coverage gate:** CI runs `yarn coverage`. Each workspace's `vitest.config.ts` has
+    thresholds about 2 points below the measured values; raise them when coverage grows, and
+    never lower them to make a change pass. Library glue (canvas, MapLibre, React Flow, pdf.js,
+    workers) is covered by e2e, not mocked in unit tests.
+  - **New pages** go into `e2e/support/pages.ts` (with a ready check), so the accessibility
+    sweep (`a11y-sweep.spec.ts`, `keyboard.spec.ts`) and `yarn measure` include them.
+- **Accessibility details** (from the M11 sweep):
+  - Keyboard focus must show without colour alone: MUI ButtonBase gets an outline in the theme;
+    custom focus styles use an outline, not a background or shadow (forced colors drops them).
+  - One `h1` per page and no skipped heading levels (e.g. `StatCard headingLevel`).
+  - JavaScript animations take `motionDuration(ms)` from `@pgo/ui` (0 under reduced motion);
+    CSS transitions are stopped by the theme.
+- **Performance patterns:**
+  - Large React Flow graphs keep unchanged node and edge objects (`reuseUnchanged` in
+    `features/network/stable.ts`); style many identical nodes with one container stylesheet,
+    not per-node `sx`.
+  - Expensive views driven by user edits render from `useDeferredValue`, with the heavy children
+    memoised and their callbacks stable.
+  - Heavy single-page libraries (Tiptap, the PDF viewer) load with `next/dynamic`, so routes that
+    share the feature's modules don't download them. Check route JS with `yarn measure`.
+- **Demo and screenshots:** `yarn demo:record` (`apps/web/e2e-demo/tour.spec.ts`) re-records the
+  video (git-ignored `demo/`) and `docs/screenshots/*.jpg`. Update it when the UI changes.
 - **Server-only code** (data access, secrets) lives in `apps/web/src/server` and imports
   `server-only`. It is infrastructure, like `store/`; features call it from server
   components and route handlers.
@@ -72,8 +185,11 @@ not the roadmap.
 ## Infrastructure
 
 - GCP project `power-grid-operations` (number `142186164859`), region **`us-central1`**.
-- The workflow deploys `main` to the Cloud Run service `pgo-web`. The image is
-  `us-central1-docker.pkg.dev/power-grid-operations/web/pgo-web:<sha>`.
+- The workflow deploys `main` to two Cloud Run services:
+  - `pgo-realtime`, first: image `.../web/pgo-realtime:<sha>`, `--max-instances 1`,
+    `--timeout 3600`
+  - `pgo-web`: image `us-central1-docker.pkg.dev/power-grid-operations/web/pgo-web:<sha>`,
+    with `REALTIME_URL` set to the realtime service's `wss://` URL
 - The workflow reads the GitHub repository variables `GCP_PROJECT_ID`, `GCP_REGION`,
   `GCP_SERVICE_ACCOUNT` and `GCP_WORKLOAD_IDENTITY_PROVIDER` as `vars.*`. They are variables, not
   secrets.
@@ -93,4 +209,12 @@ not the roadmap.
   - Credit "U.S. Energy Information Administration" wherever EIA data is shown.
   - Never use the EIA logo, and never imply endorsement.
   - Label generated data **synthetic** in the UI and docs, and never present it as EIA data.
-- **Map:** OpenFreeMap tiles need no key, but the attribution must stay visible.
+- **Map:** OpenFreeMap tiles need no key, but the attribution must stay visible
+  (`AttributionControl` with `compact: false`, plus the credit line on `/map`).
+  - Load `maplibre-gl` with a dynamic `import()` in a client component, and keep the
+    `setWorkerUrl(new URL('maplibre-gl/dist/maplibre-gl-worker.mjs', import.meta.url))` call:
+    without it the bundled worker is not found and nothing but the background draws.
+  - Live values go through feature-state on changed assets only (feature id = asset index),
+    never `setData` per tick.
+  - e2e routes `tiles.openfreemap.org` to a minimal local style; wait for `data-ready` on the
+    map container before clicking the map.

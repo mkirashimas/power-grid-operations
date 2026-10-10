@@ -3,6 +3,8 @@ node_modules
 
 # Next.js
 .next
+# Built by yarn build:storybook
+apps/web/public/storybook
 out
 next-env.d.ts
 *.tsbuildinfo
@@ -30,3 +32,9 @@ yarn-error.log*
 .DS_Store
 *.suo
 *.sw?
+
+# Rust build output (the wasm-pack output in packages/downsample/pkg is committed)
+packages/downsample/rust/target
+
+# Demo video (yarn demo:record); uploaded, not committed
+demo

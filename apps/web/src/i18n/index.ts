@@ -18,6 +18,20 @@ const bundles = new Map<string, NamespaceResources>([[COMMON_NAMESPACE, { en, es
 // instance instead, so concurrent requests in different languages never interfere.
 let browserInstance: I18n | undefined;
 
+// Server instances that may still be rendering. A feature's module (and so its namespace) can
+// load after the request's instance was created, e.g. on the first request after the server
+// starts: such a late namespace is added to these too, or the server would render raw keys.
+// Weak references, so finished requests are garbage-collected.
+const serverInstances = new Set<WeakRef<I18n>>();
+const trackServerInstance = (instance: I18n) => {
+  serverInstances.add(new WeakRef(instance));
+  if (serverInstances.size > 256) {
+    serverInstances.forEach((ref) => {
+      if (!ref.deref()) serverInstances.delete(ref);
+    });
+  }
+};
+
 const toResources = () =>
   Object.fromEntries(
     LANGUAGES.map((language) => [
@@ -31,8 +45,11 @@ const toResources = () =>
 /** Registers a feature's translation namespace for all supported languages. */
 export const registerNamespace = (namespace: string, resources: NamespaceResources) => {
   bundles.set(namespace, resources);
-  LANGUAGES.forEach((language) =>
-    browserInstance?.addResourceBundle(language, namespace, resources[language], true, true),
+  const instances = [browserInstance, ...[...serverInstances].map((ref) => ref.deref())];
+  instances.forEach((instance) =>
+    LANGUAGES.forEach((language) =>
+      instance?.addResourceBundle(language, namespace, resources[language], true, true),
+    ),
   );
 };
 
@@ -58,7 +75,9 @@ export const createI18n = (language: Language): I18n => {
 /** One instance per request on the server, one shared instance in the browser. */
 export const getI18n = (language: Language): I18n => {
   if (typeof window === 'undefined') {
-    return createI18n(language);
+    const instance = createI18n(language);
+    trackServerInstance(instance);
+    return instance;
   }
   browserInstance ??= createI18n(language);
   return browserInstance;

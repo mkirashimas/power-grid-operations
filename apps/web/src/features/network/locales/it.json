@@ -1,0 +1,75 @@
+{
+  "title": "Rete",
+  "intro": "La rete sintetica come grafo: esplorala nell’albero degli asset, guardala nel grafo della topologia e prova una modifica con uno studio di flusso di potenza DC prima che accada.",
+  "synthetic": "Sintetico",
+  "mode": {
+    "label": "Colori delle linee",
+    "live": "In diretta",
+    "study": "Simulazione"
+  },
+  "zone": {
+    "label": "Zona",
+    "all": "Tutte le zone"
+  },
+  "tree": {
+    "title": "Asset",
+    "label": "Asset per zona e sottostazione",
+    "filter": "Filtra asset",
+    "filterPlaceholder": "Nome, ad es. CST-001",
+    "clear": "Cancella filtro",
+    "empty": "Nessun asset corrisponde a questo filtro."
+  },
+  "graph": {
+    "title": "Topologia",
+    "label": "Grafo della rete: {{substations}} sottostazioni e {{lines}} linee",
+    "hint": "Usa l’albero degli asset per muoverti nella rete con la tastiera. Ctrl e la rotella del mouse ingrandiscono il grafo."
+  },
+  "editor": {
+    "heading": "Studio di simulazione",
+    "title": "Modifica un asset",
+    "empty": "Seleziona una linea, una sottostazione, un carico o un generatore nell’albero o nel grafo per modificarlo.",
+    "trip": "Apri la linea",
+    "restore": "Ripristina la linea",
+    "offline": "Metti fuori servizio",
+    "online": "Rimetti in servizio",
+    "load": "Carico in {{name}}",
+    "loadValue": "{{value}} %",
+    "edits": "Modifiche",
+    "noEdits": "Ancora nessuna modifica.",
+    "undo": "Annulla: {{edit}}",
+    "reset": "Azzera lo studio"
+  },
+  "edits": {
+    "trip": "{{name}} aperta",
+    "load": "Carico in {{name}} {{value}} %",
+    "offline": "{{name}} fuori servizio"
+  },
+  "results": {
+    "empty": "Fai una modifica per vedere come cambiano i flussi rispetto al caso base.",
+    "overloads": "Nuovi sovraccarichi: {{total}}",
+    "noOverloads": "Nessun nuovo sovraccarico.",
+    "islands": "Sottostazioni senza alimentazione: {{total}} ({{mw}} MW di carico non servito)",
+    "table": "Linee che sono cambiate di più",
+    "line": "Linea",
+    "base": "Base",
+    "study": "Studio",
+    "delta": "Variazione",
+    "tripped": "Aperta",
+    "pct": "{{value}} %"
+  },
+  "statuses": {
+    "normal": "Normale",
+    "warning": "Avviso",
+    "alarm": "Allarme"
+  },
+  "zones": {
+    "coast": "Costa",
+    "east": "Est",
+    "far-west": "Estremo Ovest",
+    "north": "Nord",
+    "north-central": "Centro Nord",
+    "south-central": "Centro Sud",
+    "southern": "Sud",
+    "west": "Ovest"
+  }
+}

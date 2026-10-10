@@ -2,11 +2,14 @@
 
 **How deploys work:**
 
-- The web app runs on Cloud Run as the service `pgo-web` in `us-central1`.
+- Two Cloud Run services run in `us-central1`:
+  - `pgo-web`: the Next.js app
+  - `pgo-realtime`: the WebSocket service behind `/alarms` (since M6)
 - On every push to `main`, GitHub Actions does three things, in order:
-  1. builds the container image
-  2. pushes it to Artifact Registry
-  3. deploys it
+  1. builds both container images
+  2. pushes them to Artifact Registry
+  3. deploys `pgo-realtime`, then `pgo-web` with `REALTIME_URL` set to the realtime service's
+     `wss://` URL
 - Pushes to `development` and pull requests only run the checks.
 - GitHub signs in to Google Cloud with Workload Identity Federation, so no service-account key
   exists anywhere.
@@ -28,6 +31,7 @@
 | Repo binding                 | `roles/iam.workloadIdentityUser` on the deploy account                                      |
 | Artifact Registry repository | `web` (Docker, `us-central1`)                                                               |
 | Image                        | `us-central1-docker.pkg.dev/power-grid-operations/web/pgo-web:<commit sha>`                 |
+| Realtime image               | `us-central1-docker.pkg.dev/power-grid-operations/web/pgo-realtime:<commit sha>`            |
 
 The GitHub repository has these **variables**, read as `vars.*` in the workflow. They are
 variables, not secrets.
@@ -115,6 +119,39 @@ Expected output: `Updated IAM policy for secret [eia-api-key].`
 **To rotate the key:** add a new version with step 1, replacing `create` with
 `versions add eia-api-key --data-file=-` (and dropping `--replication-policy`). Then redeploy.
 
+## Realtime service (`pgo-realtime`)
+
+The deploy job creates it on the first release after M6; no setup is needed.
+
+| Setting           | Value   | Why                                                                    |
+| ----------------- | ------- | ---------------------------------------------------------------------- |
+| `--timeout`       | `3600`  | A WebSocket stays open at most this long (60 min); the page reconnects |
+| `--max-instances` | `1`     | One instance holds the shared alarm state, so every visitor sees it    |
+| `--min-instances` | `0`     | Scales to zero when nobody has `/alarms` open                          |
+| `--memory`        | `512Mi` | The simulator and up to a few hundred connections fit easily           |
+
+**Check it after a release (Cloud Shell):**
+
+```bash
+URL=$(gcloud run services describe pgo-realtime --region=us-central1 --project=power-grid-operations --format='value(status.url)')
+curl -s "$URL/healthz"
+```
+
+Expected output:
+
+```text
+ok
+```
+
+```bash
+gcloud run services describe pgo-web --region=us-central1 --project=power-grid-operations --format='value(spec.template.spec.containers[0].env)'
+```
+
+Expected output: a list that contains `REALTIME_URL` with a `wss://pgo-realtime-…run.app` value.
+
+Then open `<web URL>/alarms`: the chip turns **Live** within a few seconds (longer after a cold
+start).
+
 ## Troubleshooting
 
 | Symptom in the deploy job                                                           | Cause and fix                                                                                    |
@@ -125,6 +162,7 @@ Expected output: `Updated IAM policy for secret [eia-api-key].`
 | `gcloud run deploy`: `PERMISSION_DENIED ... iam.serviceaccounts.actAs`              | The deploy account lacks `roles/iam.serviceAccountUser`.                                         |
 | `gcloud run deploy`: `Permission denied on secret ... for Revision service account` | The runtime account cannot read the secret. Run step 2 of "EIA API key".                         |
 | The deploy job is skipped                                                           | The push wasn't to `main`, the checks failed, or `GCP_PROJECT_ID` isn't set.                     |
+| `/alarms` stays on **Connecting…** or **Reconnecting…**                             | `REALTIME_URL` is missing on `pgo-web`, or `pgo-realtime` failed to start. Run the checks above. |
 
 ## Testing the container locally (optional, needs Docker)
 
@@ -134,3 +172,12 @@ docker run --rm -p 8080:8080 pgo-web
 ```
 
 Then open http://localhost:8080.
+
+The realtime service:
+
+```bash
+docker build -f services/realtime/Dockerfile -t pgo-realtime .
+docker run --rm -p 8081:8080 pgo-realtime
+```
+
+Then `curl http://localhost:8081/healthz` prints `ok`.

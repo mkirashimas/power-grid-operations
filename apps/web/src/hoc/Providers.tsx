@@ -2,6 +2,7 @@
 
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
+import { LiveAnnouncer } from '@pgo/ui';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import { Provider } from 'react-redux';
@@ -25,7 +26,8 @@ const ThemedApp = ({ children }: { children: ReactNode }) => {
     // disableTransitionOnChange: switch schemes instantly, without animating every colour.
     <ThemeProvider theme={theme} disableTransitionOnChange>
       <CssBaseline enableColorScheme />
-      {children}
+      {/* App-wide live regions for screen-reader announcements (useAnnounce). */}
+      <LiveAnnouncer>{children}</LiveAnnouncer>
     </ThemeProvider>
   );
 };

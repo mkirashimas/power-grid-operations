@@ -1,0 +1,74 @@
+{
+  "pages": [
+    {
+      "page": "/",
+      "ready": 306.6999999284744,
+      "lcp": 172,
+      "cls": 0,
+      "tbt": 5,
+      "jsKb": 313.265625
+    },
+    {
+      "page": "/telemetry",
+      "ready": 1199.3000000715256,
+      "lcp": 180,
+      "cls": 0.006582954989539253,
+      "tbt": 7,
+      "jsKb": 323.365234375
+    },
+    {
+      "page": "/charts",
+      "ready": 1259.6999999284744,
+      "lcp": 220,
+      "cls": 0,
+      "tbt": 7,
+      "jsKb": 323.7177734375
+    },
+    {
+      "page": "/alarms",
+      "ready": 484.2999999523163,
+      "lcp": 160,
+      "cls": 0.03646791627671983,
+      "tbt": 7,
+      "jsKb": 323.0634765625
+    },
+    {
+      "page": "/map",
+      "ready": 1244.6000000238419,
+      "lcp": 180,
+      "cls": 0,
+      "tbt": 84,
+      "jsKb": 597.3681640625
+    },
+    {
+      "page": "/network",
+      "ready": 816.3000000715256,
+      "lcp": 232,
+      "cls": 0,
+      "tbt": 375,
+      "jsKb": 404.380859375
+    },
+    {
+      "page": "/incidents",
+      "ready": 556.8999999761581,
+      "lcp": 128,
+      "cls": 0,
+      "tbt": 27,
+      "jsKb": 335.4697265625
+    },
+    {
+      "page": "/incidents/inc-sample-01",
+      "ready": 1238.8000000715256,
+      "lcp": 484,
+      "cls": 0.011040607028537326,
+      "tbt": 62,
+      "jsKb": 609.16796875
+    }
+  ],
+  "interactions": {
+    "network: trip a line → button responds": 98,
+    "network: trip a line → study results": 324,
+    "incidents: open a PDF → first page drawn": 540,
+    "telemetry: filter 1,076,544 rows by zone": 443
+  }
+}

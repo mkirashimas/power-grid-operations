@@ -1,0 +1,107 @@
+{
+  "title": "Alarmes",
+  "intro": "Un flux d’alarmes en direct du réseau synthétique, diffusé par WebSocket depuis le service temps réel. Les acquittements sont partagés avec toutes les personnes qui consultent cette page.",
+  "synthetic": "Synthétique",
+  "connection": {
+    "connecting": "Connexion…",
+    "live": "En direct",
+    "liveLatency": "En direct · {{ms}} ms",
+    "reconnecting": "Reconnexion…",
+    "offline": "Hors ligne, nouvelle tentative"
+  },
+  "kpi": {
+    "activeAlarms": "Alarmes actives",
+    "activeWarnings": "Avertissements actifs",
+    "unacknowledged": "Non acquittées",
+    "updates": "Mises à jour par seconde",
+    "updatesCaption": "Ticks et messages d’alarme"
+  },
+  "chart": {
+    "title": "Charge du système, 10 dernières minutes",
+    "load": "Charge du système",
+    "waiting": "En attente de données…",
+    "summary": "{{title}}, du {{from}} au {{to}} : {{series}}.",
+    "summaryItem": "{{label}} de {{min}} à {{max}}",
+    "keyboardHint": "Graphique en direct. Les flèches déplacent le curseur, Échap l’efface.",
+    "time": "Heure (CT)",
+    "showTable": "Afficher en tableau",
+    "hideTable": "Masquer le tableau",
+    "toolbar": "Commandes du graphique",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "reset": "Afficher toute la plage",
+    "presets": "Plage",
+    "day": "24 h",
+    "week": "7 j",
+    "month": "30 j",
+    "overview": "Vue d’ensemble"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "filters": {
+    "label": "Filtres des alarmes",
+    "severity": "Gravité",
+    "zone": "Zone",
+    "all": "Toutes",
+    "allZones": "Toutes les zones",
+    "alarm": "Alarmes",
+    "warning": "Avertissements"
+  },
+  "pause": "Pause",
+  "resume": "Reprendre",
+  "paused": "En pause : le tableau est figé et les nouvelles alarmes ne sont pas ajoutées.",
+  "table": {
+    "label": "Alarmes",
+    "raised": "Début",
+    "severity": "Gravité",
+    "asset": "Équipement",
+    "zone": "Zone",
+    "condition": "Condition",
+    "value": "Valeur",
+    "state": "État",
+    "acknowledged": "Acquittée",
+    "empty": "Aucune alarme pour l’instant."
+  },
+  "severities": {
+    "alarm": "Alarme",
+    "warning": "Avertissement"
+  },
+  "conditions": {
+    "overload": "Surcharge",
+    "undervoltage": "Sous-tension",
+    "overvoltage": "Surtension"
+  },
+  "states": {
+    "active": "Active",
+    "cleared": "Résolue {{time}}"
+  },
+  "acknowledge": "Acquitter",
+  "acknowledgeLabel": "Acquitter l’alarme {{id}} sur {{asset}}",
+  "announce": "Nouvelle alarme : {{condition}} sur {{asset}}",
+  "zones": {
+    "coast": "Côte",
+    "east": "Est",
+    "far-west": "Extrême Ouest",
+    "north": "Nord",
+    "north-central": "Centre Nord",
+    "south-central": "Centre Sud",
+    "southern": "Sud",
+    "west": "Ouest"
+  },
+  "kinds": {
+    "substation": "Poste",
+    "line": "Ligne",
+    "generator": "Générateur",
+    "load": "Charge"
+  },
+  "selected": {
+    "title": "Équipement sélectionné, en direct",
+    "values": "Charge {{loading}} · Tension {{voltage}}",
+    "updated": "Mis à jour {{time}}",
+    "waiting": "En attente de la prochaine mise à jour…",
+    "only": "Seulement l’équipement sélectionné"
+  }
+}

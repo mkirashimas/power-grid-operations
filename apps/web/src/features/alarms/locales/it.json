@@ -1,0 +1,107 @@
+{
+  "title": "Allarmi",
+  "intro": "Un flusso di allarmi in tempo reale dalla rete sintetica, trasmesso via WebSocket dal servizio realtime. Le conferme sono condivise con tutti coloro che visualizzano questa pagina.",
+  "synthetic": "Sintetico",
+  "connection": {
+    "connecting": "Connessione…",
+    "live": "In diretta",
+    "liveLatency": "In diretta · {{ms}} ms",
+    "reconnecting": "Riconnessione…",
+    "offline": "Offline, nuovo tentativo"
+  },
+  "kpi": {
+    "activeAlarms": "Allarmi attivi",
+    "activeWarnings": "Avvisi attivi",
+    "unacknowledged": "Non confermati",
+    "updates": "Aggiornamenti al secondo",
+    "updatesCaption": "Tick e messaggi di allarme"
+  },
+  "chart": {
+    "title": "Carico del sistema, ultimi 10 minuti",
+    "load": "Carico del sistema",
+    "waiting": "In attesa dei dati…",
+    "summary": "{{title}}, da {{from}} a {{to}}: {{series}}.",
+    "summaryItem": "{{label}} da {{min}} a {{max}}",
+    "keyboardHint": "Grafico in diretta. Le frecce spostano il cursore, Esc lo cancella.",
+    "time": "Ora (CT)",
+    "showTable": "Mostra come tabella",
+    "hideTable": "Nascondi tabella",
+    "toolbar": "Controlli del grafico",
+    "zoomIn": "Ingrandisci",
+    "zoomOut": "Riduci",
+    "reset": "Mostra l’intero intervallo",
+    "presets": "Intervallo",
+    "day": "24 h",
+    "week": "7 g",
+    "month": "30 g",
+    "overview": "Panoramica"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "filters": {
+    "label": "Filtri degli allarmi",
+    "severity": "Gravità",
+    "zone": "Zona",
+    "all": "Tutti",
+    "allZones": "Tutte le zone",
+    "alarm": "Allarmi",
+    "warning": "Avvisi"
+  },
+  "pause": "Pausa",
+  "resume": "Riprendi",
+  "paused": "In pausa: la tabella è bloccata e i nuovi allarmi non vengono aggiunti.",
+  "table": {
+    "label": "Allarmi",
+    "raised": "Inizio",
+    "severity": "Gravità",
+    "asset": "Asset",
+    "zone": "Zona",
+    "condition": "Condizione",
+    "value": "Valore",
+    "state": "Stato",
+    "acknowledged": "Confermato",
+    "empty": "Ancora nessun allarme."
+  },
+  "severities": {
+    "alarm": "Allarme",
+    "warning": "Avviso"
+  },
+  "conditions": {
+    "overload": "Sovraccarico",
+    "undervoltage": "Sottotensione",
+    "overvoltage": "Sovratensione"
+  },
+  "states": {
+    "active": "Attivo",
+    "cleared": "Rientrato {{time}}"
+  },
+  "acknowledge": "Conferma",
+  "acknowledgeLabel": "Conferma l’allarme {{id}} su {{asset}}",
+  "announce": "Nuovo allarme: {{condition}} su {{asset}}",
+  "zones": {
+    "coast": "Costa",
+    "east": "Est",
+    "far-west": "Estremo Ovest",
+    "north": "Nord",
+    "north-central": "Centro Nord",
+    "south-central": "Centro Sud",
+    "southern": "Sud",
+    "west": "Ovest"
+  },
+  "kinds": {
+    "substation": "Sottostazione",
+    "line": "Linea",
+    "generator": "Generatore",
+    "load": "Carico"
+  },
+  "selected": {
+    "title": "Asset selezionato, in diretta",
+    "values": "Carico {{loading}} · Tensione {{voltage}}",
+    "updated": "Aggiornato {{time}}",
+    "waiting": "In attesa del prossimo aggiornamento…",
+    "only": "Solo l’asset selezionato"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "title": "Graphiques",
+  "intro": "Demande, prévision, production et échanges d’ERCOT fournis par l’EIA, plus une série synthétique de charge à la seconde d’environ 2,6 millions de points. Zoomez ou déplacez un graphique : les autres suivent.",
+  "workbench": "ERCOT, 30 derniers jours",
+  "panes": {
+    "demand": "Demande et prévision de la veille",
+    "fuel": "Production par combustible",
+    "interchange": "Échanges nets (négatif = importation)",
+    "highRes": "Charge du système à la seconde"
+  },
+  "series": {
+    "demand": "Demande",
+    "forecast": "Prévision de la veille",
+    "error": "Écart de prévision",
+    "interchange": "Échanges nets",
+    "load": "Charge"
+  },
+  "fuels": {
+    "gas": "Gaz",
+    "wind": "Éolien",
+    "solar": "Solaire",
+    "nuclear": "Nucléaire",
+    "coal": "Charbon",
+    "other": "Autres"
+  },
+  "labels": {
+    "toolbar": "Contrôles du graphique",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "reset": "Afficher toute la période",
+    "presets": "Période",
+    "day": "24 h",
+    "week": "7 j",
+    "month": "30 j",
+    "showTable": "Afficher en tableau",
+    "hideTable": "Masquer le tableau",
+    "time": "Heure (CT)",
+    "overview": "Vue d’ensemble : faites glisser la fenêtre ou utilisez les flèches pour déplacer la période visible",
+    "keyboardHint": "Graphique interactif. Les flèches déplacent le curseur, Maj avec les flèches fait défiler, plus et moins zooment, Début et Fin vont aux extrémités, Échap efface le curseur."
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "summary": "{{title}}, du {{from}} au {{to}} : {{series}}.",
+  "summaryItem": "{{label}} de {{min}} à {{max}}",
+  "loadingHighRes": "Génération de la série à la seconde…",
+  "highResFailed": "Impossible de générer la série à la seconde : {{message}}",
+  "synthetic": "Synthétique",
+  "source": "Source :",
+  "live": "en direct, actualisé toutes les heures",
+  "downsampling": {
+    "engine": "Moteur",
+    "algorithm": "Algorithme",
+    "js": "JS",
+    "wasm": "WASM",
+    "minmax": "Min/max",
+    "lttb": "LTTB",
+    "note": "Min/max conserve tous les pics (jusqu’à 4 points par colonne de pixels). LTTB conserve la forme avec un point par colonne, mais peut perdre un pic d’une seule seconde.",
+    "wasmUnavailable": "WebAssembly n’a pas pu être chargé dans ce navigateur : le sous-échantillonnage se fait en JS.",
+    "stats": "{{input}} → {{drawn}} points · {{engine}} {{algorithm}} en {{downsampleMs}} ms dans un worker · tracé en {{drawMs}} ms"
+  },
+  "benchmark": {
+    "run": "Lancer le benchmark",
+    "running": "Benchmark en cours…",
+    "done": "Benchmark terminé.",
+    "failed": "Le benchmark a échoué : {{message}}",
+    "caption": "Médiane de 7 exécutions dans un Web Worker sur cet appareil, réduites à {{buckets}} colonnes de pixels",
+    "range": "Plage",
+    "algorithm": "Algorithme",
+    "points": "Points dans la plage",
+    "speedup": "Gain WASM",
+    "ms": "{{value}} ms",
+    "times": "{{value}}×"
+  }
+}

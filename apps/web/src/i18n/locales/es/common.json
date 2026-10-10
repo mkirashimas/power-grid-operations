@@ -17,11 +17,39 @@
     "ro": "Română"
   },
   "nav": {
-    "home": "Resumen"
+    "home": "Resumen",
+    "telemetry": "Telemetría",
+    "charts": "Gráficos",
+    "alarms": "Alarmas",
+    "map": "Mapa",
+    "network": "Red",
+    "incidents": "Incidentes"
   },
   "notFound": {
     "title": "Página no encontrada",
     "body": "La página que buscas no existe.",
     "home": "Volver al resumen"
+  },
+  "selection": {
+    "label": "Activo seleccionado",
+    "openIn": "Abrir en {{view}}",
+    "reportIncident": "Informar incidente",
+    "clear": "Borrar la selección",
+    "kinds": {
+      "substation": "Subestación",
+      "line": "Línea",
+      "generator": "Generador",
+      "load": "Carga"
+    },
+    "zones": {
+      "coast": "Costa",
+      "east": "Este",
+      "far-west": "Lejano Oeste",
+      "north": "Norte",
+      "north-central": "Centro Norte",
+      "south-central": "Centro Sur",
+      "southern": "Sur",
+      "west": "Oeste"
+    }
   }
 }

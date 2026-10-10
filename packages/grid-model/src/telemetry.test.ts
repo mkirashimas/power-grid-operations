@@ -51,9 +51,11 @@ describe('generateTelemetry', () => {
   });
 
   it('is deterministic for a seed', () => {
-    const again = generateTelemetry(assets, demand);
-    expect(again.mw).toEqual(telemetry.mw);
-    expect(generateTelemetry(assets, demand, undefined, 7).mw).not.toEqual(telemetry.mw);
+    // Byte comparison: element-wise toEqual on 1M floats takes seconds.
+    const sameBytes = (x: Float32Array, y: Float32Array) =>
+      Buffer.from(x.buffer).equals(Buffer.from(y.buffer));
+    expect(sameBytes(generateTelemetry(assets, demand).mw, telemetry.mw)).toBe(true);
+    expect(sameBytes(generateTelemetry(assets, demand, undefined, 7).mw, telemetry.mw)).toBe(false);
   });
 
   it('keeps values in plausible ranges', () => {

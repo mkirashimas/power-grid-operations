@@ -17,11 +17,39 @@
     "ro": "Română"
   },
   "nav": {
-    "home": "Vue d’ensemble"
+    "home": "Vue d’ensemble",
+    "telemetry": "Télémesures",
+    "charts": "Graphiques",
+    "alarms": "Alarmes",
+    "map": "Carte",
+    "network": "Réseau",
+    "incidents": "Incidents"
   },
   "notFound": {
     "title": "Page introuvable",
     "body": "La page que vous cherchez n’existe pas.",
     "home": "Retour à la vue d’ensemble"
+  },
+  "selection": {
+    "label": "Équipement sélectionné",
+    "openIn": "Ouvrir dans {{view}}",
+    "reportIncident": "Signaler un incident",
+    "clear": "Effacer la sélection",
+    "kinds": {
+      "substation": "Poste",
+      "line": "Ligne",
+      "generator": "Générateur",
+      "load": "Charge"
+    },
+    "zones": {
+      "coast": "Côte",
+      "east": "Est",
+      "far-west": "Extrême Ouest",
+      "north": "Nord",
+      "north-central": "Centre Nord",
+      "south-central": "Centre Sud",
+      "southern": "Sud",
+      "west": "Ouest"
+    }
   }
 }

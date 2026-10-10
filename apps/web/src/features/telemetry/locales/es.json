@@ -1,0 +1,99 @@
+{
+  "title": "Telemetría",
+  "intro": "Cada activo sintético, cada 15 minutos, durante 6 días. La ordenación, el filtrado y la agrupación se ejecutan en un Web Worker, así que la página sigue respondiendo.",
+  "gridLabel": "Filas de telemetría",
+  "columns": {
+    "asset": "Activo",
+    "kind": "Tipo",
+    "zone": "Zona",
+    "time": "Hora",
+    "mw": "MW",
+    "loading": "Carga %",
+    "voltage": "Tensión (pu)",
+    "status": "Estado"
+  },
+  "kinds": {
+    "substation": "Subestación",
+    "line": "Línea",
+    "generator": "Generador",
+    "load": "Carga"
+  },
+  "zones": {
+    "coast": "Costa",
+    "east": "Este",
+    "far-west": "Lejano Oeste",
+    "north": "Norte",
+    "north-central": "Centro Norte",
+    "south-central": "Centro Sur",
+    "southern": "Sur",
+    "west": "Oeste"
+  },
+  "statuses": {
+    "normal": "Normal",
+    "warning": "Aviso",
+    "alarm": "Alarma"
+  },
+  "filters": {
+    "label": "Controles de la tabla",
+    "asset": "Filtrar activos",
+    "assetPlaceholder": "Nombre o id",
+    "clear": "Borrar filtro",
+    "kind": "Tipo",
+    "zone": "Zona",
+    "status": "Estado",
+    "all": "Todos",
+    "groupBy": "Agrupar por",
+    "groupOptions": {
+      "none": "Ninguno",
+      "kind": "Tipo",
+      "zone": "Zona",
+      "asset": "Activo",
+      "status": "Estado"
+    },
+    "expandAll": "Expandir todo",
+    "collapseAll": "Contraer todo",
+    "reset": "Borrar filtros"
+  },
+  "readout": {
+    "rows": "{{matched}} de {{total}} filas",
+    "generate": "generar {{ms}} ms",
+    "filter": "filtrar {{ms}} ms",
+    "sort": "ordenar {{ms}} ms",
+    "group": "agrupar {{ms}} ms",
+    "updating": "Actualizando…",
+    "announce": "{{matched}} filas coinciden"
+  },
+  "groupSummary": "{{count}} filas · media {{avg}} MW · máx. {{max}} MW · carga máxima {{loading}} %",
+  "loading": "Generando más de un millón de filas de telemetría…",
+  "error": "No se pudo generar la telemetría: {{message}}",
+  "empty": {
+    "title": "Ninguna fila coincide con estos filtros",
+    "body": "Prueba con otro activo, zona o estado, o borra los filtros."
+  },
+  "synthetic": "Sintético",
+  "source": "Perfil de carga de:",
+  "assetChart": {
+    "title": "Activo seleccionado: {{name}}",
+    "mwPane": "Potencia",
+    "loadingPane": "Carga",
+    "mw": "MW",
+    "loading": "Carga",
+    "unitMw": "{{value}} MW",
+    "unitPct": "{{value}} %",
+    "summary": "{{title}}, de {{from}} a {{to}}: {{series}}.",
+    "summaryItem": "{{label}} de {{min}} a {{max}}",
+    "toolbar": "Controles del gráfico",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
+    "reset": "Mostrar todo el intervalo",
+    "presets": "Intervalo",
+    "day": "24 h",
+    "week": "7 d",
+    "month": "30 d",
+    "showTable": "Mostrar como tabla",
+    "hideTable": "Ocultar tabla",
+    "time": "Hora (CT)",
+    "overview": "Vista general: arrastra la ventana o usa las flechas para mover el intervalo visible",
+    "keyboardHint": "Gráfico interactivo. Las flechas mueven el cursor, Mayús con las flechas desplaza, más y menos hacen zoom, Inicio y Fin van a los extremos, Escape borra el cursor."
+  }
+}

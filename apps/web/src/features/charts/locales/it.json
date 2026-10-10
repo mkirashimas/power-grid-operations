@@ -1,0 +1,75 @@
+{
+  "title": "Grafici",
+  "intro": "Domanda, previsione, generazione e scambi di ERCOT forniti dall’EIA, più una serie sintetica di carico al secondo di circa 2,6 milioni di punti. Ingrandisci o sposta un grafico: gli altri lo seguono.",
+  "workbench": "ERCOT, ultimi 30 giorni",
+  "panes": {
+    "demand": "Domanda e previsione del giorno prima",
+    "fuel": "Generazione per combustibile",
+    "interchange": "Scambio netto (negativo = importazione)",
+    "highRes": "Carico di sistema al secondo"
+  },
+  "series": {
+    "demand": "Domanda",
+    "forecast": "Previsione del giorno prima",
+    "error": "Errore di previsione",
+    "interchange": "Scambio netto",
+    "load": "Carico"
+  },
+  "fuels": {
+    "gas": "Gas",
+    "wind": "Eolico",
+    "solar": "Solare",
+    "nuclear": "Nucleare",
+    "coal": "Carbone",
+    "other": "Altro"
+  },
+  "labels": {
+    "toolbar": "Controlli del grafico",
+    "zoomIn": "Ingrandisci",
+    "zoomOut": "Riduci",
+    "reset": "Mostra tutto il periodo",
+    "presets": "Periodo",
+    "day": "24 h",
+    "week": "7 g",
+    "month": "30 g",
+    "showTable": "Mostra come tabella",
+    "hideTable": "Nascondi tabella",
+    "time": "Ora (CT)",
+    "overview": "Panoramica: trascina la finestra o usa le frecce per spostare il periodo visibile",
+    "keyboardHint": "Grafico interattivo. Le frecce spostano il cursore, Maiusc con le frecce sposta il periodo, più e meno ingrandiscono o riducono, Inizio e Fine vanno agli estremi, Esc cancella il cursore."
+  },
+  "units": {
+    "mw": "{{value}} MW"
+  },
+  "summary": "{{title}}, dal {{from}} al {{to}}: {{series}}.",
+  "summaryItem": "{{label}} da {{min}} a {{max}}",
+  "loadingHighRes": "Generazione della serie al secondo…",
+  "highResFailed": "Impossibile generare la serie al secondo: {{message}}",
+  "synthetic": "Sintetico",
+  "source": "Fonte:",
+  "live": "in tempo reale, aggiornato ogni ora",
+  "downsampling": {
+    "engine": "Motore",
+    "algorithm": "Algoritmo",
+    "js": "JS",
+    "wasm": "WASM",
+    "minmax": "Min/max",
+    "lttb": "LTTB",
+    "note": "Min/max conserva tutti i picchi (fino a 4 punti per colonna di pixel). LTTB conserva la forma con un punto per colonna, ma può perdere un picco che dura un solo secondo.",
+    "wasmUnavailable": "Non è stato possibile caricare WebAssembly in questo browser, quindi il downsampling avviene in JS.",
+    "stats": "{{input}} → {{drawn}} punti · {{engine}} {{algorithm}} in {{downsampleMs}} ms in un worker · disegnato in {{drawMs}} ms"
+  },
+  "benchmark": {
+    "run": "Esegui benchmark",
+    "running": "Benchmark in corso…",
+    "done": "Benchmark completato.",
+    "failed": "Il benchmark non è riuscito: {{message}}",
+    "caption": "Mediana di 7 esecuzioni in un Web Worker su questo dispositivo, ridotte a {{buckets}} colonne di pixel",
+    "range": "Intervallo",
+    "algorithm": "Algoritmo",
+    "points": "Punti nell’intervallo",
+    "speedup": "Accelerazione WASM",
+    "ms": "{{value}} ms",
+    "times": "{{value}}×"
+  }
+}

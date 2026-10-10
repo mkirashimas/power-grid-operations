@@ -1,0 +1,74 @@
+{
+  "title": "Map",
+  "intro": "The synthetic grid over Texas, coloured by live loading from the realtime service. Click an asset to select it everywhere; Show as table lists every asset.",
+  "synthetic": "Synthetic",
+  "connection": {
+    "connecting": "Connecting…",
+    "live": "Live",
+    "liveLatency": "Live · {{ms}} ms",
+    "reconnecting": "Reconnecting…",
+    "offline": "Offline, retrying"
+  },
+  "layers": {
+    "label": "Layers",
+    "withCount": "{{layer}} ({{count}})",
+    "lines": "Lines",
+    "substations": "Substations",
+    "generators": "Generators",
+    "loads": "Loads"
+  },
+  "legend": {
+    "label": "Status",
+    "normal": "Normal",
+    "warning": "Warning",
+    "alarm": "Alarm"
+  },
+  "summary": "Map of {{count}} grid assets in Texas: {{alarm}} in alarm, {{warning}} in warning. Use Show as table for a list.",
+  "failed": "The map cannot be shown in this browser (WebGL is not available). The table below lists every asset with its live values.",
+  "panel": {
+    "label": "Selected asset",
+    "empty": "Select an asset on the map or in the table.",
+    "kind": "Kind",
+    "zone": "Zone",
+    "capacity": "Rating",
+    "loading": "Loading",
+    "voltage": "Voltage"
+  },
+  "table": {
+    "label": "Assets",
+    "show": "Show as table",
+    "hide": "Hide table",
+    "asset": "Asset",
+    "kind": "Kind",
+    "zone": "Zone",
+    "loading": "Loading",
+    "voltage": "Voltage",
+    "status": "Status"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "credit": {
+    "prefix": "Map tiles:",
+    "data": "data",
+    "osm": "© OpenStreetMap contributors"
+  },
+  "kinds": {
+    "substation": "Substation",
+    "line": "Line",
+    "generator": "Generator",
+    "load": "Load"
+  },
+  "zones": {
+    "coast": "Coast",
+    "east": "East",
+    "far-west": "Far West",
+    "north": "North",
+    "north-central": "North Central",
+    "south-central": "South Central",
+    "southern": "Southern",
+    "west": "West"
+  }
+}

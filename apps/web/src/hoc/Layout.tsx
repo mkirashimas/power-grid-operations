@@ -1,16 +1,21 @@
 'use client';
 
 // Per-icon imports: the package index pulls in thousands of modules.
+import AccountTreeOutlined from '@mui/icons-material/AccountTreeOutlined';
 import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import HomeOutlined from '@mui/icons-material/HomeOutlined';
 import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
+import MapOutlined from '@mui/icons-material/MapOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
+import NotificationsActiveOutlined from '@mui/icons-material/NotificationsActiveOutlined';
+import ReportOutlined from '@mui/icons-material/ReportOutlined';
+import ShowChartOutlined from '@mui/icons-material/ShowChartOutlined';
+import TableRowsOutlined from '@mui/icons-material/TableRowsOutlined';
 import {
   AppBar,
   Box,
   Container,
   Drawer,
-  IconButton,
   Link,
   List,
   ListItem,
@@ -20,16 +25,18 @@ import {
   MenuItem,
   Select,
   Toolbar,
-  Tooltip,
   useColorScheme,
   type SelectChangeEvent,
 } from '@mui/material';
+import { IconButton } from '@pgo/ui';
 import NextLink from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { persistLanguage, toLanguage } from '../i18n/language';
 import { LANGUAGES, PATHS, type Language, type Path } from '../types';
+import { SelectionBar } from './SelectionBar';
+import { useSelectionUrlSync } from './useSelectionUrlSync';
 
 const SIDEBAR_WIDTH = 240;
 const MAIN_CONTENT_ID = 'main-content';
@@ -41,7 +48,15 @@ interface NavItem {
 }
 
 // One entry per feature section.
-const NAV_ITEMS: NavItem[] = [{ key: 'home', to: PATHS.HOME, icon: <HomeOutlined /> }];
+const NAV_ITEMS: NavItem[] = [
+  { key: 'home', to: PATHS.HOME, icon: <HomeOutlined /> },
+  { key: 'telemetry', to: PATHS.TELEMETRY, icon: <TableRowsOutlined /> },
+  { key: 'charts', to: PATHS.CHARTS, icon: <ShowChartOutlined /> },
+  { key: 'alarms', to: PATHS.ALARMS, icon: <NotificationsActiveOutlined /> },
+  { key: 'map', to: PATHS.MAP, icon: <MapOutlined /> },
+  { key: 'network', to: PATHS.NETWORK, icon: <AccountTreeOutlined /> },
+  { key: 'incidents', to: PATHS.INCIDENTS, icon: <ReportOutlined /> },
+];
 
 const isSelected = (item: NavItem, pathname: string) =>
   item.to === PATHS.HOME ? pathname === PATHS.HOME : pathname.startsWith(item.to);
@@ -86,19 +101,17 @@ const ThemeModeToggle = () => {
   const label = t(resolvedMode === 'dark' ? 'theme.switchToLight' : 'theme.switchToDark');
 
   return (
-    <Tooltip title={label}>
-      <IconButton
-        color="inherit"
-        onClick={() => setMode(resolvedMode === 'dark' ? 'light' : 'dark')}
-        aria-label={label}
-      >
-        {/* Both icons render; CSS picks one, so the server markup is right for either scheme. */}
-        <DarkModeOutlined sx={(theme) => theme.applyStyles('dark', { display: 'none' })} />
-        <LightModeOutlined
-          sx={(theme) => ({ display: 'none', ...theme.applyStyles('dark', { display: 'block' }) })}
-        />
-      </IconButton>
-    </Tooltip>
+    <IconButton
+      label={label}
+      color="inherit"
+      onClick={() => setMode(resolvedMode === 'dark' ? 'light' : 'dark')}
+    >
+      {/* Both icons render; CSS picks one, so the server markup is right for either scheme. */}
+      <DarkModeOutlined sx={(theme) => theme.applyStyles('dark', { display: 'none' })} />
+      <LightModeOutlined
+        sx={(theme) => ({ display: 'none', ...theme.applyStyles('dark', { display: 'block' }) })}
+      />
+    </IconButton>
   );
 };
 
@@ -153,6 +166,7 @@ const LanguageSelect = () => {
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation('common');
+  useSelectionUrlSync();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -183,7 +197,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             color="inherit"
             edge="start"
             onClick={() => setSidebarOpen((open) => !open)}
-            aria-label={t('openMenu')}
+            label={t('openMenu')}
             aria-expanded={sidebarOpen}
             sx={(theme) => ({
               display: 'none',
@@ -247,6 +261,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             [theme.breakpoints.down('md')]: { py: 2, px: 2 },
           })}
         >
+          <SelectionBar />
           {children}
         </Container>
       </Box>
