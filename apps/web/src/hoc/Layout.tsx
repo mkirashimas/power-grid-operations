@@ -78,7 +78,10 @@ const NAV_ITEMS: NavItem[] = [
 const isSelected = (item: NavItem, pathname: string) =>
   item.to === PATHS.HOME ? pathname === PATHS.HOME : pathname.startsWith(item.to);
 
-/** Order of the blocks in every section's help panel (`help.headings.*`, `help.sections.<key>.*`). */
+/**
+ * Order of the plain-language blocks in every section's help panel (`help.headings.*`,
+ * `help.sections.<key>.*`). The `tech` list ("Under the hood") always comes last.
+ */
 const HELP_BLOCKS = ['what', 'looking', 'how', 'why'] as const;
 
 interface NavigationProps {
@@ -162,10 +165,17 @@ const SectionHelp = () => {
       variant={phone ? 'sheet' : 'side'}
       title={t('help.title', { section: t(`nav.${item.key}`) })}
       closeLabel={t('help.close')}
-      sections={HELP_BLOCKS.map((block) => ({
-        heading: t(`help.headings.${block}`),
-        body: t(`help.sections.${item.key}.${block}`),
-      }))}
+      sections={[
+        ...HELP_BLOCKS.map((block) => ({
+          heading: t(`help.headings.${block}`),
+          body: t(`help.sections.${item.key}.${block}`),
+        })),
+        // "Under the hood": the engineering behind the section, as a list.
+        {
+          heading: t('help.headings.tech'),
+          items: t(`help.sections.${item.key}.tech`, { returnObjects: true }) as string[],
+        },
+      ]}
     />
   );
 };

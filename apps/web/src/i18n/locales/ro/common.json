@@ -79,50 +79,93 @@
       "what": "Ce este?",
       "looking": "Ce văd aici?",
       "how": "Cum se folosește?",
-      "why": "De ce contează?"
+      "why": "De ce contează?",
+      "tech": "Sub capotă"
     },
     "sections": {
       "home": {
         "what": "Pagina principală a consolei. Arată cele mai recente cifre ale rețelei electrice reale din Texas și un rezumat al rețelei de exercițiu folosite de celelalte pagini.",
         "looking": "Cardurile de sus sunt date reale publicate de Administrația pentru Informații Energetice a SUA: câtă electricitate consumă Texasul, cât se prognozase și de unde vine energia. Dedesubt este numărul stațiilor, liniilor și centralelor fictive afișate în alte pagini.",
         "how": "Citiți-o ca pe un tablou de bord. Deschideți o secțiune din meniu pentru mai multe detalii și folosiți acest buton de ajutor pe orice pagină ca să aflați ce face.",
-        "why": "Operatorii rețelei încep fiecare tură cu o privire de ansamblu ca aceasta: este consumul normal, se confirmă prognoza, se întâmplă ceva neobișnuit?"
+        "why": "Operatorii rețelei încep fiecare tură cu o privire de ansamblu ca aceasta: este consumul normal, se confirmă prognoza, se întâmplă ceva neobișnuit?",
+        "tech": [
+          "Randată pe server cu App Router din Next.js: datele EIA sunt preluate pe server și păstrate în cache o oră, așa că pagina sosește gata (LCP de 172 ms, 5 ms de blocare totală).",
+          "Circa 2.000 de echipamente de exercițiu sunt generate dintr-un PRNG cu sămânță (mulberry32): fiecare build produce aceeași rețea, deci testele și capturile sunt reproductibile.",
+          "Sarcina sintetică urmează consumul orar real ERCOT, scalat pe zone meteo.",
+          "Un singur design system, @pgo/ui (MUI + Storybook), construiește fiecare pagină; axe (WCAG 2.1 AA) verifică fiecare pagină și poveste în modul luminos și întunecat."
+        ]
       },
       "telemetry": {
         "what": "Un tabel foarte mare cu citiri de la fiecare echipament al rețelei de exercițiu, înregistrate la fiecare 15 minute timp de șase zile.",
         "looking": "Fiecare rând este o citire: despre ce echipament e vorba, unde se află, cât de încărcat este și dacă asta e normal. Sunt peste un milion de rânduri.",
         "how": "Faceți clic pe titlul unei coloane pentru sortare. Folosiți filtrele pentru a restrânge lista sau grupați rândurile pentru totaluri pe zone ori tipuri. Faceți clic pe un rând pentru a selecta echipamentul; celelalte pagini îl evidențiază și ele.",
-        "why": "Operatorii folosesc astfel de tabele pentru a găsi echipamente supraîncărcate sau cu un comportament ciudat și pentru a verifica ce s-a întâmplat la un anumit moment."
+        "why": "Operatorii folosesc astfel de tabele pentru a găsi echipamente supraîncărcate sau cu un comportament ciudat și pentru a verifica ce s-a întâmplat la un anumit moment.",
+        "tech": [
+          "1.076.544 de rânduri (1.869 de echipamente × 576 de citiri), generate în circa 410 ms.",
+          "Toată prelucrarea datelor rulează într-un Web Worker peste array-uri tipizate pe coloane (circa 23 MB), transferate o singură dată fără copiere; ordinea de afișare se întoarce ca Uint32Array transferabil.",
+          "Filtrarea durează 3–15 ms; sortarea stabilă după două chei a scăzut de la 944 ms la 440 ms.",
+          "Derulare virtuală, modelul complet de tastatură al grilei ARIA și un cronometru pentru fiecare operație."
+        ]
       },
       "charts": {
         "what": "Grafice cu ultimele 30 de zile din rețeaua Texasului: câtă electricitate s-a consumat, cât se prognozase, cum a fost produsă și câtă a venit din rețelele vecine.",
         "looking": "Date orare reale de la Administrația pentru Informații Energetice a SUA, plus o serie de exercițiu cu o citire pe secundă, aproximativ 2,6 milioane de puncte.",
         "how": "Măriți orice grafic și trageți de el pentru a vă deplasa în timp. Celelalte grafice îl urmează, ca să le puteți compara în același moment.",
-        "why": "Compararea consumului cu prognoza și cu modul în care a fost produsă energia arată când rețeaua a fost solicitată și cum a făcut față."
+        "why": "Compararea consumului cu prognoza și cu modul în care a fost produsă energia arată când rețeaua a fost solicitată și cum a făcut față.",
+        "tech": [
+          "Panouri canvas pe o axă de timp comună: zoom, deplasare, selector de ansamblu și cursoare sincronizate, totul din tastatură, cu o vizualizare tabelară pentru fiecare grafic pentru cititoarele de ecran.",
+          "Circa 2,6 milioane de puncte la secundă sunt reduse de Rust compilat în WebAssembly într-un Web Worker: min/max păstrează fiecare vârf, LTTB păstrează forma.",
+          "30 de zile devin circa 3.455 de puncte în circa 5,8 ms; firul principal doar desenează (sub 1 ms, față de 19,7 ms înainte). LTTB în WASM este de circa 1,4 ori mai rapid decât în JS.",
+          "Un comutator JS/WASM și un test de performanță care rulează pe calculatorul dvs.; un test de paritate dovedește că ambele motoare întorc aceleași puncte."
+        ]
       },
       "alarms": {
         "what": "O listă în timp real cu avertizările din rețeaua de exercițiu, de exemplu o linie care transportă prea multă electricitate sau o tensiune prea mică.",
         "looking": "Alarmele noi apar pe măsură ce se produc. Contoarele de sus arată câte sunt active și câte nu au fost încă preluate de nimeni.",
         "how": "Filtrați după gravitate sau zonă și puneți fluxul pe pauză ca să citiți fără ca lista să se miște. Confirmați o alarmă ca să le arătați tuturor celor care urmăresc că vă ocupați de ea; o văd imediat.",
-        "why": "Într-o cameră de comandă reală, alarmele le arată operatorilor că ceva necesită atenție. Confirmarea lor evită ca doi oameni să urmărească aceeași problemă."
+        "why": "Într-o cameră de comandă reală, alarmele le arată operatorilor că ceva necesită atenție. Confirmarea lor evită ca doi oameni să urmărească aceeași problemă.",
+        "tech": [
+          "Un al doilea serviciu Cloud Run (Node 22 + ws) transmite simularea prin WebSocket în fiecare secundă și rulează doar cât timp e cineva conectat.",
+          "Un endpoint de streaming RTK Query adaugă fiecare mesaj în cache cu un reducer pur; se reconectează cu așteptare progresivă și se oprește fără conexiune.",
+          "Serverul difuzează confirmările, așa că toate filele deschise se actualizează deodată.",
+          "Alarmele noi sunt anunțate cititoarelor de ecran prin regiuni live."
+        ]
       },
       "map": {
         "what": "O hartă a Texasului cu toate stațiile, centralele, zonele de consum și liniile electrice ale rețelei de exercițiu.",
         "looking": "Culorile arată cât de încărcat este fiecare echipament chiar acum, actualizate în timp real. Legenda explică culorile, iar comutatoarele de straturi ascund sau afișează fiecare tip de echipament.",
         "how": "Măriți și trageți harta ca pe orice hartă online. Faceți clic pe un punct sau pe o linie pentru a-l selecta și a vedea detaliile; celelalte pagini îl evidențiază și ele. Alegeți Afișează ca tabel pentru o listă cu tot ce apare pe hartă.",
-        "why": "Faptul că vedeți unde este solicitarea îi ajută pe operatori să înțeleagă o problemă dintr-o privire, de exemplu mai multe linii încărcate în aceeași regiune."
+        "why": "Faptul că vedeți unde este solicitarea îi ajută pe operatori să înțeleagă o problemă dintr-o privire, de exemplu mai multe linii încărcate în aceeași regiune.",
+        "tech": [
+          "MapLibre GL (WebGL) cu dale vectoriale OpenFreeMap fără cheie API, încărcat doar pe această pagină; stilurile luminos și întunecat urmează tema.",
+          "769 de linii, 400 de stații, 300 de generatoare și 400 de consumatori își schimbă culoarea în fiecare secundă prin feature-state, doar pentru echipamentele modificate; datele nu se reîncarcă niciodată complet.",
+          "Starea se vede prin formă și text, nu doar prin culoare, iar Afișează ca tabel este alternativa accesibilă la canvas.",
+          "Selecția stă în URL: harta zboară la echipamentul ales oriunde, iar linkurile pot fi partajate."
+        ]
       },
       "network": {
         "what": "Rețeaua de exercițiu desenată ca o rețea: ce stații sunt legate între ele și prin ce linii.",
         "looking": "Un arbore listează fiecare zonă și echipament, iar o diagramă desenează legăturile. Culoarea liniilor arată încărcarea în timp real sau rezultatul unui studiu de tip „ce-ar fi dacă”.",
         "how": "Selectați un echipament în arbore sau în diagramă. În studiul „ce-ar fi dacă”, declanșați o linie, scoateți un echipament din funcțiune sau modificați o sarcină și vedeți cum ar circula energia după schimbare. Puteți anula sau reseta oricând.",
-        "why": "Înainte de a scoate o linie pentru reparații, inginerii verifică dacă restul rețelei poate prelua energia în plus. Această pagină arată acea verificare într-o formă simplă."
+        "why": "Înainte de a scoate o linie pentru reparații, inginerii verifică dacă restul rețelei poate prelua energia în plus. Această pagină arată acea verificare într-o formă simplă.",
+        "tech": [
+          "Un graf React Flow cu 400 de stații așezate geografic și 769 de linii, cu minihartă și filtru pe zone.",
+          "Studiile „ce-ar fi dacă” rulează un calcul real de circulație de putere DC: matrice de susceptanțe, LU densă cu pivotare parțială, detecția insulelor cu union-find și dispecerizare în ordinea meritului.",
+          "Declanșați o linie: butonul răspunde în 98 ms, iar rezultatele complete sosesc în 324 ms.",
+          "Scenariile stau în URL (study=), deci un studiu poate fi partajat; arborele urmează modelul de arbore WAI-ARIA."
+        ]
       },
       "incidents": {
         "what": "Rapoarte scrise despre evenimente din rețea, de exemplu o întrerupere sau un echipament care s-a defectat.",
         "looking": "O listă de rapoarte cu starea și gravitatea lor. Un raport exemplu arată cum arată unul finalizat.",
         "how": "Creați un raport, legați echipamentele implicate, adăugați acțiuni de urmărire și atașați documente PDF. Rapoartele sunt salvate doar în acest browser; nu se trimite nimic nicăieri.",
-        "why": "A scrie ce s-a întâmplat și ce se va face este felul în care echipele învață din incidente și împiedică repetarea lor."
+        "why": "A scrie ce s-a întâmplat și ce se va face este felul în care echipele învață din incidente și împiedică repetarea lor.",
+        "tech": [
+          "Editor Tiptap cu mențiuni @ ale echipamentelor, liste de sarcini și salvare automată; actualizările optimiste RTK Query fac ca salvarea să nu mute niciodată cursorul.",
+          "Rapoartele și fișierele PDF stau în IndexedDB: funcționează offline și nu părăsesc niciodată browserul.",
+          "Vizualizator pdf.js cu căutare, zoom și text selectabil; scripturile și XFA sunt oprite, iar încărcările sunt verificate după tipul MIME și semnătura %PDF-, până la 10 MB.",
+          "Prima pagină a unui PDF este desenată în 540 ms."
+        ]
       }
     }
   }

@@ -7,7 +7,10 @@ import { IconButton } from '../IconButton/IconButton.tsx';
 
 export interface HelpSection {
   heading: string;
-  body: string;
+  /** A short paragraph. */
+  body?: string;
+  /** A bulleted list, e.g. technical details. */
+  items?: string[];
 }
 
 export interface HelpPanelProps {
@@ -91,14 +94,31 @@ export const HelpPanel = ({
         </IconButton>
       </Stack>
       <Stack spacing={2}>
-        {sections.map(({ heading, body }) => (
+        {sections.map(({ heading, body, items }) => (
           <Box key={heading}>
             <Typography variant="subtitle1" component="h3" sx={{ fontWeight: 'fontWeightMedium' }}>
               {heading}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {body}
-            </Typography>
+            {body && (
+              <Typography variant="body2" color="text.secondary">
+                {body}
+              </Typography>
+            )}
+            {items && items.length > 0 && (
+              <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+                {items.map((item) => (
+                  <Typography
+                    key={item}
+                    component="li"
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 0.5 }}
+                  >
+                    {item}
+                  </Typography>
+                ))}
+              </Box>
+            )}
           </Box>
         ))}
       </Stack>

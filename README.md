@@ -5,14 +5,51 @@ frontend for the energy industry can be built: large data grids, advanced charts
 maps, a document viewer with rich text, live updates, Rust/WASM number crunching, and an
 accessible, tested component library.
 
-**Live demo:** _link added after the first release (see [M11](docs/m11-finish.md#release-checklist))._
+- **Live demo:** <https://pgo-web-ttu5xq5tza-uc.a.run.app>
+- **Storybook (design system):** <https://pgo-web-ttu5xq5tza-uc.a.run.app/storybook>
+- **Source:** <https://github.com/mkirashimas/power-grid-operations>
 
 ![The network view: asset tree, topology graph and a what-if study](docs/screenshots/network.jpg)
 
+## Highlights
+
+Every number below is measured: see the Performance section further down, and [M11](docs/m11-finish.md).
+
+- **1,076,544-row data grid that never freezes.** All data work runs in a Web Worker over
+  columnar typed arrays, transferred with zero copies. Filtering takes 3–15 ms; the two-key
+  stable sort went from 944 ms to 440 ms. Virtual scrolling, full ARIA grid keyboard support.
+  ([M3](docs/m3-telemetry-table.md))
+- **Rust → WebAssembly in a Web Worker.** About 2.6 million points are downsampled to about
+  3,455 in about 5.8 ms. The main thread only draws (under 1 ms, down from 19.7 ms). A live
+  JS vs WASM toggle and an in-browser benchmark; a parity test proves both engines agree.
+  ([M5](docs/m5-wasm-downsampling.md))
+- **Real-time over WebSocket.** A second Cloud Run service (Node 22 + `ws`) streams the grid
+  every second. RTK Query folds it into the cache; acknowledgements reach every open tab
+  at once. ([M6](docs/m6-realtime-alarms.md))
+- **A power-flow solver in the browser.** What-if studies run a DC power flow (dense LU with
+  partial pivoting, union-find island detection): trip a line and get results in 324 ms.
+  ([M9](docs/m9-network-view.md))
+- **WebGL map, live.** MapLibre recolours 1,869 assets every second through feature-state,
+  only for what changed. ([M8](docs/m8-live-map.md))
+- **Linked selection everywhere.** Pick an asset in any view and every view follows; the
+  selection and view state live in the URL, so any screen can be shared.
+  ([M7](docs/m7-linked-selection.md))
+- **Fast and accessible.** Lighthouse 100 / 100 / 100 / 100 on `/` and `/telemetry`, and
+  accessibility 100 on every page measured. axe (WCAG 2.1 AA) runs on every page and every
+  Storybook story in light and dark mode, plus keyboard, reflow (320 px) and forced-colors
+  checks. ([M11](docs/m11-finish.md))
+- **Installable and offline-ready PWA**, in **5 languages**, with a documented design system
+  (`@pgo/ui`) and plain-language help on every page. ([M12](docs/m12-pwa.md),
+  [M13](docs/m13-enhanced-ui.md))
+- **Production pipeline.** Unit tests (Vitest) and Playwright e2e on desktop and mobile, with
+  coverage gates in CI. GitHub Actions deploys to Cloud Run through Workload Identity
+  Federation, so no service-account key exists anywhere.
+
 ## Demo
 
-An 80-second tour of every module, recorded with `yarn demo:record`:
-_video link added after upload._
+A 1-minute tour of every module, recorded with `yarn demo:record`:
+
+https://github.com/user-attachments/assets/b9d832ca-a57d-4e43-9d13-b88c044a60ac
 
 <details>
 <summary><b>Screenshots</b></summary>
@@ -23,6 +60,7 @@ _video link added after upload._
 | ![Charts](docs/screenshots/charts.jpg)     | ![Charts in dark mode](docs/screenshots/charts-dark.jpg) |
 | ![Alarms](docs/screenshots/alarms.jpg)     | ![Map](docs/screenshots/map.jpg)                         |
 | ![Network](docs/screenshots/network.jpg)   | ![Incident report](docs/screenshots/incidents.jpg)       |
+| ![Section help](docs/screenshots/help.jpg) |                                                          |
 
 </details>
 
@@ -62,6 +100,38 @@ yarn dev                                        # web on :3000, realtime service
 Without a key, the app runs on the committed EIA snapshot. Rust is only needed to change the
 WebAssembly code: the built module is committed (see
 [M5: Rust/WASM downsampling](docs/m5-wasm-downsampling.md)).
+
+## Links and commands
+
+| Link                                                | What it is                                         |
+| --------------------------------------------------- | -------------------------------------------------- |
+| <https://pgo-web-ttu5xq5tza-uc.a.run.app>           | the deployed app (Cloud Run, deployed from `main`) |
+| <https://pgo-web-ttu5xq5tza-uc.a.run.app/storybook> | the deployed Storybook                             |
+| http://localhost:3000                               | the app, after `yarn dev`                          |
+| http://localhost:6006                               | Storybook, after `yarn storybook`                  |
+
+| Command                                                | What it does                                                                             |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `yarn dev`                                             | web (http://localhost:3000) and realtime service (ws://localhost:8081) with hot reload   |
+| `yarn dev:web` / `yarn dev:realtime`                   | one of the two                                                                           |
+| `yarn build` / `yarn start`                            | production build and server                                                              |
+| `yarn lint` / `yarn typecheck`                         | ESLint / TypeScript                                                                      |
+| `yarn test`                                            | unit and component tests (Vitest), in every workspace                                    |
+| `yarn workspace @pgo/web test:watch`                   | Vitest in watch mode for the web app                                                     |
+| `yarn coverage`                                        | the same with V8 coverage; fails below each workspace's thresholds (CI runs this)        |
+| `yarn data:fetch`                                      | downloads the last 30 days of ERCOT data from EIA into the committed snapshot            |
+| `yarn wasm:build`                                      | rebuilds the Rust/WASM module into `packages/downsample/pkg` (needs Rust and wasm-pack)  |
+| `yarn wasm:test`                                       | `cargo fmt --check`, `cargo clippy` and `cargo test` for the Rust crate                  |
+| `yarn storybook`                                       | local Storybook at http://localhost:6006, with hot reload                                |
+| `yarn build:storybook`                                 | static Storybook into `apps/web/public/storybook`, served by the web app at `/storybook` |
+| `yarn e2e`                                             | builds, starts and runs the Playwright tests (desktop and mobile, with axe checks)       |
+| `yarn workspace @pgo/web playwright test help.spec.ts` | one e2e spec only (any file in `apps/web/e2e`)                                           |
+| `yarn measure`                                         | builds, starts and measures every page and key interactions (README performance tables)  |
+| `yarn demo:record`                                     | records the demo tour (`demo/*.webm`) and the README screenshots (`docs/screenshots`)    |
+| `yarn workspace @pgo/web samples:pdf`                  | rewrites the synthetic sample PDFs in `apps/web/public/samples/incidents`                |
+| `yarn format` / `yarn format:check`                    | Prettier: write / check only                                                             |
+
+Run `yarn workspace @pgo/web playwright install chromium` once before the first `yarn e2e`.
 
 <details>
 <summary><b>Tech stack</b></summary>
@@ -169,32 +239,6 @@ services/
   realtime/        WebSocket service (Cloud Run pgo-realtime): live load, asset updates, alarms
 docs/              deployment guide and one plan per milestone
 ```
-
-</details>
-
-<details>
-<summary><b>All commands</b></summary>
-
-| Command                               | What it does                                                                             |
-| ------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `yarn dev`                            | web (http://localhost:3000) and realtime service (ws://localhost:8081) with hot reload   |
-| `yarn dev:web` / `yarn dev:realtime`  | one of the two                                                                           |
-| `yarn build` / `yarn start`           | production build and server                                                              |
-| `yarn lint` / `yarn typecheck`        | ESLint / TypeScript                                                                      |
-| `yarn test`                           | unit and component tests (Vitest), in every workspace                                    |
-| `yarn coverage`                       | the same with V8 coverage; fails below each workspace's thresholds (CI runs this)        |
-| `yarn data:fetch`                     | downloads the last 30 days of ERCOT data from EIA into the committed snapshot            |
-| `yarn wasm:build`                     | rebuilds the Rust/WASM module into `packages/downsample/pkg` (needs Rust and wasm-pack)  |
-| `yarn wasm:test`                      | `cargo fmt --check`, `cargo clippy` and `cargo test` for the Rust crate                  |
-| `yarn storybook`                      | local Storybook at http://localhost:6006, with hot reload                                |
-| `yarn build:storybook`                | static Storybook into `apps/web/public/storybook`, served by the web app at `/storybook` |
-| `yarn e2e`                            | builds, starts and runs the Playwright tests (desktop and mobile, with axe checks)       |
-| `yarn measure`                        | builds, starts and measures every page and key interactions (README performance tables)  |
-| `yarn demo:record`                    | records the demo tour (`demo/*.webm`) and the README screenshots (`docs/screenshots`)    |
-| `yarn workspace @pgo/web samples:pdf` | rewrites the synthetic sample PDFs in `apps/web/public/samples/incidents`                |
-| `yarn format`                         | Prettier                                                                                 |
-
-Run `yarn workspace @pgo/web playwright install chromium` once before the first `yarn e2e`.
 
 </details>
 

@@ -79,50 +79,93 @@
       "what": "¿Qué es esto?",
       "looking": "¿Qué estoy viendo?",
       "how": "¿Cómo se usa?",
-      "why": "¿Por qué importa?"
+      "why": "¿Por qué importa?",
+      "tech": "Bajo el capó"
     },
     "sections": {
       "home": {
         "what": "La portada de la consola. Muestra las últimas cifras de la red eléctrica real de Texas y un resumen de la red de práctica que usan las demás páginas.",
         "looking": "Las tarjetas superiores son datos reales publicados por la Administración de Información Energética de EE. UU.: cuánta electricidad consume Texas, cuánto se había previsto y de dónde procede la energía. Debajo hay un recuento de las subestaciones, líneas y centrales ficticias que aparecen en otras páginas.",
         "how": "Léala como un panel de control. Abra una sección desde el menú para ver más detalle y use este botón de ayuda en cualquier página para saber qué hace.",
-        "why": "Los operadores de la red empiezan cada turno con un resumen como este: ¿la demanda es normal?, ¿se cumple la previsión?, ¿ocurre algo fuera de lo común?"
+        "why": "Los operadores de la red empiezan cada turno con un resumen como este: ¿la demanda es normal?, ¿se cumple la previsión?, ¿ocurre algo fuera de lo común?",
+        "tech": [
+          "Renderizada en el servidor con el App Router de Next.js: los datos de la EIA se obtienen en el servidor y se guardan en caché una hora, así que la página llega lista (LCP de 172 ms, 5 ms de bloqueo total).",
+          "Unos 2.000 equipos de práctica se generan con un PRNG con semilla (mulberry32): cada compilación produce la misma red, así que las pruebas y capturas son reproducibles.",
+          "La carga sintética sigue la demanda horaria real de ERCOT, escalada por zona meteorológica.",
+          "Un único sistema de diseño, @pgo/ui (MUI + Storybook), construye todas las páginas; axe (WCAG 2.1 AA) revisa cada página e historia en modo claro y oscuro."
+        ]
       },
       "telemetry": {
         "what": "Una tabla muy grande con lecturas de todos los equipos de la red de práctica, registradas cada 15 minutos durante seis días.",
         "looking": "Cada fila es una lectura: de qué equipo se trata, dónde está, cuánto trabaja y si eso es normal. Hay más de un millón de filas.",
         "how": "Haga clic en el título de una columna para ordenar. Use los filtros para acotar la lista o agrupe filas para ver totales por zona o tipo. Haga clic en una fila para seleccionar ese equipo; las demás páginas también lo resaltan.",
-        "why": "Los operadores usan tablas como esta para encontrar equipos sobrecargados o con un comportamiento extraño, y para comprobar qué pasó en un momento dado."
+        "why": "Los operadores usan tablas como esta para encontrar equipos sobrecargados o con un comportamiento extraño, y para comprobar qué pasó en un momento dado.",
+        "tech": [
+          "1.076.544 filas (1.869 equipos × 576 lecturas), generadas en unos 410 ms.",
+          "Todo el trabajo con datos se hace en un Web Worker sobre arrays tipados por columnas (unos 23 MB), transferidos una vez sin copias; el orden de visualización vuelve como un Uint32Array transferible.",
+          "Filtrar tarda 3–15 ms; la ordenación estable por dos claves bajó de 944 ms a 440 ms.",
+          "Desplazamiento virtual, el patrón de teclado completo de la cuadrícula ARIA y un indicador de tiempo para cada operación."
+        ]
       },
       "charts": {
         "what": "Gráficos de líneas de los últimos 30 días en la red de Texas: cuánta electricidad se consumió, cuánto se había previsto, cómo se produjo y cuánta llegó de redes vecinas.",
         "looking": "Datos horarios reales de la Administración de Información Energética de EE. UU., más una serie de práctica con una lectura por segundo, unos 2,6 millones de puntos.",
         "how": "Amplíe cualquier gráfico y arrástrelo para moverse en el tiempo. Los demás gráficos lo siguen, así que puede compararlos en el mismo instante.",
-        "why": "Comparar la demanda con la previsión y con la forma en que se produjo la energía muestra cuándo estuvo la red bajo presión y cómo respondió."
+        "why": "Comparar la demanda con la previsión y con la forma en que se produjo la energía muestra cuándo estuvo la red bajo presión y cómo respondió.",
+        "tech": [
+          "Paneles en canvas con un eje temporal compartido: zoom, desplazamiento, selector de vista general y cursores sincronizados, todo manejable con teclado, con una vista de tabla por gráfico para lectores de pantalla.",
+          "Unos 2,6 millones de puntos de un segundo se reducen con Rust compilado a WebAssembly en un Web Worker: min/max conserva cada pico, LTTB conserva la forma.",
+          "30 días se convierten en unos 3.455 puntos en unos 5,8 ms; el hilo principal solo dibuja (menos de 1 ms, antes 19,7 ms). LTTB en WASM es unas 1,4 veces más rápido que en JS.",
+          "Un selector JS/WASM y una prueba de rendimiento que se ejecuta en su equipo; una prueba de paridad demuestra que ambos motores devuelven los mismos puntos."
+        ]
       },
       "alarms": {
         "what": "Una lista en directo de avisos de la red de práctica, como una línea que transporta demasiada electricidad o una tensión demasiado baja.",
         "looking": "Las nuevas alarmas aparecen en cuanto se producen. Los contadores superiores muestran cuántas están activas y cuántas no ha atendido nadie todavía.",
         "how": "Filtre por gravedad o zona, y pause el flujo para leer sin que la lista se mueva. Reconozca una alarma para indicar a todos los que la ven que usted se ocupa; lo ven al instante.",
-        "why": "En una sala de control real, las alarmas avisan a los operadores de que algo requiere atención. Reconocerlas evita que dos personas persigan el mismo problema."
+        "why": "En una sala de control real, las alarmas avisan a los operadores de que algo requiere atención. Reconocerlas evita que dos personas persigan el mismo problema.",
+        "tech": [
+          "Un segundo servicio en Cloud Run (Node 22 + ws) transmite la simulación por WebSocket cada segundo y solo avanza mientras haya alguien conectado.",
+          "Un endpoint de streaming de RTK Query incorpora cada mensaje a la caché con un reductor puro; se reconecta con espera progresiva y se pausa sin conexión.",
+          "El servidor difunde los reconocimientos, así que todas las pestañas abiertas se actualizan a la vez.",
+          "Las nuevas alarmas se anuncian a los lectores de pantalla mediante regiones activas."
+        ]
       },
       "map": {
         "what": "Un mapa de Texas con todas las subestaciones, centrales, zonas de consumo y líneas eléctricas de la red de práctica.",
         "looking": "Los colores muestran la carga de cada equipo en este momento, actualizada en directo. La leyenda explica los colores y los interruptores de capas ocultan o muestran cada tipo de equipo.",
         "how": "Amplíe y arrastre el mapa como cualquier mapa en línea. Haga clic en un punto o una línea para seleccionarlo y ver sus detalles; las demás páginas también lo resaltan. Elija Mostrar como tabla para ver una lista de todo lo que hay en el mapa.",
-        "why": "Ver dónde está la presión ayuda a los operadores a entender un problema de un vistazo, por ejemplo varias líneas muy cargadas en la misma región."
+        "why": "Ver dónde está la presión ayuda a los operadores a entender un problema de un vistazo, por ejemplo varias líneas muy cargadas en la misma región.",
+        "tech": [
+          "MapLibre GL (WebGL) con teselas vectoriales de OpenFreeMap sin clave de API, cargado solo en esta página; los estilos base claro y oscuro siguen el tema.",
+          "769 líneas, 400 subestaciones, 300 generadores y 400 cargas cambian de color cada segundo mediante feature-state, solo en los equipos que cambiaron; los datos nunca se recargan por completo.",
+          "El estado se muestra con forma y texto además de color, y Mostrar como tabla es la alternativa accesible al canvas.",
+          "La selección vive en la URL: el mapa vuela al equipo elegido en cualquier parte y los enlaces se pueden compartir."
+        ]
       },
       "network": {
         "what": "La red de práctica dibujada como una red: qué subestaciones están conectadas entre sí y mediante qué líneas.",
         "looking": "Un árbol enumera cada zona y cada equipo, y un diagrama dibuja las conexiones. El color de las líneas muestra la carga en directo o el resultado de un estudio hipotético.",
         "how": "Seleccione un equipo en el árbol o en el diagrama. En el estudio hipotético, dispare una línea, deje un equipo fuera de servicio o cambie una carga, y vea cómo circularía la energía tras el cambio. Puede deshacer o reiniciar en cualquier momento.",
-        "why": "Antes de retirar una línea para repararla, los ingenieros comprueban que el resto de la red puede transportar la energía adicional. Esta página muestra esa comprobación de forma sencilla."
+        "why": "Antes de retirar una línea para repararla, los ingenieros comprueban que el resto de la red puede transportar la energía adicional. Esta página muestra esa comprobación de forma sencilla.",
+        "tech": [
+          "Un grafo de React Flow con 400 subestaciones situadas por geografía y 769 líneas, con minimapa y filtro por zona.",
+          "Los estudios hipotéticos ejecutan un flujo de potencia DC real: matriz de susceptancias, LU densa con pivoteo parcial, detección de islas con union-find y despacho por orden de mérito.",
+          "Al disparar una línea, el botón responde en 98 ms y los resultados completos llegan en 324 ms.",
+          "Los escenarios viven en la URL (study=), así que un estudio se puede compartir; el árbol de equipos sigue el patrón de árbol WAI-ARIA."
+        ]
       },
       "incidents": {
         "what": "Informes escritos sobre sucesos en la red, por ejemplo un apagón o un equipo que falló.",
         "looking": "Una lista de informes con su estado y gravedad. Un informe de ejemplo muestra cómo es uno terminado.",
         "how": "Cree un informe, vincule los equipos implicados, añada acciones de seguimiento y adjunte documentos PDF. Los informes se guardan solo en este navegador; no se envía nada a ningún sitio.",
-        "why": "Dejar por escrito qué pasó y qué se hará al respecto es como los equipos aprenden de los incidentes y evitan que se repitan."
+        "why": "Dejar por escrito qué pasó y qué se hará al respecto es como los equipos aprenden de los incidentes y evitan que se repitan.",
+        "tech": [
+          "Editor de texto enriquecido Tiptap con menciones @ de equipos, listas de tareas y autoguardado; las actualizaciones optimistas de RTK Query evitan que el autoguardado mueva el cursor.",
+          "Los informes y los PDF se guardan en IndexedDB: funcionan sin conexión y nunca salen del navegador.",
+          "Visor pdf.js con búsqueda, zoom y texto seleccionable; los scripts y XFA están desactivados, y las subidas se comprueban por tipo MIME y firma %PDF-, hasta 10 MB.",
+          "La primera página de un PDF se dibuja en 540 ms."
+        ]
       }
     }
   }

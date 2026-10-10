@@ -9,7 +9,7 @@ const VIDEO = new URL('../../../demo/power-grid-operations.webm', import.meta.ur
 const SHOTS = new URL('../../../docs/screenshots/', import.meta.url);
 
 /** A caption box over the page, only in the recording (it is not part of the app). */
-const caption = async (page: Page, text: string, holdMs = 2500) => {
+const caption = async (page: Page, text: string, holdMs = 2000) => {
   await page.evaluate((value) => {
     let box = document.getElementById('demo-caption');
     if (!box) {
@@ -63,11 +63,10 @@ test('demo tour', async ({ page }) => {
   await go(page, '/');
   await caption(
     page,
-    'Power Grid Operations: an operations console for the Texas (ERCOT) grid',
-    3500,
+    'Power Grid Operations: a console for the Texas (ERCOT) grid, on real EIA data and a synthetic grid',
+    3000,
   );
   await shot(page, 'overview');
-  await caption(page, 'Real EIA demand and forecasts, plus a synthetic grid of 1,869 assets');
 
   // Telemetry
   await go(page, '/telemetry');
@@ -85,20 +84,19 @@ test('demo tour', async ({ page }) => {
   await expect(page.getByTestId('highres-stats')).toBeVisible({ timeout: 30_000 });
   await caption(page, 'Chart workbench: synced panes, zoom, brush and crosshair');
   await page.getByRole('button', { name: '7 d' }).first().click();
-  await caption(page, 'A 2.6M-point series, downsampled in Rust/WebAssembly in a worker');
+  await caption(
+    page,
+    'A 2.6M-point series, downsampled in Rust/WebAssembly in a worker, with a JS vs WASM benchmark',
+    3000,
+  );
   await shot(page, 'charts');
-  await page.getByRole('button', { name: 'Run benchmark' }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Benchmark finished.' })).toBeVisible({
-    timeout: 60_000,
-  });
-  await caption(page, 'JS vs WASM benchmark, measured on the visitor’s own machine', 3500);
 
   // Alarms
   await go(page, '/alarms');
   await expect(page.getByTestId('connection-status')).toHaveAttribute('data-state', 'live', {
     timeout: 30_000,
   });
-  await caption(page, 'Live alarms over a WebSocket from a second Cloud Run service', 4000);
+  await caption(page, 'Live alarms over a WebSocket from a second Cloud Run service', 3000);
   await shot(page, 'alarms');
   const ack = page
     .getByRole('grid', { name: 'Alarms' })
@@ -116,10 +114,9 @@ test('demo tour', async ({ page }) => {
   await caption(
     page,
     'Live map: assets coloured by loading, updated with every tick of the feed',
-    4000,
+    3000,
   );
   await shot(page, 'map');
-  await caption(page, 'The selected asset follows you to every view');
 
   // Network
   await go(page, '/network?asset=ln-0001');
@@ -129,8 +126,15 @@ test('demo tour', async ({ page }) => {
   await caption(page, 'Network: asset tree and topology of 400 substations and 769 lines');
   await page.getByRole('button', { name: 'Trip line' }).click();
   await expect(page.getByTestId('study-results')).toBeVisible();
-  await caption(page, 'What-if: a DC power flow re-solves the grid in a few milliseconds', 4000);
+  await caption(page, 'What-if: a DC power flow re-solves the grid in a few milliseconds', 3000);
   await shot(page, 'network');
+  await page.getByRole('button', { name: 'About this section' }).click();
+  const help = page.getByRole('complementary', { name: 'About Network' });
+  await help.getByRole('heading', { name: 'Under the hood' }).scrollIntoViewIfNeeded();
+  await caption(page, 'Every section explains itself: plain language, plus “Under the hood”');
+  await shot(page, 'help');
+  await page.keyboard.press('Escape');
+  await expect(help).toBeHidden();
 
   // Incidents
   await go(page, '/incidents/inc-sample-01?doc=att-sample-relay');
@@ -154,11 +158,11 @@ test('demo tour', async ({ page }) => {
   await shot(page, 'charts-dark');
   await page.getByRole('combobox', { name: 'Language' }).click();
   await page.getByRole('option', { name: 'Español' }).click();
-  await caption(page, 'Five languages, rendered on the server without a flash', 3500);
+  await caption(page, 'Five languages, rendered on the server without a flash', 3000);
   await caption(
     page,
     'Accessible (WCAG 2.1 AA, checked by axe in CI), tested, and open source',
-    4000,
+    3000,
   );
 
   // Save the video once the page is closed.

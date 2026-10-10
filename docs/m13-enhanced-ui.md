@@ -11,6 +11,7 @@ Make each section understandable to people who don't work on power grids, such a
   - _What am I looking at?_
   - _How do I use it?_
   - _Why does it matter?_
+  - _Under the hood_: a list of the engineering behind the section, with real numbers from the milestone docs and `docs/measurements.json`
 - **Read while you try:** on desktop, the help is a side panel that pushes the page instead of covering it. You can follow "click a line to select it" with the map still in view.
 - **Room for the page:** the left sidebar folds down to an icon rail. It does this by itself while help is open, and on demand at any other time.
 
@@ -24,6 +25,7 @@ Make each section understandable to people who don't work on power grids, such a
 | D   | Collapsible sidebar: a 240 px list or an icon rail with tooltips                         | done   |
 | E   | The help panel folds the sidebar, and closing it restores the user's choice              | done   |
 | F   | The sidebar choice is kept in a cookie, so the server renders the right width            | done   |
+| G   | "Under the hood" list in every help panel: tech details and measured numbers             | done   |
 
 ## How it works
 
@@ -34,6 +36,7 @@ Make each section understandable to people who don't work on power grids, such a
   - It sets `aria-expanded`, and `aria-controls` while the panel is open.
 - `hoc/Layout.tsx` renders `SectionHelp` as a sibling of `<main>`.
   - It finds the current section from `NAV_ITEMS` and builds the panel from `common` keys: `help.headings.<block>` and `help.sections.<section>.<block>`.
+  - The last block, `help.sections.<section>.tech`, is a string array, read with `returnObjects` and shown as a bulleted list (`HelpSection.items`). Every language has the same number of items, which `locales.test.ts` checks.
   - When you navigate with the panel open, it stays open and shows the new section's help.
 - **Desktop (`md` and up):** a persistent right `Drawer`, 360 px wide. Its docked width animates from 0, so `<main>` shrinks to make room.
   - It is an `<aside>` landmark named by its heading.
@@ -127,6 +130,13 @@ Then check by hand with `yarn dev`:
 3. Open help with the sidebar expanded, then close it. The sidebar comes back. Do the same with it collapsed: it stays collapsed.
 4. On a phone-sized window, help opens as a bottom sheet.
 5. Check both themes.
+
+## Demo tour
+
+`e2e-demo/tour.spec.ts` opens the help panel on Network (sidebar folded, _Under the hood_
+visible), takes `docs/screenshots/help.jpg`, and closes it with Escape. The tour was also
+shortened to about 60 s (2 s caption holds, no benchmark run) so the MP4 fits GitHub's 10 MB
+upload limit; see [M11](m11-finish.md).
 
 ## Follow-up commands
 

@@ -28,6 +28,13 @@ const meta = {
         heading: 'How do I use it?',
         body: 'Click a dot or a line to select it. The other pages then highlight it too.',
       },
+      {
+        heading: 'Under the hood',
+        items: [
+          'MapLibre GL (WebGL) with keyless OpenFreeMap vector tiles.',
+          'Colours update every second through feature-state, only for assets that changed.',
+        ],
+      },
     ],
   },
 } satisfies Meta<typeof HelpPanel>;

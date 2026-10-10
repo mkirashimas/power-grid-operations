@@ -87,6 +87,8 @@ describe('Layout', () => {
     expect(helpButton).toHaveAttribute('aria-expanded', 'true');
     expect(helpButton).toHaveAttribute('aria-controls', panel.id);
     expect(within(panel).getByRole('heading', { name: 'What is this?' })).toBeVisible();
+    expect(within(panel).getByRole('heading', { name: 'Under the hood' })).toBeVisible();
+    expect(within(within(panel).getByRole('list')).getAllByRole('listitem')).toHaveLength(4);
     expect(within(desktopNav()).getByRole('button', { name: 'Expand menu' })).toBeInTheDocument();
 
     await user.keyboard('{Escape}');

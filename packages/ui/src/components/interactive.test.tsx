@@ -1,5 +1,5 @@
 // Interactive components: keyboard behaviour, state and an axe scan each.
-import { act, screen } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -187,6 +187,7 @@ describe('LiveAnnouncer', () => {
 const HELP_SECTIONS = [
   { heading: 'What is this?', body: 'A map of the practice grid.' },
   { heading: 'How do I use it?', body: 'Click an asset to select it.' },
+  { heading: 'Under the hood', items: ['MapLibre GL (WebGL)', 'feature-state updates'] },
 ];
 
 const HelpHarness = ({ variant }: { variant: 'side' | 'sheet' }) => {
@@ -221,6 +222,12 @@ describe('HelpPanel', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'About Map' })).toHaveFocus();
     expect(screen.getByRole('heading', { level: 3, name: 'What is this?' })).toBeVisible();
     expect(screen.getByText('Click an asset to select it.')).toBeVisible();
+    const list = screen.getByRole('list');
+    expect(
+      within(list)
+        .getAllByRole('listitem')
+        .map((item) => item.textContent),
+    ).toEqual(['MapLibre GL (WebGL)', 'feature-state updates']);
     await expectNoAxeViolations();
 
     await user.keyboard('{Escape}');

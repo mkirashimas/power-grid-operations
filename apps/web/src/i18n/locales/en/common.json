@@ -79,50 +79,93 @@
       "what": "What is this?",
       "looking": "What am I looking at?",
       "how": "How do I use it?",
-      "why": "Why does it matter?"
+      "why": "Why does it matter?",
+      "tech": "Under the hood"
     },
     "sections": {
       "home": {
         "what": "The front page of the console. It shows the latest figures for the real Texas power grid and a summary of the practice grid that the other pages use.",
         "looking": "The top cards are real numbers published by the U.S. Energy Information Administration: how much electricity Texas is using, what was forecast, and where the power comes from. Below them is a count of the made-up substations, power lines and power plants shown elsewhere.",
         "how": "Read it like a dashboard. Open a section from the menu to see more detail, and use this help button on any page to learn what it does.",
-        "why": "Grid operators start each shift with a quick overview like this one: is demand normal, is the forecast holding, and is anything unusual going on?"
+        "why": "Grid operators start each shift with a quick overview like this one: is demand normal, is the forecast holding, and is anything unusual going on?",
+        "tech": [
+          "Server-rendered with the Next.js App Router: EIA data is fetched on the server and cached for an hour, so the page arrives ready (172 ms LCP, 5 ms total blocking time).",
+          "About 2,000 practice assets are generated from a seeded PRNG (mulberry32): every build produces the identical network, so tests and screenshots are reproducible.",
+          "Synthetic load follows real ERCOT hourly demand, scaled by weather zone.",
+          "One design system, @pgo/ui (MUI + Storybook), builds every page; axe (WCAG 2.1 AA) checks every page and story in light and dark mode."
+        ]
       },
       "telemetry": {
         "what": "A very large table of readings from every piece of equipment on the practice grid, recorded every 15 minutes over six days.",
         "looking": "Each row is one reading: which equipment it is, where it is, how hard it is working and whether that is normal. There are more than a million rows.",
         "how": "Click a column title to sort. Use the filters to narrow the list, or group rows to see totals by area or type. Click a row to select that equipment; the other pages highlight it too.",
-        "why": "Operators use tables like this to find equipment that is overloaded or behaving oddly, and to check what happened at a given time."
+        "why": "Operators use tables like this to find equipment that is overloaded or behaving oddly, and to check what happened at a given time.",
+        "tech": [
+          "1,076,544 rows (1,869 assets × 576 readings), generated in about 410 ms.",
+          "All data work runs in a Web Worker over columnar typed arrays (about 23 MB), transferred once with zero copies; the display order comes back as a transferable Uint32Array.",
+          "Filtering takes 3–15 ms; the two-key stable sort was cut from 944 ms to 440 ms.",
+          "Virtual scrolling, the full ARIA grid keyboard pattern, and a timing readout for every operation."
+        ]
       },
       "charts": {
         "what": "Line charts of the last 30 days on the Texas grid: how much electricity was used, what was forecast, how it was produced and how much came from neighbouring grids.",
         "looking": "Real hourly data from the U.S. Energy Information Administration, plus one practice series with a reading every second, about 2.6 million points.",
         "how": "Zoom into any chart and drag to move through time. The other charts follow, so you can compare them at the same moment.",
-        "why": "Comparing demand with the forecast and with how power was produced shows when the grid was under strain and how it coped."
+        "why": "Comparing demand with the forecast and with how power was produced shows when the grid was under strain and how it coped.",
+        "tech": [
+          "Canvas panes on one shared time axis: zoom, pan, overview brush and synced crosshairs, all keyboard-operable, with a table view per chart for screen readers.",
+          "About 2.6 million one-second points are downsampled by Rust compiled to WebAssembly in a Web Worker: min/max keeps every peak, LTTB keeps the shape.",
+          "30 days become about 3,455 points in about 5.8 ms; the main thread only draws (under 1 ms, down from 19.7 ms). LTTB in WASM is about 1.4× faster than JS.",
+          "A JS/WASM toggle and a benchmark run on your machine; a parity test proves both engines return identical points."
+        ]
       },
       "alarms": {
         "what": "A live list of warnings from the practice grid, such as a power line carrying too much electricity or a voltage that is too low.",
         "looking": "New alarms appear as they happen. The counters at the top show how many are active and how many nobody has handled yet.",
         "how": "Filter by severity or area, and pause the feed to read without the list moving. Acknowledge an alarm to tell everyone else watching that you are dealing with it; they see it straight away.",
-        "why": "In a real control room, alarms are how operators learn that something needs attention. Acknowledging them stops two people chasing the same problem."
+        "why": "In a real control room, alarms are how operators learn that something needs attention. Acknowledging them stops two people chasing the same problem.",
+        "tech": [
+          "A second Cloud Run service (Node 22 + ws) streams the simulation over a WebSocket every second, and only ticks while someone is connected.",
+          "An RTK Query streaming endpoint folds each message into the cache with a pure reducer; it reconnects with backoff and pauses while offline.",
+          "Acknowledgements are broadcast by the server, so every open tab updates at once.",
+          "New alarms are announced to screen readers through live regions."
+        ]
       },
       "map": {
         "what": "A map of Texas with every substation, power plant, customer area and power line of the practice grid.",
         "looking": "Colours show how heavily each piece of equipment is loaded right now, updated live. The legend explains the colours, and the layer switches hide or show each kind of equipment.",
         "how": "Zoom and drag the map like any online map. Click a dot or a line to select it and see its details; the other pages highlight it too. Choose Show as table for a list of everything on the map.",
-        "why": "Seeing where the strain is helps operators understand a problem at a glance, for example several busy lines in the same region."
+        "why": "Seeing where the strain is helps operators understand a problem at a glance, for example several busy lines in the same region.",
+        "tech": [
+          "MapLibre GL (WebGL) with keyless OpenFreeMap vector tiles, loaded only on this page; light and dark base styles follow the theme.",
+          "769 lines, 400 substations, 300 generators and 400 loads are recoloured every second through feature-state, only for the assets that changed; the data is never fully reloaded.",
+          "Status uses shape and text as well as colour, and Show as table is the accessible alternative to the canvas.",
+          "The selection lives in the URL: the map flies to an asset picked anywhere, and links can be shared."
+        ]
       },
       "network": {
         "what": "The practice grid drawn as a network: which substations are connected to which, and through which power lines.",
         "looking": "A tree lists every area and piece of equipment, and a diagram draws the connections. Line colours show either live loading or the result of a what-if study.",
         "how": "Select equipment in the tree or the diagram. In the what-if study, trip a line, take equipment offline or change a load, and see how the power would flow after the change. Undo or reset at any time.",
-        "why": "Before taking a line out for repairs, engineers check that the rest of the grid can carry the extra power. This page shows that check in a simple form."
+        "why": "Before taking a line out for repairs, engineers check that the rest of the grid can carry the extra power. This page shows that check in a simple form.",
+        "tech": [
+          "A React Flow graph of 400 substations placed by geography and 769 lines, with a minimap and zone filter.",
+          "What-if studies run a real DC power flow: bus susceptance matrix, dense LU with partial pivoting, union-find island detection and merit-order dispatch.",
+          "Trip a line: the button responds in 98 ms and the full study results arrive in 324 ms.",
+          "Scenarios live in the URL (study=), so a study can be shared; the asset tree follows the WAI-ARIA tree pattern."
+        ]
       },
       "incidents": {
         "what": "Written reports about events on the grid, for example an outage or a piece of equipment that failed.",
         "looking": "A list of reports with their status and severity. A sample report shows what a finished one looks like.",
         "how": "Create a report, link the equipment involved, add follow-up actions and attach PDF documents. Reports are saved in this browser only; nothing is sent anywhere.",
-        "why": "Writing down what happened, and what will be done about it, is how teams learn from incidents and stop them happening again."
+        "why": "Writing down what happened, and what will be done about it, is how teams learn from incidents and stop them happening again.",
+        "tech": [
+          "Tiptap rich-text editor with @-mentions of grid assets, task lists and autosave; optimistic RTK Query updates mean autosave never moves your cursor.",
+          "Reports and PDF files live in IndexedDB: they work offline and never leave the browser.",
+          "pdf.js viewer with search, zoom and selectable text; scripting and XFA are off, and uploads are checked by MIME type and %PDF- signature, up to 10 MB.",
+          "The first PDF page is drawn in 540 ms."
+        ]
       }
     }
   }

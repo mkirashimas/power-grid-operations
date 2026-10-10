@@ -181,8 +181,18 @@ network (trip a line) → incidents (PDF search, an @-mention) → dark mode →
 
 **Output:**
 
-- `demo/power-grid-operations.webm`: about 80 s and 12 MB, git-ignored. Upload it, for example
-  to the GitHub README or YouTube.
+- `demo/power-grid-operations.webm`: about 60 s, git-ignored.
+- **For the README:** GitHub plays videos inline, but free accounts can upload at most 10 MB, so
+  convert to H.264 MP4 first (needs ffmpeg, e.g. `winget install --id Gyan.FFmpeg -e`):
+
+  ```bash
+  ffmpeg -y -i demo/power-grid-operations.webm -c:v libx264 -preset slow -crf 28 -pix_fmt yuv420p -movflags +faststart -an demo/power-grid-operations.mp4
+  ```
+
+  Drag the MP4 into any GitHub comment box, copy the `https://github.com/user-attachments/assets/…`
+  URL it inserts (no need to post the comment), and put that URL on its own line in the README's
+  Demo section.
+
 - `docs/screenshots/*.jpg`: the README screenshots, committed.
 
 The captions are a box the script adds to the page; they aren't part of the app. Re-run the

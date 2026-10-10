@@ -79,50 +79,93 @@
       "what": "Qu'est-ce que c'est ?",
       "looking": "Que vois-je ?",
       "how": "Comment l'utiliser ?",
-      "why": "Pourquoi est-ce important ?"
+      "why": "Pourquoi est-ce important ?",
+      "tech": "Sous le capot"
     },
     "sections": {
       "home": {
         "what": "La page d'accueil de la console. Elle affiche les derniers chiffres du réseau électrique réel du Texas et un résumé du réseau d'entraînement utilisé par les autres pages.",
         "looking": "Les cartes du haut sont des chiffres réels publiés par l'Agence américaine d'information sur l'énergie (EIA) : la consommation d'électricité du Texas, la prévision et l'origine de l'énergie. En dessous, un décompte des postes, lignes et centrales fictifs affichés ailleurs.",
         "how": "Lisez-la comme un tableau de bord. Ouvrez une section depuis le menu pour plus de détails, et utilisez ce bouton d'aide sur chaque page pour savoir à quoi elle sert.",
-        "why": "Les opérateurs du réseau commencent chaque service par une vue d'ensemble comme celle-ci : la demande est-elle normale, la prévision tient-elle, se passe-t-il quelque chose d'inhabituel ?"
+        "why": "Les opérateurs du réseau commencent chaque service par une vue d'ensemble comme celle-ci : la demande est-elle normale, la prévision tient-elle, se passe-t-il quelque chose d'inhabituel ?",
+        "tech": [
+          "Rendue côté serveur avec l'App Router de Next.js : les données de l'EIA sont récupérées sur le serveur et mises en cache une heure, la page arrive donc prête (LCP de 172 ms, 5 ms de blocage total).",
+          "Environ 2 000 équipements d'entraînement sont générés par un PRNG à graine (mulberry32) : chaque build produit le même réseau, donc tests et captures sont reproductibles.",
+          "La charge synthétique suit la demande horaire réelle d’ERCOT, répartie par zone météo.",
+          "Un seul design system, @pgo/ui (MUI + Storybook), construit chaque page ; axe (WCAG 2.1 AA) vérifie chaque page et chaque story en mode clair et sombre."
+        ]
       },
       "telemetry": {
         "what": "Un très grand tableau de mesures de chaque équipement du réseau d'entraînement, relevées toutes les 15 minutes pendant six jours.",
         "looking": "Chaque ligne est une mesure : de quel équipement il s'agit, où il se trouve, à quel point il est sollicité et si c'est normal. Il y a plus d'un million de lignes.",
         "how": "Cliquez sur un titre de colonne pour trier. Utilisez les filtres pour réduire la liste, ou regroupez les lignes pour voir des totaux par zone ou par type. Cliquez sur une ligne pour sélectionner cet équipement ; les autres pages le mettent aussi en évidence.",
-        "why": "Les opérateurs utilisent ce genre de tableau pour repérer les équipements surchargés ou au comportement anormal, et pour vérifier ce qui s'est passé à un moment donné."
+        "why": "Les opérateurs utilisent ce genre de tableau pour repérer les équipements surchargés ou au comportement anormal, et pour vérifier ce qui s'est passé à un moment donné.",
+        "tech": [
+          "1 076 544 lignes (1 869 équipements × 576 mesures), générées en environ 410 ms.",
+          "Tout le traitement des données tourne dans un Web Worker sur des tableaux typés en colonnes (environ 23 Mo), transférés une seule fois sans copie ; l'ordre d'affichage revient sous forme d'Uint32Array transférable.",
+          "Le filtrage prend 3 à 15 ms ; le tri stable sur deux clés est passé de 944 ms à 440 ms.",
+          "Défilement virtuel, le modèle clavier complet de la grille ARIA et un chronométrage de chaque opération."
+        ]
       },
       "charts": {
         "what": "Des courbes des 30 derniers jours sur le réseau du Texas : l'électricité consommée, la prévision, la façon dont elle a été produite et ce qui est venu des réseaux voisins.",
         "looking": "Des données horaires réelles de l'EIA américaine, plus une série d'entraînement avec une mesure par seconde, soit environ 2,6 millions de points.",
         "how": "Zoomez sur n'importe quel graphique et faites-le glisser pour avancer ou reculer dans le temps. Les autres graphiques suivent, pour comparer au même instant.",
-        "why": "Comparer la demande à la prévision et au mode de production montre quand le réseau a été sous tension et comment il a réagi."
+        "why": "Comparer la demande à la prévision et au mode de production montre quand le réseau a été sous tension et comment il a réagi.",
+        "tech": [
+          "Des graphiques canvas sur un axe temporel commun : zoom, déplacement, brosse d'aperçu et réticules synchronisés, tout au clavier, avec une vue tableau par graphique pour les lecteurs d'écran.",
+          "Environ 2,6 millions de points à la seconde sont sous-échantillonnés par du Rust compilé en WebAssembly dans un Web Worker : min/max garde chaque pic, LTTB garde la forme.",
+          "30 jours deviennent environ 3 455 points en environ 5,8 ms ; le thread principal ne fait que dessiner (moins de 1 ms, contre 19,7 ms avant). LTTB en WASM est environ 1,4 fois plus rapide qu’en JS.",
+          "Un sélecteur JS/WASM et un banc d’essai qui tourne sur votre machine ; un test de parité prouve que les deux moteurs renvoient les mêmes points."
+        ]
       },
       "alarms": {
         "what": "Une liste en direct des alertes du réseau d'entraînement, par exemple une ligne qui transporte trop d'électricité ou une tension trop basse.",
         "looking": "Les nouvelles alarmes apparaissent dès qu'elles surviennent. Les compteurs du haut indiquent combien sont actives et combien n'ont encore été prises en charge par personne.",
         "how": "Filtrez par gravité ou par zone, et mettez le flux en pause pour lire sans que la liste bouge. Acquittez une alarme pour signaler à tous ceux qui regardent que vous vous en occupez ; ils le voient aussitôt.",
-        "why": "Dans une vraie salle de conduite, les alarmes signalent aux opérateurs qu'une intervention est nécessaire. Les acquitter évite que deux personnes traitent le même problème."
+        "why": "Dans une vraie salle de conduite, les alarmes signalent aux opérateurs qu'une intervention est nécessaire. Les acquitter évite que deux personnes traitent le même problème.",
+        "tech": [
+          "Un second service Cloud Run (Node 22 + ws) diffuse la simulation par WebSocket chaque seconde, et ne tourne que lorsqu'un client est connecté.",
+          "Un endpoint de streaming RTK Query intègre chaque message au cache avec un réducteur pur ; il se reconnecte avec un délai croissant et se met en pause hors ligne.",
+          "Le serveur diffuse les acquittements : tous les onglets ouverts se mettent à jour en même temps.",
+          "Les nouvelles alarmes sont annoncées aux lecteurs d'écran via des régions live."
+        ]
       },
       "map": {
         "what": "Une carte du Texas avec tous les postes, centrales, zones de consommation et lignes du réseau d'entraînement.",
         "looking": "Les couleurs indiquent la charge actuelle de chaque équipement, mise à jour en direct. La légende explique les couleurs, et les interrupteurs de couches affichent ou masquent chaque type d'équipement.",
         "how": "Zoomez et déplacez la carte comme n'importe quelle carte en ligne. Cliquez sur un point ou une ligne pour le sélectionner et voir ses détails ; les autres pages le mettent aussi en évidence. Choisissez Afficher en tableau pour lister tout ce qui figure sur la carte.",
-        "why": "Voir où se trouvent les contraintes aide les opérateurs à comprendre un problème d'un coup d'œil, par exemple plusieurs lignes chargées dans la même région."
+        "why": "Voir où se trouvent les contraintes aide les opérateurs à comprendre un problème d'un coup d'œil, par exemple plusieurs lignes chargées dans la même région.",
+        "tech": [
+          "MapLibre GL (WebGL) avec les tuiles vectorielles OpenFreeMap sans clé d’API, chargé uniquement sur cette page ; les styles clair et sombre suivent le thème.",
+          "769 lignes, 400 postes, 300 centrales et 400 charges changent de couleur chaque seconde via feature-state, uniquement pour les équipements modifiés ; les données ne sont jamais rechargées entièrement.",
+          "L'état est indiqué par la forme et le texte en plus de la couleur, et Afficher en tableau est l'alternative accessible au canvas.",
+          "La sélection est dans l'URL : la carte vole vers l'équipement choisi n'importe où, et les liens se partagent."
+        ]
       },
       "network": {
         "what": "Le réseau d'entraînement dessiné comme un graphe : quels postes sont reliés entre eux, et par quelles lignes.",
         "looking": "Une arborescence liste chaque zone et chaque équipement, et un schéma dessine les connexions. La couleur des lignes montre la charge en direct ou le résultat d'une étude de scénario.",
         "how": "Sélectionnez un équipement dans l'arborescence ou sur le schéma. Dans l'étude de scénario, déclenchez une ligne, mettez un équipement hors service ou modifiez une charge, et voyez comment l'énergie circulerait après le changement. Annulez ou réinitialisez à tout moment.",
-        "why": "Avant de retirer une ligne pour travaux, les ingénieurs vérifient que le reste du réseau peut absorber l'énergie supplémentaire. Cette page montre cette vérification de façon simple."
+        "why": "Avant de retirer une ligne pour travaux, les ingénieurs vérifient que le reste du réseau peut absorber l'énergie supplémentaire. Cette page montre cette vérification de façon simple.",
+        "tech": [
+          "Un graphe React Flow de 400 postes placés selon la géographie et de 769 lignes, avec mini-carte et filtre par zone.",
+          "Les études de scénario lancent un vrai calcul de répartition DC : matrice de susceptance, LU dense avec pivot partiel, détection d'îlots par union-find et dispatch par ordre de mérite.",
+          "Déclencher une ligne : le bouton répond en 98 ms et les résultats complets arrivent en 324 ms.",
+          "Les scénarios sont dans l'URL (study=), une étude se partage donc ; l'arborescence suit le modèle d'arbre WAI-ARIA."
+        ]
       },
       "incidents": {
         "what": "Des rapports écrits sur des événements du réseau, par exemple une coupure ou un équipement tombé en panne.",
         "looking": "Une liste de rapports avec leur statut et leur gravité. Un rapport d'exemple montre à quoi ressemble un rapport terminé.",
         "how": "Créez un rapport, liez les équipements concernés, ajoutez des actions de suivi et joignez des documents PDF. Les rapports sont enregistrés uniquement dans ce navigateur ; rien n'est envoyé.",
-        "why": "Écrire ce qui s'est passé et ce qui sera fait est la façon dont les équipes tirent les leçons des incidents et évitent qu'ils se reproduisent."
+        "why": "Écrire ce qui s'est passé et ce qui sera fait est la façon dont les équipes tirent les leçons des incidents et évitent qu'ils se reproduisent.",
+        "tech": [
+          "Éditeur riche Tiptap avec mentions @ d'équipements, listes de tâches et sauvegarde automatique ; les mises à jour optimistes de RTK Query évitent que la sauvegarde déplace le curseur.",
+          "Rapports et PDF sont stockés dans IndexedDB : ils fonctionnent hors ligne et ne quittent jamais le navigateur.",
+          "Visionneuse pdf.js avec recherche, zoom et texte sélectionnable ; scripts et XFA désactivés, et les fichiers importés sont vérifiés par type MIME et signature %PDF-, jusqu’à 10 Mo.",
+          "La première page d'un PDF s'affiche en 540 ms."
+        ]
       }
     }
   }
