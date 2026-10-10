@@ -17,13 +17,18 @@ import {
   Typography,
 } from '@mui/material';
 import { IconButton, useAnnounce } from '@pgo/ui';
+import dynamic from 'next/dynamic';
 import { useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAddAttachmentMutation, useRemoveAttachmentMutation } from '../api';
 import { INCIDENTS_NAMESPACE } from '../i18n';
 import type { Incident } from '../model';
 import { storeUpload, UploadError } from '../storage/uploads';
-import { PdfViewer } from './PdfViewer';
+
+// The viewer loads when a PDF is opened; pdf.js itself is a further dynamic import.
+const PdfViewer = dynamic(() => import('./PdfViewer').then((module) => module.PdfViewer), {
+  ssr: false,
+});
 
 interface AttachmentsProps {
   incident: Incident;

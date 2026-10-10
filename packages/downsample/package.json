@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "coverage": "vitest run --coverage",
     "build:wasm": "wasm-pack build rust --target web --release --out-dir ../pkg --out-name downsample --no-pack && node -e \"require('fs').rmSync('pkg/.gitignore', { force: true })\"",
     "test:rust": "cargo fmt --manifest-path rust/Cargo.toml --check && cargo clippy --manifest-path rust/Cargo.toml --all-targets -- -D warnings && cargo test --manifest-path rust/Cargo.toml"
   },

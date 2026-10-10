@@ -6,6 +6,7 @@ import ReportOutlined from '@mui/icons-material/ReportOutlined';
 import { Box, Button, Chip, CircularProgress, Stack, Typography } from '@mui/material';
 import { ConfirmDialog, EmptyState, Panel } from '@pgo/ui';
 import type { JSONContent } from '@tiptap/core';
+import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -22,8 +23,14 @@ import {
   type ViewerLocation,
 } from '../url';
 import { Attachments } from './Attachments';
-import { ReportEditor } from './ReportEditor';
 import { ReportHeader } from './ReportHeader';
+
+// Tiptap (about 150 kB) loads only when a report is shown, not on the list page that shares
+// this feature's modules. The placeholder keeps the editor's height, so nothing shifts.
+const ReportEditor = dynamic(() => import('./ReportEditor').then((module) => module.ReportEditor), {
+  ssr: false,
+  loading: () => <Box sx={{ minHeight: 340 }} />,
+});
 
 type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 

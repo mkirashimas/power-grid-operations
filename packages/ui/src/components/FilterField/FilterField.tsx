@@ -61,6 +61,8 @@ export const FilterField = ({
           ) : undefined,
         },
       }}
+      // The clear button above replaces the browser's own one for search inputs.
+      sx={{ '& input::-webkit-search-cancel-button': { display: 'none' } }}
     />
   );
 };

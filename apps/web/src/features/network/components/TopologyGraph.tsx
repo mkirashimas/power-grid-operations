@@ -2,6 +2,7 @@
 
 import '@xyflow/react/dist/style.css';
 import type { TelemetryStatus } from '@pgo/grid-model';
+import { motionDuration } from '@pgo/ui';
 import { Box } from '@mui/material';
 import { useColorScheme, useTheme } from '@mui/material/styles';
 import {
@@ -13,10 +14,11 @@ import {
   useReactFlow,
   type Edge,
 } from '@xyflow/react';
-import { useEffect, useId, useMemo, useRef } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, memo } from 'react';
 import type { GridNetwork } from '../engine/network';
 import type { ZoneScope } from '../slice';
-import { SubstationNode, type SubstationFlowNode } from './SubstationNode';
+import { reuseUnchanged } from '../stable';
+import { SUBSTATION_NODE_STYLES, SubstationNode, type SubstationFlowNode } from './SubstationNode';
 
 const NODE_TYPES = { substation: SubstationNode };
 /** Pixels per degree of longitude (latitude is scaled to match at Texas latitudes). */
@@ -27,6 +29,22 @@ const project = ({ lat, lon }: { lat: number; lon: number }) => ({
   x: (lon + 107) * SCALE * COS_LAT,
   y: (37 - lat) * SCALE,
 });
+
+// What a node or edge draws: when it is unchanged, the previous object is kept.
+const sameNode = (a: SubstationFlowNode, b: SubstationFlowNode) =>
+  a.position.x === b.position.x &&
+  a.position.y === b.position.y &&
+  a.data.label === b.data.label &&
+  a.data.status === b.data.status &&
+  a.data.selected === b.data.selected &&
+  a.data.deEnergized === b.data.deEnergized;
+
+const sameEdge = (a: Edge, b: Edge) =>
+  a.source === b.source &&
+  a.target === b.target &&
+  a.style?.stroke === b.style?.stroke &&
+  a.style?.strokeWidth === b.style?.strokeWidth &&
+  a.style?.strokeDasharray === b.style?.strokeDasharray;
 
 export interface TopologyGraphProps {
   network: GridNetwork;
@@ -98,37 +116,45 @@ const Graph = ({
     )?.bus;
   }, [network, selectedId]);
 
+  // Previous nodes and edges, reused when unchanged (see reuseUnchanged).
+  const [nodeCache] = useState(() => new Map<string, SubstationFlowNode>());
+  const [edgeCache] = useState(() => new Map<string, Edge>());
+
   const nodes: SubstationFlowNode[] = useMemo(
     () =>
-      network.buses.flatMap((bus, index) =>
-        zone !== 'all' && bus.zone !== zone
-          ? []
-          : [
-              {
-                id: bus.id,
-                type: 'substation' as const,
-                position: project(bus),
-                data: {
-                  label: bus.name,
-                  status: busStatus(index),
-                  selected: selectedBus === index,
-                  deEnergized: deEnergized.has(bus.id),
+      reuseUnchanged(
+        nodeCache,
+        network.buses.flatMap((bus, index) =>
+          zone !== 'all' && bus.zone !== zone
+            ? []
+            : [
+                {
+                  id: bus.id,
+                  type: 'substation' as const,
+                  position: project(bus),
+                  data: {
+                    label: bus.name,
+                    status: busStatus(index),
+                    selected: selectedBus === index,
+                    deEnergized: deEnergized.has(bus.id),
+                  },
+                  draggable: false,
+                  connectable: false,
+                  // Fixed size: the minimap only draws nodes with known dimensions, and these
+                  // nodes are not fed back through onNodesChange (the graph is read-only).
+                  width: 10,
+                  height: 10,
                 },
-                draggable: false,
-                connectable: false,
-                // Fixed size: the minimap only draws nodes with known dimensions, and these
-                // nodes are not fed back through onNodesChange (the graph is read-only).
-                width: 10,
-                height: 10,
-              },
-            ],
+              ],
+        ),
+        sameNode,
       ),
-    [network, zone, busStatus, selectedBus, deEnergized],
+    [network, zone, busStatus, selectedBus, deEnergized, nodeCache],
   );
 
   const edges: Edge[] = useMemo(() => {
     const visible = new Set(nodes.map((node) => node.id));
-    return network.lines.flatMap((line, index) => {
+    const next = network.lines.flatMap((line, index) => {
       const source = network.buses[line.from].id;
       const target = network.buses[line.to].id;
       if (!visible.has(source) || !visible.has(target)) return [];
@@ -153,7 +179,8 @@ const Graph = ({
         },
       ];
     });
-  }, [network, nodes, lineStatus, selectedId, palette]);
+    return reuseUnchanged(edgeCache, next, sameEdge);
+  }, [network, nodes, lineStatus, selectedId, palette, edgeCache]);
 
   // The first view: centred on the selected asset (e.g. a shared link), or the whole grid.
   const ready = useRef(false);
@@ -169,7 +196,7 @@ const Graph = ({
 
   // Later selections, from anywhere (tree, map, a result row), are centred.
   useEffect(() => {
-    if (ready.current && selectedId) centreOn(selectedId, 400);
+    if (ready.current && selectedId) centreOn(selectedId, motionDuration(400));
     // centreOn reads the network and flow, which are stable.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId]);
@@ -179,7 +206,9 @@ const Graph = ({
   useEffect(() => {
     if (!ready.current || shownZone.current === zone) return;
     shownZone.current = zone;
-    const frame = requestAnimationFrame(() => flow.fitView({ padding: 0.1, duration: 300 }));
+    const frame = requestAnimationFrame(() =>
+      flow.fitView({ padding: 0.1, duration: motionDuration(300) }),
+    );
     return () => cancelAnimationFrame(frame);
   }, [zone, flow]);
 
@@ -196,6 +225,7 @@ const Graph = ({
         borderRadius: 1,
         overflow: 'hidden',
         bgcolor: 'background.paper',
+        ...SUBSTATION_NODE_STYLES,
         [t.breakpoints.down('sm')]: { height: 420 },
       })}
     >
@@ -240,8 +270,11 @@ const Graph = ({
 };
 
 /** The grid as a graph: substations at their geographic positions, lines between them. */
-export const TopologyGraph = (props: TopologyGraphProps) => (
-  <ReactFlowProvider>
-    <Graph {...props} />
-  </ReactFlowProvider>
-);
+/** Memoised: the network view re-renders on every live tick; the graph only when its props change. */
+export const TopologyGraph = memo(function TopologyGraph(props: TopologyGraphProps) {
+  return (
+    <ReactFlowProvider>
+      <Graph {...props} />
+    </ReactFlowProvider>
+  );
+});

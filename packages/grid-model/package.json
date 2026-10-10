@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "coverage": "vitest run --coverage",
     "fetch:eia": "node --env-file=../../apps/web/.env.local --experimental-strip-types --disable-warning=ExperimentalWarning scripts/fetch-eia.ts"
   },
   "devDependencies": {

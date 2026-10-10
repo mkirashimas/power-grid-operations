@@ -35,16 +35,24 @@ export const AlarmKpis = ({
         gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 200px), 1fr))',
       }}
     >
-      <StatCard label={t('kpi.activeAlarms')} value={formats.count.format(counts.activeAlarms)} />
+      {/* Directly under the page title, so the cards' headings are level 2. */}
       <StatCard
+        headingLevel={2}
+        label={t('kpi.activeAlarms')}
+        value={formats.count.format(counts.activeAlarms)}
+      />
+      <StatCard
+        headingLevel={2}
         label={t('kpi.activeWarnings')}
         value={formats.count.format(counts.activeWarnings)}
       />
       <StatCard
+        headingLevel={2}
         label={t('kpi.unacknowledged')}
         value={formats.count.format(counts.unacknowledged)}
       />
       <StatCard
+        headingLevel={2}
         label={t('kpi.updates')}
         value={formats.rate.format(updatesPerSecond)}
         caption={t('kpi.updatesCaption')}

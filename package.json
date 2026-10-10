@@ -18,7 +18,10 @@
     "lint": "yarn workspaces run lint",
     "typecheck": "yarn workspaces run typecheck",
     "test": "yarn workspaces run test",
+    "coverage": "yarn workspaces run coverage",
     "e2e": "yarn workspace @pgo/web e2e",
+    "measure": "yarn workspace @pgo/web measure",
+    "demo:record": "yarn workspace @pgo/web demo:record",
     "data:fetch": "yarn workspace @pgo/grid-model fetch:eia",
     "wasm:build": "yarn workspace @pgo/downsample build:wasm",
     "wasm:test": "yarn workspace @pgo/downsample test:rust",
@@ -28,6 +31,7 @@
     "build:storybook": "yarn workspace @pgo/ui build:storybook"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "5.0.3",
     "concurrently": "^10.0.6",
     "prettier": "^3.9.9"
   },

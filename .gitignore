@@ -35,3 +35,6 @@ yarn-error.log*
 
 # Rust build output (the wasm-pack output in packages/downsample/pkg is committed)
 packages/downsample/rust/target
+
+# Demo video (yarn demo:record); uploaded, not committed
+demo

@@ -23,5 +23,6 @@ export default defineConfig([
     'playwright-report/**',
     'test-results/**',
     'public/storybook/**',
+    'coverage/**',
   ]),
 ]);

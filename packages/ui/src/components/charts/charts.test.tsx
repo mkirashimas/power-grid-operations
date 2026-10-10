@@ -249,8 +249,8 @@ describe('TimeSeriesPane with async downsampling', () => {
     const { calls, downsample } = deferred();
     renderWithTheme(<Charts downsample={downsample} />);
 
-    // 800 px minus the 72 px of axis margins.
-    expect(calls.map((call) => call.buckets)).toEqual([728, 728]);
+    // 800 px minus the 88 px of axis margins.
+    expect(calls.map((call) => call.buckets)).toEqual([712, 712]);
     await act(async () => {
       calls[0].resolve(line(100, 200));
       calls[1].resolve(line(300, 400));
