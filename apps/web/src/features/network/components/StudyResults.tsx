@@ -13,7 +13,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toLanguage } from '../../../i18n/language';
 import type { StudyComparison, StudyResult } from '../engine/study';
@@ -21,7 +21,7 @@ import { NETWORK_NAMESPACE } from '../i18n';
 import { studyStatus } from '../status';
 
 /** What the study changes: new overloads, islands, and the lines that moved most. */
-export const StudyResults = ({
+export const StudyResults = memo(function StudyResults({
   hasEdits,
   study,
   comparison,
@@ -31,7 +31,7 @@ export const StudyResults = ({
   study: StudyResult;
   comparison: StudyComparison;
   onSelect: (assetId: string) => void;
-}) => {
+}) {
   const { t, i18n } = useTranslation(NETWORK_NAMESPACE);
   const language = toLanguage(i18n.resolvedLanguage);
   const formats = useMemo(
@@ -120,4 +120,4 @@ export const StudyResults = ({
       </TableContainer>
     </Stack>
   );
-};
+});

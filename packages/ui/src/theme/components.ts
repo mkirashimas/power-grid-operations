@@ -2,6 +2,32 @@ import type { Components, Theme } from '@mui/material/styles';
 
 // Overrides use theme.vars (CSS variables) so a single stylesheet serves both color schemes.
 export const components: Components<Omit<Theme, 'components'>> = {
+  MuiCssBaseline: {
+    styleOverrides: {
+      // Honour the system's reduced-motion setting: no transitions, animations or smooth
+      // scrolling. JavaScript animations use motionDuration() (motion.ts).
+      '@media (prefers-reduced-motion: reduce)': {
+        '*, *::before, *::after': {
+          animationDuration: '0.01ms !important',
+          animationIterationCount: '1 !important',
+          transitionDuration: '0.01ms !important',
+          scrollBehavior: 'auto !important',
+        },
+      },
+    },
+  },
+  MuiButtonBase: {
+    styleOverrides: {
+      // A keyboard focus ring that doesn't depend on the ripple or on colour alone, so it also
+      // shows in forced-colors (high contrast) mode, where backgrounds and shadows are dropped.
+      root: ({ theme }) => ({
+        '&.Mui-focusVisible': {
+          outline: `2px solid ${(theme.vars || theme).palette.primary.main}`,
+          outlineOffset: 2,
+        },
+      }),
+    },
+  },
   MuiAppBar: {
     defaultProps: { elevation: 0, color: 'inherit', position: 'fixed' },
     styleOverrides: {

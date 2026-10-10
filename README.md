@@ -5,6 +5,27 @@ frontend for the energy industry can be built: large data grids, advanced charts
 maps, a document viewer with rich text, live updates, Rust/WASM number crunching, and an
 accessible, tested component library.
 
+**Live demo:** _link added after the first release (see [M11](docs/m11-finish.md#release-checklist))._
+
+![The network view: asset tree, topology graph and a what-if study](docs/screenshots/network.jpg)
+
+## Demo
+
+An 80-second tour of every module, recorded with `yarn demo:record`:
+_video link added after upload._
+
+<details>
+<summary><b>Screenshots</b></summary>
+
+|                                            |                                                          |
+| ------------------------------------------ | -------------------------------------------------------- |
+| ![Overview](docs/screenshots/overview.jpg) | ![Telemetry](docs/screenshots/telemetry.jpg)             |
+| ![Charts](docs/screenshots/charts.jpg)     | ![Charts in dark mode](docs/screenshots/charts-dark.jpg) |
+| ![Alarms](docs/screenshots/alarms.jpg)     | ![Map](docs/screenshots/map.jpg)                         |
+| ![Network](docs/screenshots/network.jpg)   | ![Incident report](docs/screenshots/incidents.jpg)       |
+
+</details>
+
 ## Product scope
 
 One app, a grid operations console:
@@ -84,6 +105,8 @@ data.
 - **With `EIA_API_KEY`:** the server fetches the last 30 days live and caches them for an hour.
 - **Without the key, or if EIA is down:** it serves a committed snapshot,
   `packages/grid-model/data/ercot-snapshot.json`, refreshed with `yarn data:fetch`.
+- **After an EIA failure or timeout (8 s):** the snapshot is served for 10 minutes before EIA
+  is tried again, so an outage never slows pages down. It is logged as one warning.
 - The page always shows which of the two it is using ("live" or "snapshot of &lt;date&gt;").
 - The key is only read on the server and never reaches the browser.
 
@@ -126,7 +149,9 @@ apps/web/          Next.js app
   src/theme/       MUI locales (the theme itself lives in packages/ui)
   src/types/       app-wide types and PATHS
   src/server/      server-only data access (EIA client with snapshot fallback, assets)
-  e2e/             Playwright tests
+  e2e/             Playwright tests (pages, keyboard, accessibility sweep)
+  measure/         yarn measure: load and interaction timings
+  e2e-demo/        yarn demo:record: the scripted demo tour
   scripts/         sample-pdfs.ts: writes the synthetic PDFs in public/samples/incidents
 packages/
   downsample/      min/max and LTTB downsampling in TypeScript and in Rust
@@ -153,12 +178,15 @@ docs/              deployment guide and one plan per milestone
 | `yarn build` / `yarn start`           | production build and server                                                              |
 | `yarn lint` / `yarn typecheck`        | ESLint / TypeScript                                                                      |
 | `yarn test`                           | unit and component tests (Vitest), in every workspace                                    |
+| `yarn coverage`                       | the same with V8 coverage; fails below each workspace's thresholds (CI runs this)        |
 | `yarn data:fetch`                     | downloads the last 30 days of ERCOT data from EIA into the committed snapshot            |
 | `yarn wasm:build`                     | rebuilds the Rust/WASM module into `packages/downsample/pkg` (needs Rust and wasm-pack)  |
 | `yarn wasm:test`                      | `cargo fmt --check`, `cargo clippy` and `cargo test` for the Rust crate                  |
 | `yarn storybook`                      | local Storybook at http://localhost:6006, with hot reload                                |
 | `yarn build:storybook`                | static Storybook into `apps/web/public/storybook`, served by the web app at `/storybook` |
 | `yarn e2e`                            | builds, starts and runs the Playwright tests (desktop and mobile, with axe checks)       |
+| `yarn measure`                        | builds, starts and measures every page and key interactions (README performance tables)  |
+| `yarn demo:record`                    | records the demo tour (`demo/*.webm`) and the README screenshots (`docs/screenshots`)    |
 | `yarn workspace @pgo/web samples:pdf` | rewrites the synthetic sample PDFs in `apps/web/public/samples/incidents`                |
 | `yarn format`                         | Prettier                                                                                 |
 
@@ -244,6 +272,15 @@ Run `yarn workspace @pgo/web playwright install chromium` once before the first 
     `%PDF-` signature and a 10 MB limit. The open document and page are in the URL.
 - **Accessibility checked in CI.** Every Playwright page test runs axe (WCAG 2.1 AA) in both
   color schemes. The shell has a skip link, labelled landmarks and `aria-current` navigation.
+  CI also checks what axe can't:
+  - every Tab stop on every page shows a visible focus ring, and focus is never trapped
+  - one `h1` per page and no skipped heading levels
+  - no horizontal scroll at 320 CSS px (400 % zoom)
+  - reduced motion: no transitions, and no animated map or graph moves
+  - forced colors: focus and status stay visible
+- **Responsive under live data.** The network view keeps unchanged graph elements (React Flow
+  skips them), and it renders a what-if study from a deferred value, so a click responds in
+  about 100 ms even though re-drawing 1,169 graph elements takes longer.
 - **Open demo.** There is no sign-in. All data is public or synthetic.
 
 </details>
@@ -278,6 +315,40 @@ desktop, production build.
 - Drawing the result takes under 1 ms on the main thread.
 - In M4, downsampling and drawing ran on the main thread and took 19.7 ms for 30 days.
 - The series is generated once, in the worker, so the page never blocks.
+
+Every page and the key interactions, measured with `yarn measure` (details in
+[M11](docs/m11-finish.md#measurements)). Desktop Chromium, production build, cold cache, median of 5 runs:
+
+| Page                       | Ready    | LCP    | CLS   | TBT    | JS (compressed) |
+| -------------------------- | -------- | ------ | ----- | ------ | --------------- |
+| `/`                        | 307 ms   | 172 ms | 0.000 | 5 ms   | 313 kB          |
+| `/telemetry`               | 1,199 ms | 180 ms | 0.007 | 7 ms   | 323 kB          |
+| `/charts`                  | 1,260 ms | 220 ms | 0.000 | 7 ms   | 324 kB          |
+| `/alarms`                  | 484 ms   | 160 ms | 0.036 | 7 ms   | 323 kB          |
+| `/map`                     | 1,245 ms | 180 ms | 0.000 | 84 ms  | 597 kB          |
+| `/network`                 | 816 ms   | 232 ms | 0.000 | 375 ms | 404 kB          |
+| `/incidents`               | 557 ms   | 128 ms | 0.000 | 27 ms  | 335 kB          |
+| `/incidents/inc-sample-01` | 1,239 ms | 484 ms | 0.011 | 62 ms  | 609 kB          |
+
+- **Ready:** the page's own data is loaded and drawn. Examples: the 1M-row grid, the 2.6M-point
+  series, the live feed, the first PDF page.
+- **TBT:** main-thread blocking time during the load.
+
+| Interaction                              | Median |
+| ---------------------------------------- | ------ |
+| Network: trip a line → button responds   | 98 ms  |
+| Network: trip a line → study results     | 324 ms |
+| Incidents: open a PDF → first page drawn | 540 ms |
+| Telemetry: filter 1,076,544 rows by zone | 443 ms |
+
+Lighthouse 12, desktop preset:
+
+| Page         | Performance | Accessibility | Best practices | SEO |
+| ------------ | ----------- | ------------- | -------------- | --- |
+| `/`          | 100         | 100           | 100            | 100 |
+| `/telemetry` | 100         | 100           | 100            | 100 |
+| `/incidents` | 99          | 100           | 100            | 100 |
+| `/network`   | 88          | 100           | 100            | 100 |
 
 </details>
 
@@ -384,3 +455,4 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 - [M8: Live map](docs/m8-live-map.md)
 - [M9: Network view](docs/m9-network-view.md)
 - [M10: Incident reports](docs/m10-incident-reports.md)
+- [M11: Finish](docs/m11-finish.md)

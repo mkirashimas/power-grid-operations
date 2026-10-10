@@ -2,6 +2,7 @@
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Asset } from '@pgo/grid-model';
+import { prefersReducedMotion } from '@pgo/ui';
 import { Box } from '@mui/material';
 import { useColorScheme, useTheme } from '@mui/material/styles';
 import type {
@@ -317,7 +318,9 @@ export const AssetMap = (props: AssetMapProps) => {
     if (selectedIndex === null) return;
     const { lon, lat } = assets[selectedIndex];
     if (!map.getBounds().contains([lon, lat])) {
-      map.flyTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), 7) });
+      const target = { center: [lon, lat] as [number, number], zoom: Math.max(map.getZoom(), 7) };
+      if (prefersReducedMotion()) map.jumpTo(target);
+      else map.flyTo(target);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIndex, assets]);

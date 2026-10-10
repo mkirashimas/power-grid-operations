@@ -146,6 +146,28 @@ not the roadmap.
   folders. Dynamic routes get builder functions.
 - **Tests.** Every page gets a Playwright test with axe checks in light and dark mode. Components
   with behavior get Vitest + Testing Library tests.
+  - **Coverage gate:** CI runs `yarn coverage`. Each workspace's `vitest.config.ts` has
+    thresholds about 2 points below the measured values; raise them when coverage grows, and
+    never lower them to make a change pass. Library glue (canvas, MapLibre, React Flow, pdf.js,
+    workers) is covered by e2e, not mocked in unit tests.
+  - **New pages** go into `e2e/support/pages.ts` (with a ready check), so the accessibility
+    sweep (`a11y-sweep.spec.ts`, `keyboard.spec.ts`) and `yarn measure` include them.
+- **Accessibility details** (from the M11 sweep):
+  - Keyboard focus must show without colour alone: MUI ButtonBase gets an outline in the theme;
+    custom focus styles use an outline, not a background or shadow (forced colors drops them).
+  - One `h1` per page and no skipped heading levels (e.g. `StatCard headingLevel`).
+  - JavaScript animations take `motionDuration(ms)` from `@pgo/ui` (0 under reduced motion);
+    CSS transitions are stopped by the theme.
+- **Performance patterns:**
+  - Large React Flow graphs keep unchanged node and edge objects (`reuseUnchanged` in
+    `features/network/stable.ts`); style many identical nodes with one container stylesheet,
+    not per-node `sx`.
+  - Expensive views driven by user edits render from `useDeferredValue`, with the heavy children
+    memoised and their callbacks stable.
+  - Heavy single-page libraries (Tiptap, the PDF viewer) load with `next/dynamic`, so routes that
+    share the feature's modules don't download them. Check route JS with `yarn measure`.
+- **Demo and screenshots:** `yarn demo:record` (`apps/web/e2e-demo/tour.spec.ts`) re-records the
+  video (git-ignored `demo/`) and `docs/screenshots/*.jpg`. Update it when the UI changes.
 - **Server-only code** (data access, secrets) lives in `apps/web/src/server` and imports
   `server-only`. It is infrastructure, like `store/`; features call it from server
   components and route handlers.

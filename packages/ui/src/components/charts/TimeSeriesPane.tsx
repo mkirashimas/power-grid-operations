@@ -27,7 +27,8 @@ import type {
 } from './types.ts';
 import { buildPaneView, type PaneView } from './view.ts';
 
-const MARGIN = { top: 8, right: 12, bottom: 22, left: 60 };
+// The left margin fits a y label such as "100,000 MW" at the axis font size.
+const MARGIN = { top: 8, right: 12, bottom: 22, left: 76 };
 const TABLE_ROW_LIMIT = 5000;
 
 export interface TimeSeriesPaneProps {
@@ -196,7 +197,11 @@ export const TimeSeriesPane = ({
       context.textBaseline = 'top';
       const format = timeTickFormat(domain, locale, timeZone);
       timeTicks(domain, Math.max(2, Math.floor(plotWidth / 120)), timeZone).forEach((tick) => {
-        context.fillText(format(tick), x(tick), height - MARGIN.bottom + 6);
+        // Centred under the tick, but kept inside the canvas at both ends.
+        const label = format(tick);
+        const half = context.measureText(label).width / 2;
+        const tx = Math.min(Math.max(x(tick), half + 1), width - half - 1);
+        context.fillText(label, tx, height - MARGIN.bottom + 6);
       });
 
       context.save();

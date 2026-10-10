@@ -14,5 +14,13 @@ export default defineConfig({
     include: ['src/**/*.test.{ts,tsx}'],
     setupFiles: ['./src/test/setup.ts'],
     css: false,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text-summary', 'json-summary', 'html'],
+      // About 2 points below the measured values (M11): CI fails if coverage drops.
+      thresholds: { statements: 50, branches: 38, functions: 47, lines: 50 },
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['**/*.test.{ts,tsx}', '**/*.stories.tsx', '**/*.d.ts', 'src/test/**'],
+    },
   },
 });

@@ -5,7 +5,7 @@ import { FilterField } from '@pgo/ui';
 import { Box, Stack, Typography } from '@mui/material';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItem, type TreeItemProps } from '@mui/x-tree-view/TreeItem';
-import { createContext, forwardRef, useContext, useMemo, useState } from 'react';
+import { createContext, forwardRef, useContext, useMemo, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NETWORK_NAMESPACE } from '../i18n';
 import { filterTree, pathTo, type AssetTree as Tree, type TreeNode } from '../tree';
@@ -61,7 +61,12 @@ export interface AssetTreeProps {
  * End, type-ahead) makes it the keyboard path through the network. A selection made anywhere
  * expands the tree down to the selected asset.
  */
-export const AssetTree = ({ tree, statusOf, selectedId, onSelect }: AssetTreeProps) => {
+export const AssetTree = memo(function AssetTree({
+  tree,
+  statusOf,
+  selectedId,
+  onSelect,
+}: AssetTreeProps) {
   const { t } = useTranslation(NETWORK_NAMESPACE);
   const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState<string[]>([]);
@@ -122,6 +127,16 @@ export const AssetTree = ({ tree, statusOf, selectedId, onSelect }: AssetTreePro
               if (id && !id.startsWith('zone:')) onSelect(id);
             }}
             slots={{ item: StatusItem }}
+            sx={{
+              // The default focus style is only a background tint, which forced-colors mode
+              // removes; an outline stays visible everywhere.
+              '& .MuiTreeItem-content[data-focused]': {
+                outline: 2,
+                outlineStyle: 'solid',
+                outlineColor: 'primary.main',
+                outlineOffset: -2,
+              },
+            }}
           />
         </StatusContext.Provider>
         {items.length === 0 && (
@@ -132,4 +147,4 @@ export const AssetTree = ({ tree, statusOf, selectedId, onSelect }: AssetTreePro
       </Box>
     </Stack>
   );
-};
+});

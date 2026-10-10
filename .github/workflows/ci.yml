@@ -28,7 +28,8 @@ jobs:
       - run: yarn format:check
       - run: yarn lint
       - run: yarn typecheck
-      - run: yarn test
+      # Unit tests with coverage; fails below each workspace's thresholds (vitest.config.ts).
+      - run: yarn coverage
       - run: yarn build:storybook
       - run: yarn build
 

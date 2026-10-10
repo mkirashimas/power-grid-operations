@@ -49,6 +49,7 @@ export {
   type VirtualGridProps,
 } from './components/VirtualGrid/VirtualGrid.tsx';
 export { VisuallyHidden } from './components/VisuallyHidden/VisuallyHidden.tsx';
+export { motionDuration, prefersReducedMotion } from './theme/motion.ts';
 export {
   CHART_SERIES,
   STATUSES,

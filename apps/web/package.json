@@ -10,9 +10,12 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
+    "coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "e2e": "playwright test",
-    "samples:pdf": "node --experimental-strip-types --no-warnings scripts/sample-pdfs.ts"
+    "samples:pdf": "node --experimental-strip-types --no-warnings scripts/sample-pdfs.ts",
+    "measure": "playwright test -c playwright.measure.config.ts",
+    "demo:record": "playwright test -c playwright.demo.config.ts"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",

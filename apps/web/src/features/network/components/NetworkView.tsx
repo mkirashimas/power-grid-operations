@@ -3,7 +3,7 @@
 import { WEATHER_ZONES, type TelemetryStatus } from '@pgo/grid-model';
 import { Panel, SegmentedControl } from '@pgo/ui';
 import { Box, MenuItem, Stack, TextField } from '@mui/material';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { findAsset, getAssets } from '../../../store/assets';
@@ -38,7 +38,13 @@ export const NetworkView = ({ url }: { url: string }) => {
   const { t } = useTranslation(NETWORK_NAMESPACE);
   const dispatch = useAppDispatch();
   useNetworkUrlSync();
-  const { mode, zone, edits } = useAppSelector(selectNetwork);
+  const viewState = useAppSelector(selectNetwork);
+  const { zone } = viewState;
+  // The controls follow the store at once; the study, the graph and the tree follow at low
+  // priority (interruptible), so a click responds immediately even though re-rendering the
+  // 1,169-element graph takes a few hundred ms on slower machines.
+  const mode = useDeferredValue(viewState.mode);
+  const edits = useDeferredValue(viewState.edits);
   const selectedId = useAppSelector(selectSelectedAssetId);
   const selected = findAsset(selectedId);
   const { data: feed = EMPTY_FEED } = useLiveFeedQuery(url);
@@ -87,7 +93,7 @@ export const NetworkView = ({ url }: { url: string }) => {
     [mode, lineOf, lineStatus, live],
   );
 
-  const select = (id: string) => dispatch(selectAsset(id));
+  const select = useCallback((id: string) => dispatch(selectAsset(id)), [dispatch]);
   const visibleBuses = network.buses.filter((bus) => zone === 'all' || bus.zone === zone);
   const visibleIds = new Set(visibleBuses.map((bus) => bus.id));
   const visibleLines = network.lines.filter(
@@ -100,7 +106,7 @@ export const NetworkView = ({ url }: { url: string }) => {
       <Stack direction="row" useFlexGap sx={{ gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
         <SegmentedControl<NetworkMode>
           label={t('mode.label')}
-          value={mode}
+          value={viewState.mode}
           options={[
             { value: 'live', label: t('mode.live') },
             { value: 'study', label: t('mode.study') },
@@ -163,7 +169,7 @@ export const NetworkView = ({ url }: { url: string }) => {
             <Stack spacing={3}>
               <WhatIfPanel
                 selected={selected}
-                edits={edits}
+                edits={viewState.edits}
                 onApply={(edit: StudyEdit) => dispatch(applyEdit(edit))}
                 onRemove={(edit: StudyEdit) => dispatch(removeEdit(edit))}
                 onReset={() => dispatch(clearEdits())}
