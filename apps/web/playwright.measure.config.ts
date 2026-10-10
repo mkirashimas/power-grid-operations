@@ -12,7 +12,13 @@ export default defineConfig({
   workers: 1,
   reporter: 'list',
   timeout: 300_000,
-  use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${PORT}`, locale: 'en-US' },
+  use: {
+    ...devices['Desktop Chrome'],
+    baseURL: `http://localhost:${PORT}`,
+    locale: 'en-US',
+    // Measure the network loads, without the service worker's precache downloads competing.
+    serviceWorkers: 'block',
+  },
   webServer: [
     {
       command: 'yarn workspace @pgo/realtime start',

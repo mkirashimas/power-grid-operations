@@ -18,10 +18,15 @@ export interface LiveSocketOptions {
   createSocket?: (url: string) => WebSocket;
 }
 
+const browserOffline = () => typeof navigator !== 'undefined' && navigator.onLine === false;
+
 /**
  * A WebSocket that reconnects with exponential backoff (1 s, 2 s, 4 s … up to 30 s). Status
  * goes connecting → (hello) → live; after a drop, reconnecting, and offline after several
  * failures in a row. "live" itself is set by the `hello` message, not here.
+ *
+ * While the browser is offline it doesn't retry: the status is "offline" at once, and the
+ * `online` event reconnects straight away with a fresh socket (and a fresh `hello` snapshot).
  */
 export const openLiveSocket = (
   url: string,
@@ -55,13 +60,32 @@ export const openLiveSocket = (
     current.onclose = () => {
       if (closed || socket !== current) return;
       failures += 1;
+      if (browserOffline()) {
+        onStatus('offline');
+        return;
+      }
       onStatus(failures >= offlineAfter ? 'offline' : 'reconnecting');
       timer = setTimeout(connect, Math.min(maxDelayMs, minDelayMs * 2 ** (failures - 1)));
     };
   };
 
+  const handleOffline = () => onStatus('offline');
+  // The old socket may look open but be dead: replace it rather than wait for its timeout.
+  const handleOnline = () => {
+    clearTimeout(timer);
+    failures = 0;
+    const previous = socket;
+    onStatus('reconnecting');
+    connect();
+    previous?.close();
+  };
+
   onStatus('connecting');
   connect();
+  if (typeof window !== 'undefined') {
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('online', handleOnline);
+  }
 
   return {
     send: (message) => {
@@ -72,6 +96,10 @@ export const openLiveSocket = (
     close: () => {
       closed = true;
       clearTimeout(timer);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('offline', handleOffline);
+        window.removeEventListener('online', handleOnline);
+      }
       socket?.close();
     },
   };

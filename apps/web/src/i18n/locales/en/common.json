@@ -1,5 +1,6 @@
 {
   "appName": "Power Grid Operations",
+  "appShortName": "Grid Ops",
   "appDescription": "Operations console for the Texas power grid: telemetry, forecasts, alarms and network topology.",
   "language": "Language",
   "openMenu": "Open menu",
@@ -29,6 +30,20 @@
     "title": "Page not found",
     "body": "The page you are looking for does not exist.",
     "home": "Back to overview"
+  },
+  "offline": {
+    "title": "You are offline",
+    "body": "This page has not been saved on this device yet. Pages you have opened before, and your incident reports, work without a connection.",
+    "home": "Back to overview"
+  },
+  "pwa": {
+    "install": "Install app",
+    "iosHint": "To install, tap Share, then Add to Home Screen.",
+    "offline": "You are offline. Pages and data you have opened before still work; live data resumes when you reconnect.",
+    "updateReady": "A new version is available.",
+    "reload": "Reload",
+    "dismiss": "Dismiss",
+    "shortcutNewIncident": "New incident"
   },
   "selection": {
     "label": "Selected asset",

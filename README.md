@@ -44,6 +44,8 @@ Across every module:
 
 - **Linked selection:** click an asset anywhere and every view follows.
 - **Shared component library:** accessible and tested.
+- **Installable and offline-ready (PWA):** pages you have opened, and your incident reports,
+  work without a connection. See [M12: Progressive Web App](docs/m12-pwa.md).
 
 ## Getting started
 
@@ -456,3 +458,4 @@ use it. See [docs/deploy.md](docs/deploy.md) for the deployment setup.
 - [M9: Network view](docs/m9-network-view.md)
 - [M10: Incident reports](docs/m10-incident-reports.md)
 - [M11: Finish](docs/m11-finish.md)
+- [M12: Progressive Web App](docs/m12-pwa.md)
