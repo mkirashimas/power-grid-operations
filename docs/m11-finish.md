@@ -144,6 +144,10 @@ Lighthouse 12, desktop preset:
 
 **Found, and fixed:**
 
+- **An EIA outage (a 502 from their API) slowed every page.** Each request waited for EIA to
+  fail, and the fallback was logged as an error. EIA requests now time out after 8 s. After a
+  failure, the snapshot is served for 10 minutes without calling EIA, and the fallback logs
+  one warning.
 - **`/incidents` shipped Tiptap (494 kB) on the list page.** The report's editor and PDF viewer
   now load with `next/dynamic`. The list page went from 471 to 335 kB.
 - **`/network` rebuilt all 1,169 graph elements** on every live tick and on every study. Two

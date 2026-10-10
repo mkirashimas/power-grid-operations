@@ -105,6 +105,8 @@ data.
 - **With `EIA_API_KEY`:** the server fetches the last 30 days live and caches them for an hour.
 - **Without the key, or if EIA is down:** it serves a committed snapshot,
   `packages/grid-model/data/ercot-snapshot.json`, refreshed with `yarn data:fetch`.
+- **After an EIA failure or timeout (8 s):** the snapshot is served for 10 minutes before EIA
+  is tried again, so an outage never slows pages down. It is logged as one warning.
 - The page always shows which of the two it is using ("live" or "snapshot of &lt;date&gt;").
 - The key is only read on the server and never reaches the browser.
 
