@@ -2,13 +2,13 @@
 
 This file records the settings for `mkirashimas/power-grid-operations` that live on GitHub, not in the code.
 
-| Setting        | Value                                                                 | Where                                      |
-| -------------- | --------------------------------------------------------------------- | ------------------------------------------ |
-| Default branch | `development`                                                         | Settings → General → Default branch        |
-| Release branch | `main`. A push deploys to Cloud Run.                                  | `.github/workflows/ci.yml`                 |
-| Actions vars   | `GCP_PROJECT_ID`, `GCP_REGION`, `GCP_SERVICE_ACCOUNT`, `GCP_WORKLOAD_IDENTITY_PROVIDER`, `EIA_SECRET_NAME` | Settings → Secrets and variables → Actions → **Variables** |
-| Actions secrets | none, because Workload Identity Federation means no keys are stored  |                                            |
-| Branch ruleset | `protect-main-dev`                                                    | Settings → Rules → Rulesets                |
+| Setting         | Value                                                                                                      | Where                                                      |
+| --------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Default branch  | `development`                                                                                              | Settings → General → Default branch                        |
+| Release branch  | `main`. A push deploys to Cloud Run.                                                                       | `.github/workflows/ci.yml`                                 |
+| Actions vars    | `GCP_PROJECT_ID`, `GCP_REGION`, `GCP_SERVICE_ACCOUNT`, `GCP_WORKLOAD_IDENTITY_PROVIDER`, `EIA_SECRET_NAME` | Settings → Secrets and variables → Actions → **Variables** |
+| Actions secrets | none, because Workload Identity Federation means no keys are stored                                        |                                                            |
+| Branch ruleset  | `protect-main-dev`                                                                                         | Settings → Rules → Rulesets                                |
 
 The values of the Actions variables are listed in [deploy.md](deploy.md#setup-record).
 
@@ -18,11 +18,11 @@ The values of the Actions variables are listed in [deploy.md](deploy.md#setup-re
 
 ## Ruleset `protect-main-dev`
 
-| Field             | Value                                                         |
-| ----------------- | ------------------------------------------------------------- |
-| Enforcement       | **Active**                                                    |
-| Bypass list       | Repository admin, mode **For pull requests only**             |
-| Target branches   | `Default` (`development`) and the pattern `main`              |
+| Field           | Value                                             |
+| --------------- | ------------------------------------------------- |
+| Enforcement     | **Active**                                        |
+| Bypass list     | Repository admin, mode **For pull requests only** |
+| Target branches | `Default` (`development`) and the pattern `main`  |
 
 **Rules turned on:**
 
@@ -50,9 +50,9 @@ The values of the Actions variables are listed in [deploy.md](deploy.md#setup-re
 
 ### Troubleshooting
 
-| Symptom                                                                  | Fix                                                                                                                       |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| "This ruleset does not target any resources and will not be applied"     | Step 4 is missing. Typing a pattern is not enough; you also have to click **Add inclusion target**. Then save.            |
-| Rules don't block anything                                               | Enforcement is set to Disabled or Evaluate. Set it to **Active**.                                                         |
-| PR merge is blocked and says it is waiting for a status check            | The check name doesn't match the job `name:` in `ci.yml` exactly. Remove it and pick it again from the list.               |
-| `git push --force` is rejected                                           | This is expected. Open a PR instead.                                                                                      |
+| Symptom                                                              | Fix                                                                                                            |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| "This ruleset does not target any resources and will not be applied" | Step 4 is missing. Typing a pattern is not enough; you also have to click **Add inclusion target**. Then save. |
+| Rules don't block anything                                           | Enforcement is set to Disabled or Evaluate. Set it to **Active**.                                              |
+| PR merge is blocked and says it is waiting for a status check        | The check name doesn't match the job `name:` in `ci.yml` exactly. Remove it and pick it again from the list.   |
+| `git push --force` is rejected                                       | This is expected. Open a PR instead.                                                                           |
