@@ -71,5 +71,23 @@
     "south-central": "South Central",
     "southern": "Southern",
     "west": "West"
+  },
+  "kinds": {
+    "substation": "Substation",
+    "line": "Line",
+    "generator": "Generator",
+    "load": "Load"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "hover": {
+    "loading": "Loading",
+    "studyLoading": "Loading (study)",
+    "voltage": "Voltage",
+    "rating": "Rating",
+    "deEnergized": "No supply in this study"
   }
 }

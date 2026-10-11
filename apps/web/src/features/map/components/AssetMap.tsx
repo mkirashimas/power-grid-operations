@@ -12,7 +12,7 @@ import type {
   MapGeoJSONFeature,
   PointLike,
 } from 'maplibre-gl';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   assetSeverity,
   LAYER_OF_KIND,
@@ -30,6 +30,8 @@ const STYLES = {
 type Scheme = keyof typeof STYLES;
 
 const layerId = (layer: MapLayer) => `pgo-${layer}`;
+/** Gap between the mouse pointer and the hover tooltip, in px. */
+const TOOLTIP_OFFSET = 12;
 const POINT_RADIUS: Record<Exclude<MapLayer, 'lines'>, number> = {
   substations: 4,
   generators: 3.5,
@@ -51,6 +53,11 @@ export interface AssetMapProps {
   label: string;
   /** The map could not start, e.g. without WebGL. */
   onError: () => void;
+  /**
+   * Content of the tooltip for the asset under the mouse pointer. Mouse only: the selection
+   * panel and Show as table are the accessible way to the same values.
+   */
+  renderHover?: (index: number) => ReactNode;
 }
 
 /** Theme colours as concrete values: MapLibre cannot read CSS variables. */
@@ -129,8 +136,10 @@ const addAssetLayers = (
  * change swaps the base style and re-adds the asset layers.
  */
 export const AssetMap = (props: AssetMapProps) => {
-  const { assets, loading, voltage, changed, layers, selectedIndex, label } = props;
+  const { assets, loading, voltage, changed, layers, selectedIndex, label, renderHover } = props;
   const containerRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState<number | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const loaded = useRef(false);
   const applied = useRef<number | null>(null);
@@ -267,8 +276,33 @@ export const AssetMap = (props: AssetMapProps) => {
           if (top?.id !== undefined) latest.current.props.onSelect(Number(top.id));
         });
         instance.on('mousemove', (event) => {
-          instance.getCanvas().style.cursor = hits(event.point).length ? 'pointer' : '';
+          const [top] = hits(event.point);
+          instance.getCanvas().style.cursor = top ? 'pointer' : '';
+          if (top?.id === undefined) {
+            setHovered(null);
+            return;
+          }
+          // Same index: React skips the render. The position is written straight to the DOM, so
+          // following the pointer never re-renders.
+          setHovered(Number(top.id));
+          const tooltip = tooltipRef.current;
+          if (!tooltip) return;
+          const { x, y } = event.point;
+          // Flip to the other side of the pointer near the right and bottom edges.
+          const left =
+            x + TOOLTIP_OFFSET + tooltip.offsetWidth > container.clientWidth
+              ? x - TOOLTIP_OFFSET - tooltip.offsetWidth
+              : x + TOOLTIP_OFFSET;
+          const down =
+            y + TOOLTIP_OFFSET + tooltip.offsetHeight > container.clientHeight
+              ? y - TOOLTIP_OFFSET - tooltip.offsetHeight
+              : y + TOOLTIP_OFFSET;
+          tooltip.style.transform = `translate(${Math.max(0, left)}px, ${Math.max(0, down)}px)`;
         });
+        const hideTooltip = () => setHovered(null);
+        instance.on('mouseout', hideTooltip);
+        instance.on('dragstart', hideTooltip);
+        instance.on('zoomstart', hideTooltip);
         mapRef.current = instance;
       })
       .catch(() => latest.current.props.onError());
@@ -290,6 +324,7 @@ export const AssetMap = (props: AssetMapProps) => {
     if (!map || currentScheme.current === scheme) return;
     currentScheme.current = scheme;
     loaded.current = false;
+    setHovered(null);
     map.getContainer().dataset.ready = 'false';
     map.setStyle(STYLES[scheme], { diff: false });
   }, [scheme]);
@@ -330,17 +365,34 @@ export const AssetMap = (props: AssetMapProps) => {
   }, [label]);
 
   return (
-    <Box
-      ref={containerRef}
-      data-testid="asset-map"
-      sx={(theme) => ({
-        height: 'min(65vh, 620px)',
-        borderRadius: 1,
-        overflow: 'hidden',
-        border: 1,
-        borderColor: 'divider',
-        [theme.breakpoints.down('sm')]: { height: 420 },
-      })}
-    />
+    <Box sx={{ position: 'relative' }}>
+      <Box
+        ref={containerRef}
+        data-testid="asset-map"
+        sx={(theme) => ({
+          height: 'min(65vh, 620px)',
+          borderRadius: 1,
+          overflow: 'hidden',
+          border: 1,
+          borderColor: 'divider',
+          [theme.breakpoints.down('sm')]: { height: 420 },
+        })}
+      />
+      {/* Hidden from assistive tech: it repeats what the selection panel and the table offer. */}
+      <Box
+        ref={tooltipRef}
+        aria-hidden
+        sx={(theme) => ({
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          zIndex: theme.zIndex.tooltip,
+          pointerEvents: 'none',
+          visibility: hovered === null ? 'hidden' : 'visible',
+        })}
+      >
+        {hovered !== null && hovered < assets.length && renderHover?.(hovered)}
+      </Box>
+    </Box>
   );
 };

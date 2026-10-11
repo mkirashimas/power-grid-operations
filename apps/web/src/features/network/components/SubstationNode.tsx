@@ -33,7 +33,7 @@ const hiddenHandle = {
  * one stylesheet (SUBSTATION_NODE_STYLES), instead of computing styles per node.
  */
 export const SubstationNode = memo(({ data }: NodeProps<SubstationFlowNode>) => (
-  <div className="pgo-substation" title={data.label}>
+  <div className="pgo-substation">
     <Handle type="target" position={Position.Top} isConnectable={false} style={hiddenHandle} />
     <Handle type="source" position={Position.Top} isConnectable={false} style={hiddenHandle} />
     <div

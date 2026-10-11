@@ -26,6 +26,8 @@ Make each section understandable to people who don't work on power grids, such a
 | E   | The help panel folds the sidebar, and closing it restores the user's choice              | done   |
 | F   | The sidebar choice is kept in a cookie, so the server renders the right width            | done   |
 | G   | "Under the hood" list in every help panel: tech details and measured numbers             | done   |
+| H   | Map hover tooltip: name, status, loading, voltage and rating, live                       | done   |
+| I   | Network hover tooltip: live values, or the study's loading in what-if mode               | done   |
 
 ## How it works
 
@@ -48,6 +50,38 @@ Make each section understandable to people who don't work on power grids, such a
 - **Where the text lives:** in the `common` namespace, not in each feature's own namespace.
   - The panel belongs to the app shell, next to the `nav.*` labels.
   - This way the shell never reads a feature's namespace, and features stay isolated.
+
+### Map hover tooltip
+
+- Hovering a dot or line on `/map` shows a tooltip next to the pointer, without selecting the asset:
+  name and status chip, kind · zone, loading, voltage and rating. The values update with the feed.
+- `AssetMap` reuses its hit test (`hits()`, upper layers first, then the nearest point) in
+  `mousemove`. Only a change of asset re-renders; the position is written to the DOM directly,
+  and the tooltip flips at the right and bottom edges.
+- It hides on mouse-out, drag, zoom and a theme change. Touch has no hover; taps still select.
+- It is `aria-hidden`: a mouse-only shortcut. The selection panel and **Show as table** stay the
+  accessible way to the same values.
+- `hooks/useAssetReadout.ts` formats the values for both the tooltip and the selection panel.
+- Tests: `AssetTooltip.test.tsx` (values, dashes before the feed, Romanian number format) and
+  `e2e/map.spec.ts` (hover shows it without selecting, moving away hides it).
+
+### Network hover tooltip
+
+- Hovering a substation or line in the topology graph shows the same kind of tooltip, without
+  selecting: name and status, kind · zone, loading, voltage and rating.
+- **What-if mode:** loading is the study's, labelled "Loading (study)". Voltage is left out, because
+  the DC study has none. A tripped line says **Tripped**, and a substation cut off by the study
+  says **No supply in this study**.
+- **Rendering:** `TopologyGraph` is memoised and must not re-render on every live tick. It only
+  reports `onHover({ assetId, x, y, width, height })` from React Flow's node and edge mouse events
+  (stable callback). `NetworkView` renders `GraphTooltip` and moves it through a ref, so the
+  values follow the feed while the graph stays put. Panning or zooming hides it.
+- The native `title` on substation nodes is gone, so there is no double tooltip.
+- `network` has its own `kinds`, `units` and `hover.*` keys. Features share no code, so it doesn't
+  reuse the map's tooltip.
+- Tests: `GraphTooltip.test.tsx` (live values; study loading without voltage; tripped and
+  without supply) and `e2e/network.spec.ts` (hover shows it without selecting, moving away hides
+  it).
 
 ### Sidebar
 

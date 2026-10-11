@@ -71,5 +71,23 @@
     "south-central": "Centre Sud",
     "southern": "Sud",
     "west": "Ouest"
+  },
+  "kinds": {
+    "substation": "Poste",
+    "line": "Ligne",
+    "generator": "Générateur",
+    "load": "Charge"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "hover": {
+    "loading": "Charge",
+    "studyLoading": "Charge (étude)",
+    "voltage": "Tension",
+    "rating": "Puissance nominale",
+    "deEnergized": "Sans alimentation dans cette étude"
   }
 }

@@ -71,5 +71,23 @@
     "south-central": "Centru-Sud",
     "southern": "Sud",
     "west": "Vest"
+  },
+  "kinds": {
+    "substation": "Stație",
+    "line": "Linie",
+    "generator": "Generator",
+    "load": "Consumator"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "hover": {
+    "loading": "Încărcare",
+    "studyLoading": "Încărcare (studiu)",
+    "voltage": "Tensiune",
+    "rating": "Putere nominală",
+    "deEnergized": "Fără alimentare în acest studiu"
   }
 }
