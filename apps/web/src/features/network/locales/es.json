@@ -71,5 +71,23 @@
     "south-central": "Centro Sur",
     "southern": "Sur",
     "west": "Oeste"
+  },
+  "kinds": {
+    "substation": "Subestación",
+    "line": "Línea",
+    "generator": "Generador",
+    "load": "Carga"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "hover": {
+    "loading": "Carga",
+    "studyLoading": "Carga (estudio)",
+    "voltage": "Tensión",
+    "rating": "Capacidad",
+    "deEnergized": "Sin suministro en este estudio"
   }
 }

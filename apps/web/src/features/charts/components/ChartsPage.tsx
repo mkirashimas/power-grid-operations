@@ -1,7 +1,8 @@
 import { EIA_SOURCE, EIA_SOURCE_URL } from '@pgo/grid-model';
-import { Box, Stack, Typography } from '@mui/material';
-import { SourceNote } from '@pgo/ui';
+import { Stack } from '@mui/material';
+import { PageHeader, SourceNote } from '@pgo/ui';
 import { getServerTranslation } from '../../../i18n/server';
+import { HelpButton } from '../../../shell/HelpButton';
 import { getErcotData } from '../../../server/eia';
 import { CHARTS_NAMESPACE } from '../i18n';
 import { ChartsView } from './ChartsView';
@@ -15,12 +16,7 @@ export const ChartsPage = async () => {
 
   return (
     <Stack spacing={3}>
-      <Box>
-        <Typography variant="h4" component="h1" sx={{ mb: 1 }}>
-          {t('title')}
-        </Typography>
-        <Typography color="text.secondary">{t('intro')}</Typography>
-      </Box>
+      <PageHeader title={t('title')} intro={t('intro')} action={<HelpButton />} />
       <ChartsView snapshot={snapshot} />
       <SourceNote
         prefix={t('source')}

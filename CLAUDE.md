@@ -50,6 +50,10 @@ not the roadmap.
   - Colours come from palette tokens. New tokens get a check in `src/theme/contrast.test.ts`.
   - The `index.ts` barrel uses named exports only, because Next.js cannot follow `export *` into
     `'use client'` modules.
+- **App shell controls** that features use (the section `HelpButton`, the sidebar cookie) live in
+  `src/shell`, because features may not import `hoc/`. Shell UI state is `store/shellSlice.ts`.
+  Section help text is in `common` (`help.sections.<navKey>.*`); a new section needs it in all 5
+  languages.
 - **MUI 9 icon names** end in `Outlined` (e.g. `ErrorOutlined`, not `ErrorOutline`).
 - **Theme overrides** use `(theme.vars || theme).palette.*`, so one stylesheet serves both
   schemes. In `sx`, prefer token strings (`'text.secondary'`, `bgcolor: 'background.paper'`),

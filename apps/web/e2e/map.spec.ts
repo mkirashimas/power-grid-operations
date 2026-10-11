@@ -121,6 +121,29 @@ test('clicking an asset on the map selects it', async ({ page, isMobile }) => {
   await expect(page).toHaveURL(/asset=sub-cst-001/);
 });
 
+test('hovering an asset shows its live values without selecting it', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'a mouse-only tooltip');
+  await openMap(page, '?asset=sub-cst-001');
+  const name = (await page.getByTestId('selection-bar').locator('p').nth(1).textContent())!;
+  await expect(page.getByTestId('asset-map')).toHaveAttribute('data-ready', 'true', {
+    timeout: 20_000,
+  });
+  await page.getByRole('button', { name: 'Clear selection' }).click();
+  const box = (await canvas(page).boundingBox())!;
+  const tooltip = page.getByTestId('map-asset-tooltip');
+
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+
+  await expect(tooltip).toBeVisible();
+  await expect(tooltip).toContainText(name);
+  await expect(tooltip).toContainText('Substation');
+  await expect(tooltip).toContainText(/\d+\.\d %/);
+  await expect(page.getByTestId('selection-bar')).toHaveCount(0);
+
+  await page.mouse.move(0, 0);
+  await expect(tooltip).toHaveCount(0);
+});
+
 test('has no horizontal page scroll on narrow screens', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'mobile only');
   await openMap(page);

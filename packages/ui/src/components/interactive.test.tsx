@@ -1,11 +1,12 @@
 // Interactive components: keyboard behaviour, state and an axe scan each.
-import { act, screen } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { expectNoAxeViolations, renderWithTheme } from '../test/utils.tsx';
 import { ConfirmDialog } from './ConfirmDialog/ConfirmDialog.tsx';
 import { FilterField } from './FilterField/FilterField.tsx';
+import { HelpPanel } from './HelpPanel/HelpPanel.tsx';
 import { LiveAnnouncer, useAnnounce } from './LiveAnnouncer/LiveAnnouncer.tsx';
 import { SegmentedControl } from './SegmentedControl/SegmentedControl.tsx';
 
@@ -180,5 +181,72 @@ describe('LiveAnnouncer', () => {
   it('fails loudly when used outside the provider', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => renderWithTheme(<Announcer />)).toThrow(/inside <LiveAnnouncer>/);
+  });
+});
+
+const HELP_SECTIONS = [
+  { heading: 'What is this?', body: 'A map of the practice grid.' },
+  { heading: 'How do I use it?', body: 'Click an asset to select it.' },
+  { heading: 'Under the hood', items: ['MapLibre GL (WebGL)', 'feature-state updates'] },
+];
+
+const HelpHarness = ({ variant }: { variant: 'side' | 'sheet' }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)}>
+        Help
+      </button>
+      <HelpPanel
+        open={open}
+        onClose={() => setOpen(false)}
+        title="About Map"
+        closeLabel="Close help"
+        sections={HELP_SECTIONS}
+        variant={variant}
+        id="help"
+      />
+    </>
+  );
+};
+
+describe('HelpPanel', () => {
+  it('side: focuses its heading, closes on Escape and returns focus to the opener', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<HelpHarness variant="side" />);
+
+    await user.click(screen.getByRole('button', { name: 'Help' }));
+
+    const panel = screen.getByRole('complementary', { name: 'About Map' });
+    expect(panel).toHaveAttribute('id', 'help');
+    expect(screen.getByRole('heading', { level: 2, name: 'About Map' })).toHaveFocus();
+    expect(screen.getByRole('heading', { level: 3, name: 'What is this?' })).toBeVisible();
+    expect(screen.getByText('Click an asset to select it.')).toBeVisible();
+    const list = screen.getByRole('list');
+    expect(
+      within(list)
+        .getAllByRole('listitem')
+        .map((item) => item.textContent),
+    ).toEqual(['MapLibre GL (WebGL)', 'feature-state updates']);
+    await expectNoAxeViolations();
+
+    await user.keyboard('{Escape}');
+
+    expect(screen.getByRole('button', { name: 'Help' })).toHaveFocus();
+  });
+
+  it('sheet: is a modal that closes with its close button', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<HelpHarness variant="sheet" />);
+
+    await user.click(screen.getByRole('button', { name: 'Help' }));
+    expect(screen.getByRole('complementary', { name: 'About Map' })).toBeVisible();
+    await expectNoAxeViolations();
+
+    await user.click(screen.getByRole('button', { name: 'Close help' }));
+
+    await vi.waitFor(() =>
+      expect(screen.queryByRole('complementary', { name: 'About Map' })).not.toBeInTheDocument(),
+    );
   });
 });
