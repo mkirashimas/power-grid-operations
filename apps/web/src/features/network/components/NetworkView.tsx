@@ -3,7 +3,7 @@
 import { WEATHER_ZONES, type TelemetryStatus } from '@pgo/grid-model';
 import { Panel, SegmentedControl } from '@pgo/ui';
 import { Box, MenuItem, Stack, TextField } from '@mui/material';
-import { useCallback, useDeferredValue, useMemo } from 'react';
+import { useCallback, useDeferredValue, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { findAsset, getAssets } from '../../../store/assets';
@@ -26,11 +26,14 @@ import {
 import { liveStatus, studyStatus } from '../status';
 import { buildTree } from '../tree';
 import { AssetTree } from './AssetTree';
+import { GraphTooltip } from './GraphTooltip';
 import { StudyResults } from './StudyResults';
-import { TopologyGraph } from './TopologyGraph';
+import { TopologyGraph, type GraphHover } from './TopologyGraph';
 import { WhatIfPanel } from './WhatIfPanel';
 
 const EMPTY_FEED = initialLiveFeed();
+/** Gap between the mouse pointer and the hover tooltip, in px. */
+const TOOLTIP_OFFSET = 12;
 const ZONE_OPTIONS: readonly ZoneScope[] = ['all', ...WEATHER_ZONES];
 
 /** Asset tree, topology graph and what-if editor, all on the linked selection. */
@@ -94,6 +97,31 @@ export const NetworkView = ({ url }: { url: string }) => {
   );
 
   const select = useCallback((id: string) => dispatch(selectAsset(id)), [dispatch]);
+
+  // Hover tooltip over the graph. The graph reports the asset and the pointer; the
+  // content renders here, so it follows every live tick without re-rendering the graph.
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  // Stable, so the memoised graph never re-renders for it. Only a change of asset renders; the
+  // position goes straight to the DOM, flipped to the other side near the right and bottom edges.
+  const onHover = useCallback((hover: GraphHover | null) => {
+    setHoveredId(hover?.assetId ?? null);
+    const tooltip = tooltipRef.current;
+    if (!hover || !tooltip) return;
+    const { x, y, width, height } = hover;
+    const left =
+      x + TOOLTIP_OFFSET + tooltip.offsetWidth > width
+        ? x - TOOLTIP_OFFSET - tooltip.offsetWidth
+        : x + TOOLTIP_OFFSET;
+    const down =
+      y + TOOLTIP_OFFSET + tooltip.offsetHeight > height
+        ? y - TOOLTIP_OFFSET - tooltip.offsetHeight
+        : y + TOOLTIP_OFFSET;
+    tooltip.style.transform = `translate(${Math.max(0, left)}px, ${Math.max(0, down)}px)`;
+  }, []);
+  const hovered = findAsset(hoveredId);
+  const hoveredLine = hoveredId === null ? undefined : lineOf.get(hoveredId);
+  const studyLine = mode === 'study' && hoveredLine !== undefined;
   const visibleBuses = network.buses.filter((bus) => zone === 'all' || bus.zone === zone);
   const visibleIds = new Set(visibleBuses.map((bus) => bus.id));
   const visibleLines = network.lines.filter(
@@ -145,20 +173,51 @@ export const NetworkView = ({ url }: { url: string }) => {
           <AssetTree tree={tree} statusOf={statusOf} selectedId={selectedId} onSelect={select} />
         </Panel>
         <Panel title={t('graph.title')} headingLevel={2}>
-          <TopologyGraph
-            network={network}
-            zone={zone}
-            busStatus={busStatus}
-            lineStatus={lineStatus}
-            deEnergized={deEnergized}
-            selectedId={selectedId}
-            onSelect={select}
-            label={t('graph.label', {
-              substations: visibleBuses.length,
-              lines: visibleLines.length,
-            })}
-            hint={t('graph.hint')}
-          />
+          <Box sx={{ position: 'relative' }}>
+            <TopologyGraph
+              network={network}
+              zone={zone}
+              busStatus={busStatus}
+              lineStatus={lineStatus}
+              deEnergized={deEnergized}
+              selectedId={selectedId}
+              onSelect={select}
+              label={t('graph.label', {
+                substations: visibleBuses.length,
+                lines: visibleLines.length,
+              })}
+              hint={t('graph.hint')}
+              onHover={onHover}
+            />
+            {/* Hidden from assistive tech: the asset tree and the what-if panel are the accessible
+              way to the same values. */}
+            <Box
+              ref={tooltipRef}
+              aria-hidden
+              sx={(theme) => ({
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: theme.zIndex.tooltip,
+                pointerEvents: 'none',
+                visibility: hovered ? 'visible' : 'hidden',
+              })}
+            >
+              {hovered && (
+                <GraphTooltip
+                  asset={hovered}
+                  status={statusOf(hovered.id)}
+                  loadingPct={
+                    studyLine ? study.loadingPct[hoveredLine] : feed.assetLoading[hovered.index]
+                  }
+                  voltagePu={mode === 'study' ? undefined : feed.assetVoltage[hovered.index]}
+                  study={mode === 'study'}
+                  tripped={studyLine && !study.inService[hoveredLine]}
+                  deEnergized={deEnergized.has(hovered.id)}
+                />
+              )}
+            </Box>
+          </Box>
         </Panel>
         <Box
           sx={(theme) => ({

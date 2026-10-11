@@ -1,5 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
+import { PageHeader } from '@pgo/ui';
 import { getServerTranslation } from '../../../i18n/server';
+import { HelpButton } from '../../../shell/HelpButton';
 import { INCIDENTS_NAMESPACE } from '../i18n';
 import { IncidentList } from './IncidentList';
 import { IncidentReport } from './IncidentReport';
@@ -16,15 +18,11 @@ export const IncidentsPage = async () => {
   const t = await getServerTranslation(INCIDENTS_NAMESPACE);
   return (
     <Stack spacing={3}>
-      <Box>
-        <Typography variant="h4" component="h1" sx={{ mb: 1 }}>
-          {t('title')}
-        </Typography>
-        <Typography color="text.secondary" sx={{ mb: 0.5 }}>
-          {t('intro')}
-        </Typography>
-        <StorageNote text={t('storageNote')} />
-      </Box>
+      <PageHeader title={t('title')} intro={t('intro')} action={<HelpButton />}>
+        <Box sx={{ mt: 0.5 }}>
+          <StorageNote text={t('storageNote')} />
+        </Box>
+      </PageHeader>
       <IncidentList />
     </Stack>
   );

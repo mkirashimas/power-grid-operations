@@ -100,6 +100,25 @@ test('a shared study link restores its changes, and each can be undone', async (
   await expect(page).toHaveURL(/study=l\.sub-cst-001\.20$/);
 });
 
+test('hovering a substation shows its live values without selecting it', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'a mouse-only tooltip');
+  await openNetwork(page);
+  const tooltip = page.getByTestId('graph-asset-tooltip');
+  // At the fitted zoom some substations overlap, so hover whichever one is on top there.
+  await graph(page).locator('.react-flow__node').first().hover({ force: true });
+
+  await expect(tooltip).toBeVisible();
+  await expect(tooltip).toContainText(/Substation · /);
+  await expect(tooltip).toContainText(/Voltage\s*\d\.\d{3} pu/);
+  await expect(bar(page)).toHaveCount(0);
+
+  await page.mouse.move(0, 0);
+  await expect(tooltip).toBeHidden();
+});
+
 test('has no horizontal page scroll on narrow screens', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'mobile only');
   await openNetwork(page, '?asset=ln-0001&mode=study&study=t.ln-0001');

@@ -14,7 +14,7 @@ import {
   useReactFlow,
   type Edge,
 } from '@xyflow/react';
-import { useEffect, useId, useMemo, useRef, useState, memo } from 'react';
+import { memo, useEffect, useId, useMemo, useRef, useState, type MouseEvent } from 'react';
 import type { GridNetwork } from '../engine/network';
 import type { ZoneScope } from '../slice';
 import { reuseUnchanged } from '../stable';
@@ -46,6 +46,15 @@ const sameEdge = (a: Edge, b: Edge) =>
   a.style?.strokeWidth === b.style?.strokeWidth &&
   a.style?.strokeDasharray === b.style?.strokeDasharray;
 
+export interface GraphHover {
+  assetId: string;
+  x: number;
+  y: number;
+  /** Size of the graph, to keep a tooltip inside it. */
+  width: number;
+  height: number;
+}
+
 export interface TopologyGraphProps {
   network: GridNetwork;
   zone: ZoneScope;
@@ -58,6 +67,11 @@ export interface TopologyGraphProps {
   label: string;
   /** Read after the name, e.g. "use the asset tree to move by keyboard". */
   hint: string;
+  /**
+   * The asset under the mouse pointer and where the pointer is, in px from the graph's top-left
+   * corner, or null. Must be stable (e.g. from useCallback): the graph is memoised.
+   */
+  onHover?: (hover: GraphHover | null) => void;
 }
 
 /** Where to centre for an asset: its substation, or the middle of a line. */
@@ -82,6 +96,7 @@ const Graph = ({
   onSelect,
   label,
   hint,
+  onHover,
 }: TopologyGraphProps) => {
   const theme = useTheme();
   const palette = (theme.vars ?? theme).palette;
@@ -104,6 +119,20 @@ const Graph = ({
   }, [scheme]);
   const flow = useReactFlow();
   const hintId = useId();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const hover = (assetId: string, event: MouseEvent) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    onHover?.({
+      assetId,
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+      width: rect.width,
+      height: rect.height,
+    });
+  };
+  const unhover = () => onHover?.(null);
 
   // The selected asset's substation (lines highlight themselves).
   const selectedBus = useMemo(() => {
@@ -214,6 +243,7 @@ const Graph = ({
 
   return (
     <Box
+      ref={containerRef}
       role="region"
       aria-label={label}
       aria-describedby={hintId}
@@ -238,6 +268,13 @@ const Graph = ({
         nodeTypes={NODE_TYPES}
         onNodeClick={(_, node) => onSelect(node.id)}
         onEdgeClick={(_, edge) => onSelect(edge.id)}
+        onNodeMouseEnter={(event, node) => hover(node.id, event)}
+        onNodeMouseMove={(event, node) => hover(node.id, event)}
+        onNodeMouseLeave={unhover}
+        onEdgeMouseEnter={(event, edge) => hover(edge.id, event)}
+        onEdgeMouseMove={(event, edge) => hover(edge.id, event)}
+        onEdgeMouseLeave={unhover}
+        onMoveStart={unhover}
         onInit={onInit}
         minZoom={0.3}
         maxZoom={6}

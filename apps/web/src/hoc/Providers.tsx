@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import { getI18n } from '../i18n';
 import { toLanguage } from '../i18n/language';
 import { makeStore } from '../store';
+import { initialShellState } from '../store/shellSlice';
 import { createAppTheme, MUI_LOCALES } from '../theme';
 import type { Language } from '../types';
 
@@ -35,11 +36,13 @@ const ThemedApp = ({ children }: { children: ReactNode }) => {
 interface ProvidersProps {
   /** Language resolved on the server from the cookie or Accept-Language. */
   language: Language;
+  /** Desktop sidebar choice, read on the server from the `sidebar` cookie. */
+  sidebarCollapsed?: boolean;
   children: ReactNode;
 }
 
-export const Providers = ({ language, children }: ProvidersProps) => {
-  const [store] = useState(makeStore);
+export const Providers = ({ language, sidebarCollapsed = false, children }: ProvidersProps) => {
+  const [store] = useState(() => makeStore({ shell: { ...initialShellState, sidebarCollapsed } }));
   const [i18n] = useState(() => getI18n(language));
 
   return (

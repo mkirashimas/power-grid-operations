@@ -2,6 +2,7 @@ import { combineSlices, configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { api } from './api';
+import { shellSlice } from './shellSlice';
 
 /**
  * Feature slices register themselves (slice.injectInto(rootReducer)) and extend this
@@ -10,12 +11,16 @@ import { api } from './api';
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface LazyLoadedSlices {}
 
-export const rootReducer = combineSlices(api).withLazyLoadedSlices<LazyLoadedSlices>();
+export const rootReducer = combineSlices(api, shellSlice).withLazyLoadedSlices<LazyLoadedSlices>();
 
-/** A new store per request on the server and once per page load in the browser (see hoc/Providers). */
-export const makeStore = () => {
+/**
+ * A new store per request on the server and once per page load in the browser (see hoc/Providers).
+ * `preloadedState` carries what the server read from cookies, e.g. the sidebar choice.
+ */
+export const makeStore = (preloadedState?: Partial<ReturnType<typeof rootReducer>>) => {
   const store = configureStore({
     reducer: rootReducer,
+    preloadedState,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
   });
   setupListeners(store.dispatch);

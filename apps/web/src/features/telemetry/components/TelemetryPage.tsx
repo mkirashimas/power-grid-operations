@@ -1,7 +1,8 @@
 import { DEFAULT_SEED, EIA_SOURCE, EIA_SOURCE_URL, findSeries } from '@pgo/grid-model';
-import { Box, Stack, Typography } from '@mui/material';
-import { SourceNote } from '@pgo/ui';
+import { Stack } from '@mui/material';
+import { PageHeader, SourceNote } from '@pgo/ui';
 import { getServerTranslation } from '../../../i18n/server';
+import { HelpButton } from '../../../shell/HelpButton';
 import { getErcotData } from '../../../server/eia';
 import { TELEMETRY_NAMESPACE } from '../i18n';
 import { TelemetryView } from './TelemetryView';
@@ -19,12 +20,7 @@ export const TelemetryPage = async () => {
 
   return (
     <Stack spacing={3}>
-      <Box>
-        <Typography variant="h4" component="h1" sx={{ mb: 1 }}>
-          {t('title')}
-        </Typography>
-        <Typography color="text.secondary">{t('intro')}</Typography>
-      </Box>
+      <PageHeader title={t('title')} intro={t('intro')} action={<HelpButton />} />
       <TelemetryView demand={demand} seed={DEFAULT_SEED} />
       <SourceNote prefix={t('source')} name={EIA_SOURCE} href={EIA_SOURCE_URL} />
     </Stack>

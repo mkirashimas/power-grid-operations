@@ -71,5 +71,23 @@
     "south-central": "Centro Sud",
     "southern": "Sud",
     "west": "Ovest"
+  },
+  "kinds": {
+    "substation": "Sottostazione",
+    "line": "Linea",
+    "generator": "Generatore",
+    "load": "Carico"
+  },
+  "units": {
+    "mw": "{{value}} MW",
+    "pct": "{{value}} %",
+    "pu": "{{value}} pu"
+  },
+  "hover": {
+    "loading": "Carico",
+    "studyLoading": "Carico (studio)",
+    "voltage": "Tensione",
+    "rating": "Potenza nominale",
+    "deEnergized": "Senza alimentazione in questo studio"
   }
 }

@@ -15,6 +15,7 @@ import { MAP_NAMESPACE } from '../i18n';
 import { selectLayers } from '../slice';
 import { AssetMap } from './AssetMap';
 import { AssetTable } from './AssetTable';
+import { AssetTooltip } from './AssetTooltip';
 import { ConnectionChip } from './ConnectionChip';
 import { MapControls } from './MapControls';
 import { SelectedAssetPanel } from './SelectedAssetPanel';
@@ -97,6 +98,13 @@ export const MapView = ({ url }: { url: string }) => {
             onSelect={onSelect}
             label={summary}
             onError={() => setFailed(true)}
+            renderHover={(index) => (
+              <AssetTooltip
+                asset={assets[index]}
+                loadingPct={feed.assetLoading[index]}
+                voltagePu={feed.assetVoltage[index]}
+              />
+            )}
           />
           <SelectedAssetPanel
             asset={selected}
