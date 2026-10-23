@@ -1,4 +1,11 @@
-# Power Grid Operations
+# TLDNR / tech stack:
+
+### TypeScript, React, Next.js App Router, Rust → WASM and MapLibre, deployed on Google Cloud Run with live EIA data. 
+
+### 1M+ row virtualized table, synced zoomable charts with Rust/WASM downsampling in a Web Worker, PWA, real-time alarms driving a map, topology node editor, and linked selection across every view.
+
+
+# Project name: Power Grid Operations
 
 An operations console for the Texas (ERCOT) power grid. It shows how a data-heavy, real-time
 frontend for the energy industry can be built: large data grids, advanced charts, graph views,
